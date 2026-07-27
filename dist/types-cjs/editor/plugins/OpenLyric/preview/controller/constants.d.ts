@@ -1,0 +1,33 @@
+declare const ATTACHMENT_VALUE_RE: RegExp;
+declare const DECLARE_PART_POPUP_MARGIN_PX = 12;
+declare const DECLARE_PART_POPUP_OFFSET_PX = 8;
+declare const STRUCTURE_DEFINITIONS_BY_HEADER: Map<string, {
+    code: string;
+    header: string;
+    allowsNumbering: boolean;
+}>;
+declare const DEFAULT_TEMPO_BPM = 70;
+declare const MIN_TEMPO_BPM = 40;
+declare const MAX_TEMPO_BPM = 240;
+declare const AUTO_OPEN_CONFIG_FIELD_NAMES: Set<string>;
+declare const OPEN_LYRIC_EXPORT_CONTROL_SELECTOR = ".ol-song-view__structure-key-control, .ol-song-view__simplify-toggle";
+declare const OPEN_LYRIC_PRINT_WINDOW_FEATURES = "popup=yes,width=1280,height=900";
+declare const OPEN_LYRIC_PRINT_THEME_NAME = "light";
+declare const OPEN_LYRIC_PRINT_LIGHT_INK_COLOR = "#1f2a37";
+declare const OPEN_LYRIC_PRINT_LIGHT_SURFACE_COLOR = "#ffffff";
+declare const OPEN_LYRIC_EXPORT_PROGRESS_TOTAL_STEPS = 6;
+declare const OPEN_LYRIC_POWERPOINT_MAX_LINES_PER_SLIDE = 8;
+declare const OPEN_LYRIC_POWERPOINT_DEFAULT_FONT_DETECTION_SAMPLE_TEXT = "WWWWmmmm1234567890OpenLyric";
+declare const OPEN_LYRIC_POWERPOINT_GENERIC_FONT_FAMILIES: string[];
+declare const OPEN_LYRIC_POWERPOINT_DEFAULT_TYPOGRAPHY: Readonly<{
+    chromeFontFace: "Arial";
+    lyricFontFace: "Courier New";
+    lyricFontSize: 24;
+}>;
+declare function loadHtmlToImageModule(): Promise<any>;
+declare function loadPptxGenJsModule(): Promise<any>;
+declare function isTransparentColor(colorValue: any): boolean;
+declare function normalizeFontFamilyName(fontFamily: any): string;
+declare function resolveCssUrls(cssText: any, baseUrl: any): string;
+declare function escapeStyleElementText(cssText: any): string;
+export { ATTACHMENT_VALUE_RE, AUTO_OPEN_CONFIG_FIELD_NAMES, DEFAULT_TEMPO_BPM, DECLARE_PART_POPUP_MARGIN_PX, DECLARE_PART_POPUP_OFFSET_PX, MAX_TEMPO_BPM, MIN_TEMPO_BPM, OPEN_LYRIC_EXPORT_CONTROL_SELECTOR, OPEN_LYRIC_EXPORT_PROGRESS_TOTAL_STEPS, OPEN_LYRIC_POWERPOINT_DEFAULT_FONT_DETECTION_SAMPLE_TEXT, OPEN_LYRIC_POWERPOINT_DEFAULT_TYPOGRAPHY, OPEN_LYRIC_POWERPOINT_GENERIC_FONT_FAMILIES, OPEN_LYRIC_POWERPOINT_MAX_LINES_PER_SLIDE, OPEN_LYRIC_PRINT_LIGHT_INK_COLOR, OPEN_LYRIC_PRINT_LIGHT_SURFACE_COLOR, OPEN_LYRIC_PRINT_THEME_NAME, OPEN_LYRIC_PRINT_WINDOW_FEATURES, STRUCTURE_DEFINITIONS_BY_HEADER, escapeStyleElementText, isTransparentColor, loadHtmlToImageModule, loadPptxGenJsModule, normalizeFontFamilyName, resolveCssUrls, };

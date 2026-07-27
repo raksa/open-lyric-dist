@@ -1,0 +1,32 @@
+SET UTF-8
+
+TRY ្ារកសបនតមិងលទអវុចយព់ំោគេជីហញណដូភែធ៉ខើះឹួៀថផឆៈ័ឡៗៃ៍ឧ៊ឃឋឺៅឌឈ៍ឥឿឱ‌ឫឍឯ៎ឪ៏ឮឩឰឦឳឭ។ឬ០១២៣៤៥៦៧៨៩‍៕៛៚៙៖៘ឝឞ
+
+# Identical conversion rule to make misspell got closer suggestion
+#  ូ and  ួ  are easily confused
+ICONV 2
+ICONV	ដ	ត
+ICONV	ត	ដ
+ICONV 2
+ICONV	ល	ឡ
+ICONV	ឡ	ល
+# "្"+"ត" and "្"+"ដ"
+ICONV 2
+ICONV	្ត	្ដ
+ICONV	្ដ	្ត
+ICONV 2
+ICONV	ូ	ួ
+ICONV	ួ	ូ
+ICONV 2
+ICONV	ិ	ី
+ICONV	ី	ិ
+ICONV 2
+ICONV	េ	ែ
+ICONV	ែ	េ
+ICONV 2
+ICONV	្ត្រ	្រ្ត
+ICONV	្រ្ត	្ត្រ
+
+# អញ្ចឹង have to be replaced by អ៊ីចឹង
+REP 1
+REP	អញ្ចឹង	អ៊ីចឹង

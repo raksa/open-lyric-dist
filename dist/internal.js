@@ -1,0 +1,2 @@
+import{Tt as e}from"./chunks/spellcheck-DBG3_HZE.js";import{w as t,x as n}from"./chunks/editor-plugin-registry-CdpKZPYQ.js";import{a as r,i,n as a,r as o,t as s}from"./chunks/transcript_ol_editor-m404YJ8t.js";var c=i,l=a;export{r as EditorPreferencesStore,n as createHtmlFragment,c as kmKhKeyboardCssUrl,o as olEditorPluginData,s as olEditorTranscriptPluginData,t as queryRef,e as refreshElementRefs,l as transcriptCssUrl};
+//# sourceMappingURL=internal.js.map

@@ -1,0 +1,21 @@
+declare const PREVIEW_JUMP_HIGHLIGHT_CLASS = "ol-preview-fence--jump-target";
+declare const PREVIEW_CLICK_DELAY_MS = 180;
+declare const DECLARE_PART_ACTION_ROOT_SELECTOR = "[data-preview-action=\"toggle-declare-part-menu\"]";
+declare const CONFIG_ADD_ACTION_ROOT_SELECTOR = "[data-preview-action=\"toggle-config-add-menu\"]";
+declare const CONFIG_KEY_ACTION_ROOT_SELECTOR = "[data-preview-action=\"toggle-config-key-menu\"]";
+declare const CONFIG_ATTACHMENT_ACTION_ROOT_SELECTOR = "[data-preview-action=\"toggle-config-attachment-menu\"]";
+declare const CONFIG_TIME_ACTION_ROOT_SELECTOR = "[data-preview-action=\"toggle-config-time-menu\"]";
+declare const CONFIG_TEMPO_ACTION_ROOT_SELECTOR = "[data-preview-action=\"toggle-config-tempo-menu\"]";
+declare const MARKDOWN_PREVIEW_PATTERN_TARGET_ID_PREFIX = "ol-preview-pattern";
+declare const PREVIEW_POPUP_TRIGGER_SELECTOR = "[data-chord-key], [data-pattern-reference-index]";
+declare const DECLARE_PART_POPUP_MARGIN_PX = 12;
+declare const DECLARE_PART_POPUP_OFFSET_PX = 8;
+declare const IOS_FAMILY_USER_AGENT_RE: RegExp;
+declare const IPADOS_DESKTOP_USER_AGENT_RE: RegExp;
+declare const DEFAULT_PREVIEW_TYPOGRAPHY: Readonly<{
+    fontSizePx: 16;
+    fontFamily: "";
+}>;
+declare const MIN_PREVIEW_FONT_SIZE_PX = 12;
+declare const MAX_PREVIEW_FONT_SIZE_PX = 36;
+export { CONFIG_ADD_ACTION_ROOT_SELECTOR, CONFIG_ATTACHMENT_ACTION_ROOT_SELECTOR, CONFIG_KEY_ACTION_ROOT_SELECTOR, CONFIG_TEMPO_ACTION_ROOT_SELECTOR, CONFIG_TIME_ACTION_ROOT_SELECTOR, DECLARE_PART_ACTION_ROOT_SELECTOR, DECLARE_PART_POPUP_MARGIN_PX, DECLARE_PART_POPUP_OFFSET_PX, DEFAULT_PREVIEW_TYPOGRAPHY, IOS_FAMILY_USER_AGENT_RE, IPADOS_DESKTOP_USER_AGENT_RE, MARKDOWN_PREVIEW_PATTERN_TARGET_ID_PREFIX, MAX_PREVIEW_FONT_SIZE_PX, MIN_PREVIEW_FONT_SIZE_PX, PREVIEW_CLICK_DELAY_MS, PREVIEW_JUMP_HIGHLIGHT_CLASS, PREVIEW_POPUP_TRIGGER_SELECTOR, };

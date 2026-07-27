@@ -1,0 +1,125 @@
+import * as musicTheory from './domain/music-theory.js';
+import { parseOpenLyricPlainText } from './document/plain-text-import.js';
+import * as validation from './document/validation.js';
+import { OLParser } from './domain/parser/OLParser.js';
+import * as fenceParser from './domain/parser/fences.js';
+import * as structure from './domain/structure.js';
+import { registerMarkdownOlLanguage } from './monaco/language.js';
+import * as openLyricPreview from './preview/index.js';
+declare const olEditorOpenLyricPluginData: {
+    exampleEditorShellModes: string[];
+    exampleGroupTitle: string;
+    examples: {
+        id: string;
+        fileName: string;
+        title: string;
+        description: string;
+        content: string;
+    }[];
+    id: string;
+    openLyric: {
+        document: {
+            checkMarkdown: typeof validation.checkOLMarkdown;
+            parsePlainText: typeof parseOpenLyricPlainText;
+            scheduleValidation: typeof validation.scheduleValidation;
+            validation: typeof validation;
+        };
+        domain: {
+            musicTheory: typeof musicTheory;
+            parser: {
+                OLBridge: typeof fenceParser.OLBridge;
+                OLBreakdown: typeof fenceParser.OLBreakdown;
+                OLChorus: typeof fenceParser.OLChorus;
+                OLConfig: typeof fenceParser.OLConfig;
+                OLFenceDefinition: typeof fenceParser.OLFenceDefinition;
+                OLFinalChorus: typeof fenceParser.OLFinalChorus;
+                OLFreeTextFence: typeof fenceParser.OLFreeTextFence;
+                OLInstrumental: typeof fenceParser.OLInstrumental;
+                OLInstrumentalFence: typeof fenceParser.OLInstrumentalFence;
+                OLInterlude: typeof fenceParser.OLInterlude;
+                OLIntro: typeof fenceParser.OLIntro;
+                OLLyricFence: typeof fenceParser.OLLyricFence;
+                OLOutro: typeof fenceParser.OLOutro;
+                OLPostChorus: typeof fenceParser.OLPostChorus;
+                OLPreChorus: typeof fenceParser.OLPreChorus;
+                OLRefrain: typeof fenceParser.OLRefrain;
+                OLSolo: typeof fenceParser.OLSolo;
+                OLTag: typeof fenceParser.OLTag;
+                OLVamp: typeof fenceParser.OLVamp;
+                OLVerse: typeof fenceParser.OLVerse;
+                definitions: (fenceParser.OLBridge | fenceParser.OLBreakdown | fenceParser.OLChorus | fenceParser.OLConfig | fenceParser.OLFinalChorus | fenceParser.OLInstrumental | fenceParser.OLInterlude | fenceParser.OLIntro | fenceParser.OLOutro | fenceParser.OLPostChorus | fenceParser.OLPreChorus | fenceParser.OLRefrain | fenceParser.OLSolo | fenceParser.OLTag | fenceParser.OLVamp | fenceParser.OLVerse)[];
+                definitionsByClassName: any;
+                findFenceDefinition: typeof fenceParser.findFenceDefinition;
+                formatDeclaredPartName: typeof fenceParser.formatDeclaredPartName;
+                getFenceBlockKind: typeof fenceParser.getFenceBlockKind;
+                getFenceHeaderError: typeof fenceParser.getFenceHeaderError;
+                getFenceSnippetDefinitions: typeof fenceParser.getFenceSnippetDefinitions;
+                getRequiredDeclaredPartNames: typeof fenceParser.getRequiredDeclaredPartNames;
+                parseFenceHeader: typeof fenceParser.parseFenceHeader;
+                parser: {
+                    types: {
+                        OLFenceDefinition: typeof fenceParser.OLFenceDefinition;
+                        OLConfig: typeof fenceParser.OLConfig;
+                        OLIntro: typeof fenceParser.OLIntro;
+                        OLFinalChorus: typeof fenceParser.OLFinalChorus;
+                        OLPreChorus: typeof fenceParser.OLPreChorus;
+                        OLPostChorus: typeof fenceParser.OLPostChorus;
+                        OLRefrain: typeof fenceParser.OLRefrain;
+                        OLBridge: typeof fenceParser.OLBridge;
+                        OLChorus: typeof fenceParser.OLChorus;
+                        OLVerse: typeof fenceParser.OLVerse;
+                        OLTag: typeof fenceParser.OLTag;
+                        OLOutro: typeof fenceParser.OLOutro;
+                        OLInstrumental: typeof fenceParser.OLInstrumental;
+                        OLInterlude: typeof fenceParser.OLInterlude;
+                        OLBreakdown: typeof fenceParser.OLBreakdown;
+                        OLVamp: typeof fenceParser.OLVamp;
+                        OLSolo: typeof fenceParser.OLSolo;
+                    };
+                    registry: import("./domain/parser/fences/OLFenceRegistry.js").OLFenceRegistry;
+                    definitions: any;
+                    definitionsByClassName: any;
+                    findFenceDefinition: (header: any) => any;
+                    parseFenceHeader: (info: any) => any;
+                    getFenceBlockKind: (info: any) => any;
+                    getFenceHeaderError: (info: any) => string;
+                    getFenceSnippetDefinitions: () => any;
+                    getRequiredDeclaredPartNames: () => any;
+                    formatDeclaredPartName: typeof fenceParser.formatDeclaredPartName;
+                };
+                registry: import("./domain/parser/fences/OLFenceRegistry.js").OLFenceRegistry;
+                types: {
+                    OLFenceDefinition: typeof fenceParser.OLFenceDefinition;
+                    OLConfig: typeof fenceParser.OLConfig;
+                    OLIntro: typeof fenceParser.OLIntro;
+                    OLFinalChorus: typeof fenceParser.OLFinalChorus;
+                    OLPreChorus: typeof fenceParser.OLPreChorus;
+                    OLPostChorus: typeof fenceParser.OLPostChorus;
+                    OLRefrain: typeof fenceParser.OLRefrain;
+                    OLBridge: typeof fenceParser.OLBridge;
+                    OLChorus: typeof fenceParser.OLChorus;
+                    OLVerse: typeof fenceParser.OLVerse;
+                    OLTag: typeof fenceParser.OLTag;
+                    OLOutro: typeof fenceParser.OLOutro;
+                    OLInstrumental: typeof fenceParser.OLInstrumental;
+                    OLInterlude: typeof fenceParser.OLInterlude;
+                    OLBreakdown: typeof fenceParser.OLBreakdown;
+                    OLVamp: typeof fenceParser.OLVamp;
+                    OLSolo: typeof fenceParser.OLSolo;
+                };
+                OLParser: typeof OLParser;
+            };
+            structure: typeof structure;
+        };
+        monaco: {
+            language: {
+                registerMarkdownOlLanguage: typeof registerMarkdownOlLanguage;
+                checkOLMarkdown: typeof validation.checkOLMarkdown;
+                scheduleValidation: typeof validation.scheduleValidation;
+                validateMarkdownOlModel: typeof validation.validateMarkdownOlModel;
+            };
+        };
+        preview: typeof openLyricPreview;
+    };
+};
+export { olEditorOpenLyricPluginData };

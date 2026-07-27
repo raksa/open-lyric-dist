@@ -1,0 +1,2 @@
+var e=`debug`,t=globalThis;function n(){return new URLSearchParams(globalThis.location?.search||``).get(e)?.trim().toLowerCase()===`true`}function r(){return!!t.__openLyricE2E||n()}function i(e,...t){if(!r()||!t.length)return;let[n,...i]=t;if(typeof n==`string`){let t=n.startsWith(`[Khmer timing]`)?n:`[Khmer timing] ${n}`;e.call(console,t,...i);return}e.call(console,`[Khmer timing]`,n,...i)}export{i as t};
+//# sourceMappingURL=helpers-B_FU40ek.js.map

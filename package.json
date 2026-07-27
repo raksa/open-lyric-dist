@@ -1,0 +1,95 @@
+{
+  "name": "open-lyric",
+  "version": "0.1.0",
+  "description": "Embeddable, framework-free Open Lyric components: song editor, markdown preview, lyric preview, and dashboard shell.",
+  "license": "MIT",
+  "author": "raksa <eng.raksa@gmail.com>",
+  "homepage": "https://github.com/raksa/open-lyric#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raksa/open-lyric.git",
+    "directory": "packages/open-lyric"
+  },
+  "bugs": {
+    "url": "https://github.com/raksa/open-lyric/issues"
+  },
+  "type": "module",
+  "sideEffects": [
+    "*.css",
+    "*.scss"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./internal": {
+      "import": {
+        "types": "./dist/internal.d.ts",
+        "default": "./dist/internal.js"
+      },
+      "require": {
+        "types": "./dist/internal.d.cts",
+        "default": "./dist/internal.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "lyrics",
+    "song",
+    "chords",
+    "chord-chart",
+    "worship",
+    "editor",
+    "monaco",
+    "khmer",
+    "open-lyric"
+  ],
+  "dependencies": {
+    "@tombatossals/chords-db": "^0.5.1",
+    "@tonaljs/chord": "^6.1.2",
+    "@tonaljs/interval": "^5.1.0",
+    "@tonaljs/key": "^4.11.2",
+    "@tonaljs/note": "^4.12.1",
+    "docx": "^9.6.1",
+    "html-to-image": "^1.11.13",
+    "marked": "^17.0.5",
+    "pptxgenjs": "^4.0.1",
+    "qrcode": "^1.5.4",
+    "svguitar": "^2.5.1",
+    "typo-js": "^1.3.1"
+  },
+  "peerDependencies": {
+    "eruda": "^3.4.3",
+    "monaco-editor": "^0.55.1"
+  },
+  "peerDependenciesMeta": {
+    "eruda": {
+      "optional": true
+    },
+    "monaco-editor": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
