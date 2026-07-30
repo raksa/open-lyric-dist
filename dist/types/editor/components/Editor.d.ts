@@ -112,6 +112,17 @@ export declare class Editor extends OpenLyricComponent implements OpenLyricEdito
     get monacoNamespace(): any;
     /** The live Monaco editor instance (null before mount / fallback mode). */
     get monacoEditor(): any;
+    /**
+     * The Monaco runtime loader this instance was configured with (the shared
+     * lazy chunk unless `loadMonacoResources` was passed).
+     *
+     * `Editor` owns Monaco loading for every surface it drives: an owned mount
+     * boots through it in `handleMount()`, and in wrap phase
+     * `OpenLyricDashboard` reads it here so the application it wraps loads the
+     * runtime through this same loader. Overriding Monaco for a page therefore
+     * means `new Editor({ loadMonacoResources })` — there is no second knob.
+     */
+    get monacoLoader(): LoadMonacoResources;
     protected getOwnedRoot(): HTMLElement | null;
     /** Move the caret to a source position, reveal it, and focus the surface. */
     focusRange(line: number, column: number): void;

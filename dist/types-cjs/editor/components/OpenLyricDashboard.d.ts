@@ -16,10 +16,11 @@ export interface OpenLyricDashboardDraftContext {
 export type OpenLyricDashboardLoadValue = () => Promise<OpenLyricDashboardDraft | string | null> | OpenLyricDashboardDraft | string | null;
 export type OpenLyricDashboardSaveValue = (value: string, context: OpenLyricDashboardDraftContext) => void | Promise<void>;
 export interface OpenLyricDashboardOptions extends OpenLyricComponentOptions {
-    /** Show web-only chrome (`gif` info disclosure, share-link menu entry). */
+    /**
+     * Show web-only chrome (`gif` info disclosure, share-link menu entry,
+     * topbar theme toggle).
+     */
     isWeb?: boolean;
-    /** Override the Monaco runtime loader (defaults to the lazy chunk). */
-    loadMonacoResources?: () => Promise<unknown> | unknown;
     /** Injectable persistence backend — replaces the localStorage drafts. */
     loadValue?: OpenLyricDashboardLoadValue;
     saveValue?: OpenLyricDashboardSaveValue;
@@ -90,7 +91,6 @@ export declare class OpenLyricDashboard extends OpenLyricComponent {
     private editorRef;
     private isWebValue;
     private readonly explicitTheme;
-    private readonly loadMonacoResourcesOption;
     private applicationInstance;
     private lastValueText;
     private destroying;
@@ -161,6 +161,19 @@ export declare class OpenLyricDashboard extends OpenLyricComponent {
      * notation plugin per page shell mode.
      */
     private registerBuiltInPluginsFromComposition;
+    /**
+     * Load the Monaco runtime for the wrapped application — through the owned
+     * `Editor`'s loader, because Monaco is the editor component's concern:
+     * a page overrides it with `new Editor({ loadMonacoResources })` and the
+     * app it boots picks up the same loader, whether the editor mounts its own
+     * surface (standalone) or facades the app's (here).
+     *
+     * Resolved per call rather than at construction: `editor` is assigned after
+     * the dashboard is built, and the application only loads Monaco during
+     * `mount()`. A dashboard with no editor assigned falls back to the shared
+     * lazy chunk.
+     */
+    private loadMonacoResources;
     /**
      * Bridge the owned editor to the application's live surface (see
      * `Editor.attachSharedSurface`). Every accessor is live, so the app's

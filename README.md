@@ -59,7 +59,7 @@ Verified against `moduleResolution: bundler` and `node16` (both `.mts` and
 
 | Subpath               | Contents                                                                                                                |
 | --------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `open-lyric`          | The four components, base classes, and types.                                                                             |
+| `open-lyric`          | The four components, base classes, types, and `EditorOpenLyricPlugin`.                                                    |
 | `open-lyric/internal` | **Not public.** Shared internals the two first-party plugin packages import instead of duplicating. Do not depend on it. |
 
 ## Requirements and caveats
