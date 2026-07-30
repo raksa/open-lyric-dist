@@ -18,7 +18,7 @@
  * and the plugin packages can own their sources outright.
  */
 export { refreshElementRefs } from '../../../editor/scripts/shared.js';
-export { createHtmlFragment, queryRef, } from '../../../editor/html/markup-fragments.js';
+export { createHtmlFragment, linkFragmentIds, queryRef, } from '../../../editor/html/markup-fragments.js';
 export { EditorPreferencesStore } from '../../../editor/scripts/app/EditorPreferencesStore.js';
 export { olEditorPluginData } from '../../../editor/plugins/km_KH/km_KH_ol_editor.js';
 export { olEditorTranscriptPluginData } from '../../../editor/plugins/transcript/transcript_ol_editor.js';
