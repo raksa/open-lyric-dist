@@ -103,13 +103,18 @@ with flat entry points.
   `new URL(..., import.meta.url)` so they resolve correctly from
   `node_modules`. (This is why the build does not use Vite's `build.lib` mode,
   which force-inlines every asset regardless of `assetsInlineLimit`.)
-- **~9 MB packed / ~26 MB unpacked**, of which ~16 MB is the Google Sans font
-  family and ~0.5 MB the Battambang faces, pulled in by
-  `editor/styles/font.scss` — the stylesheet the standalone chrome links for
-  print and image export. The JS itself is ~730 kB (~166 kB gzipped) and Monaco
+- **~23 MB unpacked**, of which ~16 MB is the Google Sans font family, pulled
+  in by `editor/styles/google-sans-font.ts` — the module that builds the
+  `@font-face` rules the components declare on the page
+  (`internal/font-styles.ts`) and the standalone chrome inlines again inside
+  its print and image-export documents. The Khmer assets (Battambang faces,
+  dictionaries, spellcheck worker, keyboard) are NOT here: they ship with
+  `open-lyric-plugin-km-kh`, whose plugin classes contribute them wherever
+  they are composed. The JS itself is ~700 kB (~160 kB gzipped) and Monaco
   stays external.
 - **Wrap phase.** `OpenLyricDashboard` still drives the existing application
-  underneath, so importing the barrel pulls in the whole app — including the
-  km-KH and transcript plugin data. That is why the plugin packages are thin
-  wrappers over `open-lyric/internal` rather than self-contained bundles, and
-  why importing this package currently requires a DOM.
+  underneath, so importing the barrel pulls in the whole app — which is why
+  importing this package currently requires a DOM, and why the plugin
+  packages share the core's stateful modules through `open-lyric/internal`
+  instead of bundling copies. Their heavy data (dictionaries, workers, fonts,
+  controllers) is their own; composing a plugin is what enables its feature.

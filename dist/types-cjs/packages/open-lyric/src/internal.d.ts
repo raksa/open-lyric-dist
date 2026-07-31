@@ -1,27 +1,23 @@
 /**
  * `open-lyric/internal` — **not** a public API.
  *
- * The wrap-phase reality documented in
- * `research/editor-structure-implemented.md` is that the component barrel
- * transitively contains the whole application, km-KH and the transcript
- * plugin included (`OpenLyricDashboard` → `OpenLyricEditorApplication` →
- * `plugins/default-plugins.ts`). So the two first-party plugin packages are
- * thin wrappers: everything they need at runtime already lives in this
- * bundle, and they import it from here instead of shipping a second copy.
+ * First-party plugin packages bundle their own heavy data
+ * (dictionaries, workers, keyboard, fonts, stylesheets) but still share the
+ * core's *stateful* modules through this subpath instead of duplicating
+ * them. That is a correctness requirement, not an optimization: `shared.ts`
+ * (`refs`/`state`), `markup-fragments.ts` (the id counter behind
+ * `linkFragmentIds`), and the plugin registry's registration flow hold
+ * page-level state a second copy would fork.
  *
- * That is a correctness requirement, not an optimization. `shared.ts`
- * (`refs`/`state`) and `markup-fragments.ts` (the id counter behind
- * `linkFragmentIds`) are module-global; duplicating them would give the
- * plugins a different `refs` object than the core reads.
- *
+ * Everything here maps to an entry in the plugin packages'
+ * `shareModulesWithCorePackage` configs (`packages/<name>/vite.config.ts`).
  * This subpath disappears once `editor/scripts/shared.ts` is de-globalized
- * and the plugin packages can own their sources outright.
+ * and the plugin packages can stand on a stateless core API.
  */
-export { refreshElementRefs } from '../../../editor/scripts/shared.js';
-export { createHtmlFragment, linkFragmentIds, queryRef, } from '../../../editor/html/markup-fragments.js';
-export { EditorPreferencesStore } from '../../../editor/scripts/app/EditorPreferencesStore.js';
-export { olEditorPluginData } from '../../../editor/plugins/km_KH/km_KH_ol_editor.js';
-export { olEditorTranscriptPluginData } from '../../../editor/plugins/transcript/transcript_ol_editor.js';
-declare const kmKhKeyboardCssUrl: string;
-declare const transcriptCssUrl: string;
-export { kmKhKeyboardCssUrl, transcriptCssUrl };
+export { refreshElementRefs, setStatus, updateStatus, } from '../../../src/editor/scripts/shared.js';
+export { createHtmlFragment, linkFragmentIds, queryRef, } from '../../../src/editor/html/markup-fragments.js';
+export { EditorPreferencesStore } from '../../../src/editor/scripts/app/EditorPreferencesStore.js';
+export { getRegisteredKeyboardSpecifications, getRegisteredSpellcheckSpecification, getRegisteredTranscriptLocales, getRegisteredTranscriptSpecifications, registerPlugin, unregisterPlugin, } from '../../../src/editor/scripts/editor-plugin-registry.js';
+export { EDITOR_ONLY_SHELL_MODE } from '../../../src/editor/scripts/page-config.js';
+export { createDictionarySnapshot, getDictionaryConfig, getDictionaryPrefixSuggestions, getSuggestionDictionaryConfigs, hasAnyWordBaseCharacter, loadDictionary, normalizeWord, } from '../../../src/editor/scripts/spellcheck-common.js';
+export { postProcessTranscriptText } from '../../../src/editor/scripts/spellcheck.js';
