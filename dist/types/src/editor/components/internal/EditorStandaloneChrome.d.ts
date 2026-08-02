@@ -35,6 +35,15 @@ export declare class EditorStandaloneChrome {
     destroy(): void;
     /** The component switched surface (simple ⇄ Monaco): re-sync every control. */
     syncSurfaceState(): void;
+    /**
+     * The component's unsaved-changes state flipped: mirror it onto the panel
+     * as `data-dirty` (the red top edge, the standalone twin of the app shell's
+     * marker) and re-render an open menu so Reset/Save follow it.
+     *
+     * Driven by `Editor.setDirtyState`, which covers the paths a `change` event
+     * does not — `markSaved()` and the save command.
+     */
+    syncDirtyState(): void;
     /** The document changed: refresh button availability and spellcheck. */
     handleValueChange(): void;
     private buildPanel;
@@ -76,6 +85,12 @@ export declare class EditorStandaloneChrome {
      * that declares one, collapse repeated invisible characters, and drop
      * trailing whitespace — per line, as one undoable edit.
      */
+    /**
+     * Reset — hand the document back to the component's last saved text. The
+     * confirm is the point: the edits it drops are the one thing nothing else
+     * on the page can bring back (a standalone embed has no autosaved draft).
+     */
+    private resetDocument;
     private formatDocument;
     private formatLine;
     private selectAll;

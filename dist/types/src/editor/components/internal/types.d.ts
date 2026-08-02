@@ -2,7 +2,7 @@
  * Public contracts for the standalone Open Lyric component layer.
  *
  * This module is the additive, framework-free API surface described in
- * `research/editor-structure-enhanced.md`. It intentionally holds only types
+ * `research/editor-structure-implemented.md`. It intentionally holds only types
  * plus a couple of shared constants so it can be imported from anywhere
  * (including SSR code paths) without touching the DOM.
  */
@@ -15,6 +15,17 @@ export type OpenLyricLifecycleState = 'created' | 'mounted' | 'unmounted' | 'des
 export interface OpenLyricChangePayload {
     oldValue: string;
     newValue: string;
+}
+/**
+ * A request to persist the document. The component stores nothing itself — it
+ * reports that a save was asked for and hands over the value; the host does
+ * the writing (and any dirty-state bookkeeping around it).
+ */
+export interface OpenLyricSavePayload {
+    /** The document as it stood when the save was requested. */
+    value: string;
+    /** What asked for it: the Ctrl/Cmd+S shortcut, or `requestSave()`. */
+    source: 'shortcut' | 'api';
 }
 export interface OpenLyricThemeChangePayload {
     theme: OpenLyricTheme;
@@ -46,6 +57,7 @@ export interface OpenLyricDisplayChangePayload {
 export interface OpenLyricEventMap {
     ready: Record<string, never>;
     change: OpenLyricChangePayload;
+    save: OpenLyricSavePayload;
     'theme-change': OpenLyricThemeChangePayload;
     'typography-change': OpenLyricTypographyChangePayload;
     'display-change': OpenLyricDisplayChangePayload;
@@ -101,6 +113,19 @@ export interface OpenLyricFontFaceSection {
  * `['Arial', 'Georgia']` and `[{ title: '', fontFaces: [...] }]` are equivalent.
  */
 export type OpenLyricFontFaceList = Array<string | OpenLyricFontFaceSection>;
+/**
+ * The preview setting a standalone `OpenLyric` remembers between visits — what
+ * `loadSetting()` returns and `saveSetting()` writes. Both keys are optional:
+ * an absent one means "not persisted", so the reader keeps its own default.
+ * Unlike the component's `fontSize` accessor (a CSS length string) the size
+ * here is a plain pixel number, the unit the settings popup's slider works in.
+ */
+export interface OpenLyricPreviewSetting {
+    /** Font family the preview renders with; empty = the preview default. */
+    fontFamily?: string;
+    /** Font size in pixels. */
+    fontSize?: number;
+}
 export interface OpenLyricPreviewOptions extends OpenLyricComponentOptions {
     /** The Open Lyric markdown source. */
     value?: string;
@@ -148,6 +173,18 @@ export interface OpenLyricLanguageContribution {
     spellcheck?: OpenLyricSpellcheckContributionSpec;
     keyboard?: OpenLyricKeyboardContributionSpec;
     fontFaces?: string[];
+    /**
+     * Font stack the PREVIEW surfaces render with while the document declares
+     * one of {@link locales} — never merely because the plugin is attached. A
+     * host's own `fontFamily` still outranks it.
+     */
+    fontFamily?: string;
+    /**
+     * BCP-47 tags this contribution serves, matched against the document's
+     * `ol:Config` `Locales` field. Defaults to the plugin's own id, so a plugin
+     * keyed `km-KH` needs no locale list of its own.
+     */
+    locales?: readonly string[];
     [key: string]: unknown;
 }
 /**

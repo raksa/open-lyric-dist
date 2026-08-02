@@ -27,6 +27,13 @@ export declare abstract class OpenLyricComponent implements OpenLyricComponentHo
     private readonly changeListenerUnsubscribes;
     constructor(options?: OpenLyricComponentOptions);
     get container(): HTMLElement | null;
+    /**
+     * Reassigning the container is a **detach**: the component unmounts itself
+     * from the old one first, so `handleUnmount()` and the theme-marker removal
+     * still find their target and the host's element is handed back exactly as
+     * it was given. Remounting stays the caller's move — `mount()` is async and
+     * must not happen implicitly from a setter.
+     */
     set container(next: HTMLElement | null);
     get theme(): OpenLyricTheme;
     set theme(next: OpenLyricTheme);

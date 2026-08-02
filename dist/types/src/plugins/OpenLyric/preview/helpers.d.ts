@@ -35,6 +35,7 @@ declare function createStrummingPatternPreviewContextFromMarkdown(markdown: any,
     timeSignatureText: string;
 } | null;
 declare function renderInlineTextPlainText(value: any): string;
+declare function isChordOnlyLineText(value: any): boolean;
 declare function createChordedLyricTextLines(value: any, viewOptions?: {}): string[];
 declare function renderEmptyFenceBody(): string;
 declare function parseStrummingPatterns(lines: any, options?: {}): any[];
@@ -121,4 +122,4 @@ declare function renderOpenLyricFenceHtml(info: any, body: any, sourceLocation?:
     renderStrummingPatternCards: typeof renderStrummingPatternCards;
     renderStructureValue: typeof renderStructureValue;
 }): any;
-export { DEFAULT_STRUMMING_PATTERN_TEXT, OPEN_LYRIC_PATTERN_TARGET_ID_PREFIX, createChordedLyricTextLines, createPreviewHelpers, createPreviewLineEntries, createStrummingPatternPreviewContextFromConfigBody, createStrummingPatternPreviewContextFromMarkdown, escapeHtml, getPreviewSourceLocation, normalizeMarkdownRenderableUrls, parseStrummingPatterns, parseStrummingPatternSteps, previewHelpers, renderInlineTextPlainText, renderOpenLyricFenceHtml, renderStrummingPatternGrid, sanitizeHtml, };
+export { DEFAULT_STRUMMING_PATTERN_TEXT, OPEN_LYRIC_PATTERN_TARGET_ID_PREFIX, createChordedLyricTextLines, createPreviewHelpers, createPreviewLineEntries, createStrummingPatternPreviewContextFromConfigBody, createStrummingPatternPreviewContextFromMarkdown, escapeHtml, getPreviewSourceLocation, isChordOnlyLineText, normalizeMarkdownRenderableUrls, parseStrummingPatterns, parseStrummingPatternSteps, previewHelpers, renderInlineTextPlainText, renderOpenLyricFenceHtml, renderStrummingPatternGrid, sanitizeHtml, };

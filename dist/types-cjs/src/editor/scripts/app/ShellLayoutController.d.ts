@@ -10,6 +10,14 @@ declare class ShellLayoutController {
     });
     loadPreferences(): void;
     bindEvents(): void;
+    /**
+     * Place (or release) the info disclosure's content.
+     *
+     * `openFloatingMenu` is a no-op on the wide layout, where the content is a
+     * plain in-flow block — `floating-menu.ts` writes geometry only while the
+     * stylesheet has the element `position: fixed`.
+     */
+    syncTopbarMetaFloatingPosition(): void;
     isOpenLyricPanelAvailable(): boolean;
     hasSupplementalShellPanels(): boolean;
     getEffectivePanelVisibility(): {

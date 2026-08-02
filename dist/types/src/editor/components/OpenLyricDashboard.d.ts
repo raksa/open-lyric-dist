@@ -8,12 +8,13 @@ export interface OpenLyricDashboardDraft {
     fileName?: string;
     sharedDocumentDate?: string;
 }
-/** Extra document metadata handed to the `saveValue` hook. */
+/** Extra document metadata handed to the `onValueChange`/`saveValue` hooks. */
 export interface OpenLyricDashboardDraftContext {
     fileName: string;
     sharedDocumentDate: string;
 }
 export type OpenLyricDashboardLoadValue = () => Promise<OpenLyricDashboardDraft | string | null> | OpenLyricDashboardDraft | string | null;
+export type OpenLyricDashboardOnValueChange = (value: string, context: OpenLyricDashboardDraftContext) => void | Promise<void>;
 export type OpenLyricDashboardSaveValue = (value: string, context: OpenLyricDashboardDraftContext) => void | Promise<void>;
 export interface OpenLyricDashboardOptions extends OpenLyricComponentOptions {
     /**
@@ -23,6 +24,8 @@ export interface OpenLyricDashboardOptions extends OpenLyricComponentOptions {
     isWeb?: boolean;
     /** Injectable persistence backend — replaces the localStorage drafts. */
     loadValue?: OpenLyricDashboardLoadValue;
+    onValueChange?: OpenLyricDashboardOnValueChange;
+    /** Explicit user save (Ctrl/Cmd+S, Save) — replaces the disk download. */
     saveValue?: OpenLyricDashboardSaveValue;
 }
 /**
@@ -39,7 +42,7 @@ export declare function getActiveOpenLyricDashboard(): OpenLyricDashboard | null
  * in its **wrap phase**: it drives the existing composition root
  * (`OpenLyricEditorApplication`) through the standalone component contract
  * (options bag, `mount()` → `ready`, unified `on()` events, `theme`,
- * `loadValue`/`saveValue` injection, `isWeb` chrome gating).
+ * `loadValue`/`onValueChange`/`saveValue` injection, `isWeb` chrome gating).
  *
  * The page entries (`editor/main-open-lyric.ts`, `editor/main-editor.ts`)
  * are the canonical consumers — the live app boots through this class, so
@@ -101,6 +104,20 @@ export declare class OpenLyricDashboard extends OpenLyricComponent {
     readonly surface: OpenLyricSurface;
     /** Injectable persistence hooks; may also be passed as options. */
     loadValue: OpenLyricDashboardLoadValue | null;
+    onValueChange: OpenLyricDashboardOnValueChange | null;
+    /**
+     * The **explicit save command** — Ctrl/Cmd+S over the app, either topbar
+     * Save button (the overflow menu's and the document-actions group's), or
+     * Save in the editor tools menu. Assign it and the app stops downloading a
+     * `.md` file and hands the document to this hook instead; leave it unset
+     * and the built-in save-to-disk stays exactly as it is.
+     *
+     * Distinct from {@link onValueChange}, which is the *draft* path and fires
+     * on every edit. This one fires only when the user asked to save. The
+     * signature is identical, so a host that wants both can assign the same
+     * function to each. "Download" (the menu entry that prompts for a file
+     * name) is a separate intent and keeps writing a file either way.
+     */
     saveValue: OpenLyricDashboardSaveValue | null;
     private openLyricRef;
     private openLyricMarkdownManagerRef;
@@ -112,6 +129,8 @@ export declare class OpenLyricDashboard extends OpenLyricComponent {
     private destroying;
     /** Undo functions for every patch the mount installed, LIFO. */
     private readonly patchRestorers;
+    /** Topbar slots this dashboard created (see {@link getSlot}), to remove on teardown. */
+    private readonly ownedSlots;
     constructor(options?: OpenLyricDashboardOptions);
     /**
      * The wrapped composition root (lazily constructed). An escape hatch for
@@ -141,10 +160,34 @@ export declare class OpenLyricDashboard extends OpenLyricComponent {
      */
     get editor(): Editor | null;
     set editor(next: Editor | null);
+    /**
+     * A host-owned slot in the dashboard topbar, keyed by number.
+     *
+     * The first call for a number appends a `<div data-slot="N">` to the
+     * topbar's slot row (`.ol-db-header-slots`, left of the Reset/Save pair) and
+     * returns it; every later call for the same number returns that same
+     * element, so a host can call it from anywhere without tracking the handle:
+     *
+     * ```ts
+     * dashboard.getSlot(0).innerHTML = '<button class="btn btn-sm">Sync</button>';
+     * ```
+     *
+     * The element is the host's to fill and empty — the dashboard only
+     * guarantees identity, placement and DOM order (slots sort by number, not by
+     * the order they were asked for). A slot already present in the host's own
+     * shell markup is adopted rather than duplicated; slots this dashboard
+     * created are removed again on `destroy()`.
+     *
+     * Requires the shell markup to be installed (i.e. after
+     * `OpenLyricDashboard.installShellMarkup()` or `mount()`).
+     */
+    getSlot(slotNumber: number): HTMLDivElement;
     get isWeb(): boolean;
     set isWeb(next: boolean);
     /** The current document markdown (empty until mounted). */
     get value(): string;
+    /** The previews this dashboard owns, in mount order. */
+    private get ownedPreviews();
     protected handleMount(container: HTMLElement): Promise<void>;
     unmount(): void;
     destroy(): void;
@@ -167,6 +210,24 @@ export declare class OpenLyricDashboard extends OpenLyricComponent {
      * shell) or no component was assigned.
      */
     private mountOwnedPreview;
+    /**
+     * Shadow a **prototype** method on a live app object for the lifetime of
+     * the mount, and queue its undo.
+     *
+     * This is how the wrap phase drives the running application: it intercepts
+     * the app's own methods rather than forking them. Every target here is a
+     * class instance whose methods sit on the prototype, so the shadow is an
+     * own property and `delete` uncovers the original exactly.
+     */
+    private shadowMethod;
+    /**
+     * Swap an **own** member — a callback slot, or a method the target carries
+     * itself — putting the previous value back on teardown.
+     *
+     * The counterpart of {@link shadowMethod}, for targets where `delete` would
+     * remove the member outright instead of revealing an original underneath.
+     */
+    private swapMember;
     /**
      * Wrap phase: the owned editor's attached plugins are the page's
      * composition manifest. The one built-in the dashboard still registers is
@@ -200,12 +261,33 @@ export declare class OpenLyricDashboard extends OpenLyricComponent {
      */
     private attachOwnedEditorFacade;
     /**
-     * Replace the app's draft backend with the host's `loadValue`/`saveValue`.
-     * `loadValue` is resolved once, up front, because the app reads the draft
-     * synchronously during boot; `saveValue` runs synchronously up to its
-     * first await, which keeps the beforeunload save path intact.
+     * Replace the app's draft backend with the host's
+     * `loadValue`/`onValueChange`. `loadValue` is resolved once, up front,
+     * because the app reads the draft synchronously during boot;
+     * `onValueChange` runs synchronously up to its first await, which keeps the
+     * beforeunload save path intact.
      */
     private installDraftPersistenceHooks;
+    /**
+     * Report a host hook's rejection without letting it escape into the app.
+     * Both persistence hooks may be async and neither is awaited — the app's
+     * own call sites are synchronous (the draft save runs on the beforeunload
+     * path), so a failure is logged, never thrown.
+     */
+    private runHook;
+    /**
+     * Route the app's **explicit save command** into the host's `saveValue`.
+     *
+     * Every way a user can issue it — the topbar overflow menu's Save, the
+     * document-actions Save beside it, the editor tools menu's Save, and the
+     * window-level Ctrl/Cmd+S handler, which clicks the first of those — lands
+     * on `DocumentController.saveCurrentDocument()`, so shadowing that one
+     * prototype method covers the whole command without touching the
+     * keystroke. The default it displaces is the `.md` download; the separate
+     * Download entry (which prompts for a file name) is left alone, and so is
+     * the draft path — {@link installDraftPersistenceHooks} owns that.
+     */
+    private installSaveCommandHook;
     /**
      * Document value → dashboard `change` events (one-way mirror). Two entry
      * points cover every path: the editor edit pipeline
@@ -217,6 +299,22 @@ export declare class OpenLyricDashboard extends OpenLyricComponent {
     private installChangeBridge;
     /** App-driven theme changes (UI toggle, system) → dashboard events. */
     private installThemeBridge;
+    /**
+     * The topbar row the numbered slots live in.
+     *
+     * `html/dashboard-shell.html` ships it, so on every app page this is a
+     * lookup; a host that inlined a shell of its own without one gets it created
+     * at the head of the document-actions group, ahead of Reset/Save.
+     */
+    private resolveSlotHost;
+    /**
+     * Show or hide the topbar chrome only a web host wants: the info
+     * disclosure, the share-link entry, and the theme toggle — a native host
+     * owns the OS/app theme, so the toggle goes with the rest.
+     *
+     * Resolved from `refs` on each call rather than captured, so teardown acts
+     * on whatever the page has by then.
+     */
     private applyWebOnlyChrome;
     private normalizeDraft;
 }

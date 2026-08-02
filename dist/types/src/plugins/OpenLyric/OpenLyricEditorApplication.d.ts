@@ -18,6 +18,7 @@ declare class OpenLyricEditorApplication {
         editor: null;
         editorMode: string;
         currentDocumentContent: string;
+        lastSavedContent: string;
         fileName: string;
         sharedDocumentDate: string;
         openLyricPluginAvailable: boolean;
@@ -71,7 +72,7 @@ declare class OpenLyricEditorApplication {
     listAllSpellErrorLines(): Set<any>;
     getSimpleEditor(): Element | null;
     loadEditorModePreference(): void;
-    getEditorLanguageId(): "markdown" | "markdown-ol";
+    getEditorLanguageId(): "markdown-ol" | "markdown";
     focusActiveEditorSurface(): void;
     shouldUseEditorActionsMenuForModeToggle(): boolean;
     syncEditorModeTogglePlacement(): void;
@@ -179,6 +180,16 @@ declare class OpenLyricEditorApplication {
     isMonacoCommandPaletteMenuItemElement(element: any): boolean;
     closeEditorActionsMenu(): void;
     clearEditorActionsMenuViewportBounds(): void;
+    /**
+     * Re-place the open menu — the toolbar wraps, the panel drag-resizes, and the
+     * menu's own content changes as actions come and go.
+     *
+     * The menu is `position: fixed` (see `styles/_editor-panel-chrome.scss`), so
+     * `floating-menu.ts` owns both the placement and the `max-height` that keeps
+     * a long menu inside the viewport. It no longer has to stop at the enclosing
+     * `.panel`: overhanging that panel is the point, so an editor embedded in a
+     * host UI that clips or scrolls it still shows the whole menu.
+     */
     syncEditorActionsMenuViewportBounds(): void;
     renderEditorContextMenuActions(): void;
     syncEditorActionsMenu(): void;

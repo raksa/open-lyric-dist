@@ -77,6 +77,17 @@ export declare class PluginHost {
      */
     private assertContributionRules;
     private hasRenderers;
+    /**
+     * Install every attached plugin's `style` contributions into `styleHost`
+     * right now — even unmounted — and return a teardown that removes only what
+     * this call added. The off-DOM export path uses it: a plugin's `@font-face`
+     * rules have to be in the document or the rasterizer draws its script in a
+     * fallback face, and an unmounted component has installed none of them.
+     *
+     * Plugins whose styles are already installed (a mounted component) are left
+     * untouched, so the teardown can never strip a live embed's styles.
+     */
+    installStylesInto(styleHost: HTMLElement): () => void;
     private installStyles;
     private teardownStyles;
     private safe;

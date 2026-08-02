@@ -37,6 +37,23 @@ export declare abstract class OpenLyricPreviewComponent extends OpenLyricCompone
     set adoptContainer(next: boolean);
     get value(): string;
     set value(next: string);
+    /**
+     * Adopt a value the HOST has already rendered itself — no re-render, no
+     * `change` event.
+     *
+     * The app panels keep incremental single-line fast paths that patch one
+     * segment of the adopted DOM directly and never route through
+     * `renderNow()`. Without this the component's view of the document would sit
+     * at whatever the last full render passed it, and everything resolved FROM
+     * the document — today the locale-matched font of
+     * {@link resolvedFontFamily} — would lag a `- Locales:` edit until some
+     * other change forced a full render. Costs a string assignment and one
+     * typography pass.
+     *
+     * With an editor attached the editor is authoritative (`value` reads
+     * through it), so only the typography is refreshed.
+     */
+    syncRenderedValue(next: string): void;
     get editor(): OpenLyricEditorLike | null;
     set editor(next: OpenLyricEditorLike | null);
     get isWeakRef(): boolean;
@@ -62,6 +79,24 @@ export declare abstract class OpenLyricPreviewComponent extends OpenLyricCompone
      */
     getFontFaceSections(): OpenLyricFontFaceSection[];
     get fontFamily(): string;
+    /**
+     * The stack this preview actually renders with (`--ol-font-family`): the
+     * host's `fontFamily` when set, else the font of a composed language plugin
+     * whose locale THIS document declares, else empty — the stylesheet's own.
+     *
+     * The document decides, not the composition: attaching a language plugin no
+     * longer restyles every song on the surface, so a Latin song stays on the
+     * page's font while a `- Locales: km-KH` song renders in the Khmer face,
+     * both through the same attached plugin. Re-resolved on every render, so
+     * typing the `Locales` line switches the font as it is typed.
+     */
+    get resolvedFontFamily(): string;
+    /**
+     * The first attached plugin that claims a locale this document declares and
+     * contributes a font stack for it. A plugin's claimed locales default to its
+     * own id (`km-KH`), so the usual case needs no `locales` list.
+     */
+    private resolvePluginFontFamily;
     set fontFamily(next: string);
     get fontSize(): string;
     set fontSize(next: string);
@@ -79,6 +114,30 @@ export declare abstract class OpenLyricPreviewComponent extends OpenLyricCompone
     protected getRenderOptions(): Record<string, unknown>;
     /** The mounted render root, so concrete getters can query rendered DOM. */
     protected getRenderRoot(): HTMLElement | null;
+    /**
+     * A **virtual** render root — a detached stand-in carrying everything
+     * `handleMount()` would give the real one (the root classes, the theme
+     * marker and surface styles, the `--ol-*` typography, the injected token and
+     * font-face sheets, and the attached plugins' `style` contributions).
+     *
+     * It exists so the getters that need a laid-out surface — the PNG
+     * rasterizers — can work off a component that was never mounted: a batch
+     * export or a thumbnail job needs a DOM to stage in, not a visible embed.
+     *
+     * The caller owns the handle: stage `root` in the document (rasterization
+     * needs layout), then call `dispose()` to take the plugin styles back out.
+     * `dispose()` only removes what this call installed, so it can never strip a
+     * live embed's styles.
+     *
+     * `width` is explicit because there is no host container to take one from,
+     * and `theme` because an export may be asked for in the OTHER theme than the
+     * one this component is showing — the virtual root is then what carries the
+     * requested theme's tokens, since the live root cannot.
+     */
+    protected createVirtualRenderRoot(width?: number, theme?: OpenLyricTheme): {
+        root: HTMLElement;
+        dispose: () => void;
+    };
     protected getOwnedRoot(): HTMLElement | null;
     protected getPluginStyleHost(): HTMLElement | null;
     /** Render the current value to a detached string (used by getters). */
@@ -89,8 +148,14 @@ export declare abstract class OpenLyricPreviewComponent extends OpenLyricCompone
      * re-applies `renderers` contributions on the fresh markup.
      */
     protected renderNow(): void;
-    /** Style freshly rendered markup from `--ol-*` variables (theme-aware). */
-    protected decorateRenderedDom(_root: HTMLElement): void;
+    /**
+     * Style freshly rendered markup from `--ol-*` variables (theme-aware).
+     *
+     * `theme` is the component's own unless the caller names another — an image
+     * export rendering in the opposite theme decorates its off-screen surface
+     * with THAT theme's preset fallbacks, without touching the live preview.
+     */
+    protected decorateRenderedDom(_root: HTMLElement, _theme?: OpenLyricTheme): void;
     protected handlePluginRenderRequest(): void;
     protected resolveRendererTarget(target: string): {
         selector: string;

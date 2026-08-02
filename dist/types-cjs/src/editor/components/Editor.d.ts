@@ -39,6 +39,15 @@ export interface EditorOptions extends OpenLyricComponentOptions {
      * {@link Editor.isSelectionStateEnabled}, which toggles it at any time.
      */
     selectionState?: boolean;
+    /**
+     * Own the Ctrl/Cmd+S keystroke on the mounted surface: swallow the browser's
+     * "Save page" dialog and emit the `save` event instead. Defaults to `true` —
+     * an editor that lets Ctrl+S offer to download the page is never what a host
+     * wants, and the event is inert until something listens for it. Pass `false`
+     * to leave the keystroke untouched. See
+     * {@link Editor.isSaveShortcutEnabled}, which toggles it at any time.
+     */
+    saveShortcut?: boolean;
 }
 /**
  * Wrap-phase bridge to an editor surface owned by something else (the
@@ -134,10 +143,21 @@ export declare class Editor extends OpenLyricComponent implements OpenLyricEdito
     private sharedSurfaceBridge;
     private selectionStateEnabled;
     private selectionStateTeardown;
+    private saveShortcutEnabled;
+    private saveShortcutTeardown;
     private readonly disposables;
     private lastEmittedValue;
+    /** The text {@link isDirty} compares against — see {@link markSaved}. */
+    private savedValueText;
+    private dirtyFlag;
     constructor(options?: EditorOptions);
     get value(): string;
+    /**
+     * Assigning replaces the document *and* the {@link isDirty} baseline: a
+     * host writing here is loading a document, not editing one, exactly as the
+     * app shell's `applyDocumentContent()` marks itself clean. Use
+     * {@link revertToSaved} to go back to the baseline instead of replacing it.
+     */
     set value(next: string);
     getValue(): string;
     /** True when Monaco failed to load and the textarea fallback is active. */
@@ -163,8 +183,57 @@ export declare class Editor extends OpenLyricComponent implements OpenLyricEdito
      */
     get isSelectionStateEnabled(): boolean;
     set isSelectionStateEnabled(next: boolean);
+    /**
+     * Whether Ctrl/Cmd+S over the mounted surface emits `save` instead of
+     * reaching the browser's "Save page" dialog. On by default; assigning
+     * toggles it immediately, and the setting survives unmount/mount.
+     *
+     * Only ever wired on an owned mount. A shared-surface facade installs
+     * nothing — the host application owns key handling on its own panel — but
+     * {@link requestSave} still works there.
+     */
+    get isSaveShortcutEnabled(): boolean;
+    set isSaveShortcutEnabled(next: boolean);
+    /**
+     * Ask the host to persist the document — the programmatic form of the
+     * Ctrl/Cmd+S shortcut, for a host that drives saving from its own chrome.
+     * Emits `save` with the current value; the component persists nothing
+     * itself, but it does {@link markSaved} — see there for why issuing the
+     * command, not the host's acknowledgement, is what clears the flag.
+     */
+    requestSave(): void;
+    /**
+     * Whether the document differs from the last saved text — what the chrome's
+     * Reset/Save pair is enabled by and what paints the panel's red top edge.
+     *
+     * Per instance: unlike the app shell's page-global `state.dirty`, two
+     * standalone editors on one page track their own. It is a comparison, not a
+     * latch, so editing and then undoing back to the saved text reads clean —
+     * exactly the case where {@link revertToSaved} would do nothing.
+     */
+    get isDirty(): boolean;
+    /**
+     * Declare the current text saved: it becomes the {@link revertToSaved}
+     * baseline and {@link isDirty} goes false.
+     *
+     * Called for you when a `save` is emitted (Ctrl/Cmd+S, {@link requestSave},
+     * the chrome's Save) and when a host assigns {@link value}. As in the app
+     * shell, the flag means "the user asked to save this document", not "the
+     * host acknowledged" — a host that persists asynchronously and wants the
+     * stricter reading can hold the mark until its write resolves by
+     * re-assigning `value`.
+     */
+    markSaved(): void;
+    /**
+     * Reset — put the document back to the last saved text, dropping the edits
+     * since. The counterpart of the save command, and a no-op when
+     * {@link isDirty} is false.
+     *
+     * @returns whether anything was reverted.
+     */
+    revertToSaved(): boolean;
     /** The attached plugin instances, in attach order. */
-    get plugins(): import("./index.js").OpenLyricPlugin[];
+    get plugins(): import("open-lyric").OpenLyricPlugin[];
     /**
      * Host override for the face the surfaces render with. Empty (the default)
      * means "the stylesheet's own font" — see {@link resolvedFontFamily}.
@@ -286,6 +355,24 @@ export declare class Editor extends OpenLyricComponent implements OpenLyricEdito
      */
     private syncSelectionState;
     /**
+     * Wire or drop the Ctrl/Cmd+S handler so it matches
+     * {@link isSaveShortcutEnabled} and the current lifecycle state. Mirrors
+     * {@link syncSelectionState}: called from mount, unmount and destroy.
+     *
+     * One DOM listener rather than a Monaco action, deliberately — it is the
+     * only form that covers all three surfaces this component can be editing
+     * through (Monaco, the fallback textarea, the Simple Editor textarea), and
+     * a Monaco action alongside it would fire the event twice.
+     */
+    private syncSaveShortcut;
+    private emitSave;
+    /**
+     * Mirror the dirty flag onto the chrome (the Reset/Save pair's enabled
+     * state and the panel's red top edge). No-op when unchanged, so the chrome
+     * is not re-rendered on every keystroke of an already-dirty document.
+     */
+    private setDirtyState;
+    /**
      * Build the standalone toolbar + tools menu around the mounted surface. A
      * chrome failure must never take the editor down with it — the surface stays
      * usable without its panel.
@@ -297,6 +384,13 @@ export declare class Editor extends OpenLyricComponent implements OpenLyricEdito
     protected handleThemeChange(theme: OpenLyricTheme): void;
     private bootMonaco;
     private bootTextarea;
+    /**
+     * Wire the value/focus/blur events a textarea surface emits, and register the
+     * matching disposers. Shared by both textarea surfaces — the fallback one
+     * {@link bootTextarea} builds when Monaco is unavailable, and the simple-mode
+     * one {@link ensureSimpleTextarea} builds lazily.
+     */
+    private wireTextareaEvents;
     /**
      * Push {@link resolvedFontFamily} onto whichever surfaces exist — Monaco
      * through `updateOptions`, the fallback and Simple Editor textareas inline,
