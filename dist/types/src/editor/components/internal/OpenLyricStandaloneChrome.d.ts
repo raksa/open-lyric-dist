@@ -106,6 +106,13 @@ export declare class OpenLyricStandaloneChrome {
     private print;
     private buildPrintDocument;
     private downloadPowerPoint;
+    /**
+     * Slide colours per theme, as bare PowerPoint hex (no `#`).
+     *
+     * A deck carries no stylesheet, so the palette has to be baked in — one
+     * entry per theme rather than a light/dark split, since the `-bs` pair
+     * differs from its sibling in exactly these values.
+     */
     private getPowerPointTheme;
     private getPowerPointTypography;
     private chunkLineGroups;

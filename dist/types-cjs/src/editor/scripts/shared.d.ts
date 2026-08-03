@@ -3,6 +3,15 @@ declare function escapeRegex(value: any): any;
 declare const LANGUAGE_ID = "markdown-ol";
 declare const LANGUAGE_THEME = "open-lyric-light";
 declare const DARK_LANGUAGE_THEME = "open-lyric-dark";
+declare const BS_LANGUAGE_THEME = "open-lyric-light-bs";
+declare const BS_DARK_LANGUAGE_THEME = "open-lyric-dark-bs";
+/** Registered Monaco theme per app theme — the only place the mapping lives. */
+declare const MONACO_THEME_BY_APP_THEME: {
+    light: string;
+    dark: string;
+    'light-bs': string;
+    'dark-bs': string;
+};
 declare const DEFAULT_THEME = "dark";
 declare const THEME_STORAGE_KEY = "open-lyric-editor-theme";
 declare const LEGACY_THEME_STORAGE_KEY = "editor-theme";
@@ -307,6 +316,7 @@ declare const refs: {
     toggleOpenLyricBtn: Element | null;
     togglePreviewBtn: Element | null;
     themeToggleBtn: Element | null;
+    themeMenu: Element | null;
     topbarMeta: Element | null;
     topbarActions: Element | null;
     topbarActionsBtn: Element | null;
@@ -402,6 +412,14 @@ declare const constants: {
     LANGUAGE_ID: string;
     LANGUAGE_THEME: string;
     DARK_LANGUAGE_THEME: string;
+    BS_LANGUAGE_THEME: string;
+    BS_DARK_LANGUAGE_THEME: string;
+    MONACO_THEME_BY_APP_THEME: {
+        light: string;
+        dark: string;
+        'light-bs': string;
+        'dark-bs': string;
+    };
     DEFAULT_THEME: string;
     THEME_STORAGE_KEY: string;
     MARKER_OWNER: string;
@@ -473,4 +491,4 @@ declare const helpers: {
     supportsClipboardCopy: typeof supportsClipboardCopy;
     supportsClipboardPaste: typeof supportsClipboardPaste;
 };
-export { CHORD_ANNOTATION_RE, CHORD_KEY_GROUPS, CHORD_SYMBOL_RE, CHORD_SYMBOL_SOURCE, collapseSpaceLikeText, CONFIG_ENUM_FIELD_VALUES, CONFIG_FIELD_ALIASES, CONFIG_FIELD_NAMES, CONFIG_FIELD_MATCH_NAMES, CONFIG_HEADER_RE, CONFIG_KEY_VALUES, CONFIG_LOCALE_SEPARATOR, CONFIG_LOCALE_VALUES, CONFIG_MULTILINE_FIELD_NAMES, CONFIG_PATTERN_FIELD_VALUES, CONFIG_REQUIRED_FIELD_NAMES, DARK_LANGUAGE_THEME, DEFAULT_CONTENT, DEFAULT_EDITOR_MODE, DEFAULT_PANEL_VISIBILITY, DEFAULT_THEME, DRAFT_STORAGE_KEY, FORM_SECTION_NAMES, FREE_TEXT_HEADER_RE, FREE_TEXT_SECTION_NAMES, getLeadingSpaceLikeLength, hasScriptBaseLetter, INSTRUMENTAL_DIRECTIVE_RE, INSTRUMENTAL_HEADER_RE, INSTRUMENTAL_SECTION_NAMES, INTRO_DIRECTIVE_RE, INTRO_OR_CUE_DIRECTIVE_RE, INTRO_HEADER_RE, isSpaceLikeCharacter, isValidStrummingPatternValue, LANGUAGE_ID, LANGUAGE_THEME, LEGACY_THEME_STORAGE_KEY, LYRIC_HEADER_RE, LYRIC_SECTION_NAMES, MARKER_OWNER, MONACO_WORD_PATTERN, MONACO_WORD_SEPARATORS, NUMBERED_SECTION_NAMES, normalizeWordSeparators, normalizeStrummingPatternValue, REPEAT_SUFFIX_RE, THEME_STORAGE_KEY, VALIDATION_DELAY_MS, ZERO_WIDTH_SPACE, constants, escapeRegex, findCanonicalConfigLocale, getCurrentValue, grammar, hasChordProgressionText, helpers, hideUnsavedChangesToast, isSupportedConfigLocale, markDirty, normalizeConfigFieldName, parseConfigLocaleEntries, refreshElementRefs, refs, registerUnloadAttempt, resetUnloadAttempts, runtime, shouldAllowInvisibleWordSeparators, showUnsavedChangesToast, startEditorActivity, setCurrentDocumentContent, setDropActive, setErrorCount, setSimpleEditorValue, setSharedDocumentDate, setStatus, state, supportsClipboardCopy, supportsClipboardPaste, syncEditorActivityState, syncEditorDirtyState, trimSpaceLikeEnd, trimSpaceLikeStart, trimSpaceLikeText, updateStatus, };
+export { CHORD_ANNOTATION_RE, CHORD_KEY_GROUPS, CHORD_SYMBOL_RE, CHORD_SYMBOL_SOURCE, collapseSpaceLikeText, CONFIG_ENUM_FIELD_VALUES, CONFIG_FIELD_ALIASES, CONFIG_FIELD_NAMES, CONFIG_FIELD_MATCH_NAMES, CONFIG_HEADER_RE, CONFIG_KEY_VALUES, CONFIG_LOCALE_SEPARATOR, CONFIG_LOCALE_VALUES, CONFIG_MULTILINE_FIELD_NAMES, CONFIG_PATTERN_FIELD_VALUES, CONFIG_REQUIRED_FIELD_NAMES, BS_DARK_LANGUAGE_THEME, BS_LANGUAGE_THEME, DARK_LANGUAGE_THEME, MONACO_THEME_BY_APP_THEME, DEFAULT_CONTENT, DEFAULT_EDITOR_MODE, DEFAULT_PANEL_VISIBILITY, DEFAULT_THEME, DRAFT_STORAGE_KEY, FORM_SECTION_NAMES, FREE_TEXT_HEADER_RE, FREE_TEXT_SECTION_NAMES, getLeadingSpaceLikeLength, hasScriptBaseLetter, INSTRUMENTAL_DIRECTIVE_RE, INSTRUMENTAL_HEADER_RE, INSTRUMENTAL_SECTION_NAMES, INTRO_DIRECTIVE_RE, INTRO_OR_CUE_DIRECTIVE_RE, INTRO_HEADER_RE, isSpaceLikeCharacter, isValidStrummingPatternValue, LANGUAGE_ID, LANGUAGE_THEME, LEGACY_THEME_STORAGE_KEY, LYRIC_HEADER_RE, LYRIC_SECTION_NAMES, MARKER_OWNER, MONACO_WORD_PATTERN, MONACO_WORD_SEPARATORS, NUMBERED_SECTION_NAMES, normalizeWordSeparators, normalizeStrummingPatternValue, REPEAT_SUFFIX_RE, THEME_STORAGE_KEY, VALIDATION_DELAY_MS, ZERO_WIDTH_SPACE, constants, escapeRegex, findCanonicalConfigLocale, getCurrentValue, grammar, hasChordProgressionText, helpers, hideUnsavedChangesToast, isSupportedConfigLocale, markDirty, normalizeConfigFieldName, parseConfigLocaleEntries, refreshElementRefs, refs, registerUnloadAttempt, resetUnloadAttempts, runtime, shouldAllowInvisibleWordSeparators, showUnsavedChangesToast, startEditorActivity, setCurrentDocumentContent, setDropActive, setErrorCount, setSimpleEditorValue, setSharedDocumentDate, setStatus, state, supportsClipboardCopy, supportsClipboardPaste, syncEditorActivityState, syncEditorDirtyState, trimSpaceLikeEnd, trimSpaceLikeStart, trimSpaceLikeText, updateStatus, };

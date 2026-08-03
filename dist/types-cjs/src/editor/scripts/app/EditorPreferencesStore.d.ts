@@ -128,10 +128,10 @@ declare class EditorPreferencesStore {
     normalizeEditorMode(mode: any): "monaco" | "simple";
     loadEditorModePreference(): "monaco" | "simple";
     saveEditorModePreference(mode: any): void;
-    normalizeTheme(theme: any): any;
-    loadStoredThemePreference(): any;
+    normalizeTheme(theme: any): import("open-lyric").OpenLyricTheme;
+    loadStoredThemePreference(): import("open-lyric").OpenLyricTheme | null;
     hasStoredThemePreference(): boolean;
-    loadThemePreference(): any;
+    loadThemePreference(): import("open-lyric").OpenLyricTheme;
     saveThemePreference(theme: any): void;
 }
 export { EditorPreferencesStore };

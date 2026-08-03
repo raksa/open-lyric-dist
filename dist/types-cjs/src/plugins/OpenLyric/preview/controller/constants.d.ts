@@ -18,7 +18,7 @@ declare const OPEN_LYRIC_PRINT_LIGHT_INK_COLOR = "#1f2a37";
 declare const OPEN_LYRIC_PRINT_LIGHT_SURFACE_COLOR = "#ffffff";
 declare const OPEN_LYRIC_POWERPOINT_MAX_LINES_PER_SLIDE = 8;
 declare const OPEN_LYRIC_POWERPOINT_SLIDE_IMAGE_OPTIONS: Readonly<{
-    isPngImageData: true;
+    type: "png-image";
     isWithInfo: false;
     width: 1920;
     height: 1080;

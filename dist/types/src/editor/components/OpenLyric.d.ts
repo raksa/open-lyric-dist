@@ -14,8 +14,19 @@ export interface OpenLyricInfo {
     sections: OpenLyricSectionInfo[];
 }
 /**
- * How an image getter sizes and fills its raster. Every field is ignored
- * unless `isPngImageData` asked for an image in the first place.
+ * What a content getter answers with — the one option
+ * {@link OpenLyric.getElementMap} and {@link OpenLyric.getValue} require, since
+ * nothing about a song says which of its forms a caller wants.
+ *
+ * - `'text'` — plain text.
+ * - `'html'` — the rendered markup, styles resolved inline.
+ * - `'png-image'` — a `data:image/png;base64,…` URI of that markup rasterized.
+ */
+export type OpenLyricContentType = 'text' | 'html' | 'png-image';
+/**
+ * How an image getter sizes and fills its raster — and, since `'html'` answers
+ * with the very surface the raster is drawn from, how the HTML variant is sized
+ * and filled too. Both are ignored by the `'text'` variant.
  */
 export interface OpenLyricImageOptions {
     /**
@@ -44,33 +55,40 @@ export interface OpenLyricImageOptions {
 }
 export interface OpenLyricElementMapOptions extends OpenLyricImageOptions {
     /**
-     * Image only. The CSS pixel width of ONE SECTION image — not the page's, the
-     * difference from {@link OpenLyricImageOptions.width}. The section is laid
-     * out at that width, so its lines wrap for the image being asked for.
+     * Image and HTML. The CSS pixel width of ONE SECTION tile — not the page's,
+     * the difference from {@link OpenLyricImageOptions.width}. The section is
+     * laid out at that width, so its lines wrap for the tile being asked for.
      *
      * Omit it and the sections keep the width they have in this preview, lines
      * breaking exactly where the panel breaks them.
      */
     width?: number;
     /**
-     * Image only. The CSS pixel height every section image comes out at — a
+     * Image and HTML. The CSS pixel height every section tile comes out at — a
      * uniform tile size. The sections are laid out that tall (what the panel's
      * own grid does to every section in a row), so a short section pads with its
      * background and a long one crops.
      *
-     * Omit it and each image keeps its section's own height.
+     * Omit it and each tile keeps its section's own height.
      */
     height?: number;
-    /** Map each section to its plain-text body (the default). */
-    isText?: boolean;
-    /** Map each section to its rendered HTML (`<section …>…</section>`). */
-    isHtml?: boolean;
     /**
-     * Map each section to a `data:image/png;base64,…` URI of the rasterized
-     * section. Renders off a virtual root when the preview is not mounted, so
-     * no mount is required — only a DOM to stage in.
+     * What each entry's value is — required, because nothing about a song says
+     * which of its forms the caller is after.
+     *
+     * - `'text'` — the section's plain-text body.
+     * - `'html'` — the section's rendered HTML: the SAME node `'png-image'`
+     *   rasterizes, serialized instead of drawn — the section inside its tile,
+     *   sized by `width` / `height`, shaped by `fontSize`, `theme`, `css` and
+     *   `backgroundAlpha`, and carrying the styles the browser resolved for it
+     *   inline (with every class and `data-*` attribute kept). So the markup is
+     *   what the image is a picture OF, and needs no stylesheet attached to
+     *   render that way — only the fonts, which stay a family name.
+     * - `'png-image'` — a `data:image/png;base64,…` URI of the rasterized
+     *   section. Renders off a virtual root when the preview is not mounted, so
+     *   no mount is required — only a DOM to stage in.
      */
-    isPngImageData?: boolean;
+    type: OpenLyricContentType;
     /**
      * Keep the inline key notes — the `[chord]` markers and the leading `|`
      * bars. Off by default, so the map holds lyrics only.
@@ -102,10 +120,10 @@ export interface OpenLyricElementMapOptions extends OpenLyricImageOptions {
      * Without the key notes the card drops that line with them — a lyrics-only
      * map that still announced the key would be the one chord left standing.
      *
-     * For the image variant it is one more raster: the same card box a section
-     * image comes out as, at the same `width` / `height`, with its content
+     * For the image (and HTML) variant it is one more tile: the same card box a
+     * section comes out as, at the same `width` / `height`, with its content
      * centred — a title slide beside the lyric slides. Pass `false` to skip it
-     * (and skip that raster) when only the sections are wanted.
+     * (and skip building it) when only the sections are wanted.
      *
      * A map scoped to one part with {@link key} never carries it: that map is
      * about the section, and the render behind it drops the song-level header
@@ -113,24 +131,42 @@ export interface OpenLyricElementMapOptions extends OpenLyricImageOptions {
      */
     isWithInfo?: boolean;
     /**
-     * Image only. The font size, in CSS pixels, the sections are rendered at —
-     * overriding whatever this preview is displaying at, so a thumbnail can be
+     * Image and HTML. The font size, in CSS pixels, the sections are rendered at
+     * — overriding whatever this preview is displaying at, so a thumbnail can be
      * drawn small and a slide large from the same embed. The line height scales
      * with it, and `width` still decides where the lines wrap. Omit it to keep
      * the preview's own size.
      */
     fontSize?: number;
     /**
-     * `0`–`1` opacity for each section image's background fill, with one
+     * Image and HTML. The font family the sections are rendered in — a CSS
+     * `font-family` value (`'Georgia, serif'`), overriding whatever face this
+     * preview is displaying in, so a slide can be drawn in one face and the
+     * embed keep another.
+     *
+     * It replaces the whole stack: both the surface's own `font-family` and the
+     * `--ol-font-family` variable the rules below it read — how a language
+     * plugin ships its script face — so a section that would have rendered in
+     * the plugin's Khmer face renders in this one instead. Name a fallback of
+     * your own (`'Moul, editor-Battambang'`) when the override cannot cover
+     * every script in the song.
+     *
+     * The face still has to be loaded in the document; this names one, it does
+     * not fetch one. Omit it (or pass a blank string) to keep the preview's own
+     * face — {@link OpenLyric.resolvedFontFamily}.
+     */
+    fontFamily?: string;
+    /**
+     * `0`–`1` opacity for each section tile's background fill, with one
      * difference from {@link OpenLyricImageOptions.backgroundAlpha}: a section
-     * image has **no** background unless this asks for one. Omit it and every
-     * section rasterizes transparent — a section is a piece of the song, not a
-     * page — while `1` fills it with the opaque surface colour and anything
-     * between tints it.
+     * has **no** background unless this asks for one. Omit it and every section
+     * comes out transparent — a section is a piece of the song, not a page —
+     * while `1` fills it with the opaque surface colour and anything between
+     * tints it.
      */
     backgroundAlpha?: number;
     /**
-     * Image only. Render the sections in this theme instead of the one this
+     * Image and HTML. Render the sections in this theme instead of the one this
      * preview is displaying — light section images off a dark embed, without
      * touching what the reader is looking at. The whole theme follows: the
      * `--ol-*` tokens, the surface colour `backgroundAlpha` tints, and the chord
@@ -143,9 +179,9 @@ export interface OpenLyricElementMapOptions extends OpenLyricImageOptions {
      */
     theme?: OpenLyricTheme;
     /**
-     * Image only. Extra CSS applied to the export surface — the way to shape the
-     * exported image without restyling the page: centre the lines for a slide,
-     * hide the section titles, drop the chords.
+     * Image and HTML. Extra CSS applied to the export surface — the way to shape
+     * the export without restyling the page: centre the lines for a slide, hide
+     * the section titles, drop the chords.
      *
      * The rules cannot reach the visible preview or another embed: the export
      * surface lays out inside a **shadow root** — see `internal/export-stage.ts`
@@ -157,22 +193,33 @@ export interface OpenLyricElementMapOptions extends OpenLyricImageOptions {
      *
      * They win over the preview stylesheet, but not over the inline colours the
      * component sets on chords and section titles — those take `!important`.
+     *
+     * For the HTML variant they are resolved rather than shipped: the rules are
+     * applied to the surface, and what they made of it is what the inline styles
+     * carry.
      */
     css?: string;
 }
 export interface OpenLyricValueOptions extends OpenLyricImageOptions {
-    /** Produce the whole-song plain text — the default (= "Copy as Text"). */
-    isText?: boolean;
-    /** Produce the whole-song rendered HTML. */
-    isHtml?: boolean;
     /**
-     * Produce a `data:image/png;base64,…` URI of the whole song — the same
-     * rendered image the preview panel's **Download as Image** action captures
-     * (background, fonts, and full width), as PNG. Renders off a virtual root
-     * when the preview is not mounted, so no mount is required — only a DOM to
-     * stage in.
+     * What the value is — required, because nothing about a song says which of
+     * its forms the caller is after.
+     *
+     * - `'text'` — the whole-song plain text (= "Copy as Text").
+     * - `'html'` — the whole-song rendered HTML: the SAME export surface
+     *   `'png-image'` rasterizes, serialized instead of drawn — laid out at
+     *   `width`, filled to `backgroundAlpha`, shaped by `theme` and `css`, and
+     *   carrying the styles the browser resolved for it inline (with every class
+     *   and `data-*` attribute kept). So the markup is what the image is a
+     *   picture OF, and needs no stylesheet attached to render that way — only
+     *   the fonts, which stay a family name.
+     * - `'png-image'` — a `data:image/png;base64,…` URI of the whole song, the
+     *   same rendered image the preview panel's **Download as Image** action
+     *   captures (background, fonts, and full width), as PNG. Renders off a
+     *   virtual root when the preview is not mounted, so no mount is required —
+     *   only a DOM to stage in.
      */
-    isPngImageData?: boolean;
+    type: OpenLyricContentType;
     /**
      * Override the inline key notes — the `[chord]` markers and leading `|`
      * bars. `true` forces them on, `false` forces them off. Omit to follow the
@@ -180,6 +227,26 @@ export interface OpenLyricValueOptions extends OpenLyricImageOptions {
      * Download as Image reproduce).
      */
     isWithKeyNote?: boolean;
+    /**
+     * Image and HTML. The font family the song is rendered in — a CSS
+     * `font-family` value (`'Georgia, serif'`), overriding whatever face this
+     * preview is displaying in, so a slide can be drawn in one face and the
+     * embed keep another.
+     *
+     * It replaces the whole stack: both the surface's own `font-family` and the
+     * `--ol-font-family` variable the rules below it read — how a language
+     * plugin ships its script face — so a song that would have rendered in the
+     * plugin's Khmer face renders in this one instead. Name a fallback of your
+     * own (`'Moul, editor-Battambang'`) when the override cannot cover every
+     * script in the song.
+     *
+     * The face still has to be loaded in the document; this names one, it does
+     * not fetch one. Omit it (or pass a blank string) to keep the preview's own
+     * face — {@link OpenLyric.resolvedFontFamily}.
+     *
+     * The section counterpart is {@link OpenLyricElementMapOptions.fontFamily}.
+     */
+    fontFamily?: string;
     /**
      * Image only. Render the song in this theme instead of the one this preview
      * is displaying — a light slide image off a dark embed, without touching
@@ -383,11 +450,11 @@ export declare class OpenLyric extends OpenLyricPreviewComponent {
     /**
      * A map from section (part) name to that section's rendered content — one
      * entry per unique part in the structure. The value's form is chosen by the
-     * option flag:
+     * required `type` option:
      *
-     * - `{ isText: true }` (default) — the section body as plain text.
-     * - `{ isHtml: true }` — the section's rendered HTML (`<section …>…`).
-     * - `{ isPngImageData: true }` — a `data:image/png;base64,…` URI of the
+     * - `{ type: 'text' }` — the section body as plain text.
+     * - `{ type: 'html' }` — the section's rendered HTML (`<section …>…`).
+     * - `{ type: 'png-image' }` — a `data:image/png;base64,…` URI of the
      *   rasterized section (no mount required — see {@link getValue}).
      *
      * By default the map holds lyrics only — the inline key notes (the `[chord]`
@@ -412,17 +479,17 @@ export declare class OpenLyric extends OpenLyricPreviewComponent {
      * Always async: PNG rasterization is deferred, and the text/HTML variants
      * resolve on the same contract so callers have one uniform call shape.
      */
-    getElementMap(options?: OpenLyricElementMapOptions): Promise<Record<string, string>>;
+    getElementMap(options: OpenLyricElementMapOptions): Promise<Record<string, string>>;
     /**
      * The whole song rendered as a single value — the counterpart to
      * {@link getElementMap} (which returns one entry per section). The value's
-     * form is chosen by the option flag:
+     * form is chosen by the required `type` option:
      *
-     * - `{ isText: true }` (default) — the full plain-text render, identical to
-     *   the preview panel's **Copy as Text** action (title, meta, structure, and
+     * - `{ type: 'text' }` — the full plain-text render, identical to the
+     *   preview panel's **Copy as Text** action (title, meta, structure, and
      *   every section joined).
-     * - `{ isHtml: true }` — the whole-song rendered HTML.
-     * - `{ isPngImageData: true }` — a `data:image/png;base64,…` URI of the
+     * - `{ type: 'html' }` — the whole-song rendered HTML.
+     * - `{ type: 'png-image' }` — a `data:image/png;base64,…` URI of the
      *   whole song, the same image the **Download as Image** action captures
      *   (surface background, loaded fonts, full width), as PNG. `width` /
      *   `height` size the output and `backgroundAlpha` controls how opaque its
@@ -443,7 +510,7 @@ export declare class OpenLyric extends OpenLyricPreviewComponent {
      * Async for the same reason as {@link getElementMap}: image rasterization is
      * deferred, so every variant resolves on one uniform call shape.
      */
-    getValue(options?: OpenLyricValueOptions): Promise<string>;
+    getValue(options: OpenLyricValueOptions): Promise<string>;
     /** Song metadata: title, sections, key, structure. */
     getInfo(): OpenLyricInfo | null;
     protected rootClassName(): string;
@@ -471,8 +538,29 @@ export declare class OpenLyric extends OpenLyricPreviewComponent {
      */
     private getContentRenderOptions;
     private buildTextElementMap;
-    private buildHtmlElementMap;
-    private buildImageElementMap;
+    /**
+     * The section map's shared path: stage the export surface as a column of
+     * section tiles and hand each tile to `readTile`, which turns the one node
+     * into that entry's value — a PNG data URI, or the same node as HTML.
+     *
+     * Both forms come off the SAME node for the same reason the getters take the
+     * same options: an HTML map that answered with the raw render would describe
+     * a different picture than the image map does — no `width` / `height` tile,
+     * no `fontSize`, `theme` or `css` override, and none of the resolved styling
+     * the raster carries (see `internal/inline-styles.ts`).
+     */
+    private buildSectionElementMap;
+    /**
+     * The whole song as HTML — the same export surface {@link buildPngImageData}
+     * rasterizes, serialized instead of drawn (`internal/inline-styles.ts`).
+     *
+     * So the two answer for one picture: the same `width` / `height`, the same
+     * `theme` and `css` overrides, the same background `backgroundAlpha` asked
+     * for, and the same resolved typography — one as pixels, one as markup that
+     * still carries its classes and `data-*` attributes. What the HTML does not
+     * carry is the font FILES; see the module note on the serializer.
+     */
+    private buildHtmlValue;
     /**
      * The whole song as a PNG data URI, matching the **Download as Image**
      * action: the surface carries its resolved background and typography, fonts
@@ -540,6 +628,26 @@ export declare class OpenLyric extends OpenLyricPreviewComponent {
      * stays rounded instead of sitting on a filled rectangle.
      */
     private wrapInSectionTile;
+    /**
+     * The background the export surface itself is painted in, which is not quite
+     * the colour the raster is filled with.
+     *
+     * `backgroundAlpha` is a property of the *output*, and the two outputs paint
+     * it in different places. The raster fills the canvas BEHIND the surface (see
+     * {@link buildPngImageData}), which is what lets a `height` taller than the
+     * song keep the same fill in the padded strip — so a tinted surface on top of
+     * it would stack the alpha twice and come out darker than asked for. The
+     * surface stays clear there and the fill alone carries the tint. The HTML
+     * variant has no canvas under it, so the surface is where the tint has to
+     * live for the two to agree.
+     *
+     * `undefined` (and the opaque `1`) mean the same in both: the resolved
+     * surface colour, exactly as **Download as Image** has always painted it. A
+     * section-tile surface is not part of either output — only its tiles are —
+     * so it keeps the plain colour; {@link applySectionTiles} paints the alpha
+     * onto the cards instead.
+     */
+    private resolveExportSurfaceBackground;
     /**
      * The colour to fill behind the rasterized song — the reference root's own
      * (non-transparent) background, else the theme's default surface — so the

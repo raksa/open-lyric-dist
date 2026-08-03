@@ -59,8 +59,24 @@ Verified against `moduleResolution: bundler` and `node16` (both `.mts` and
 
 | Subpath               | Contents                                                                                                                |
 | --------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `open-lyric`          | The four components, base classes, types, and `EditorOpenLyricPlugin`.                                                    |
+| `open-lyric`          | The four components, base classes, types, `EditorOpenLyricPlugin`, and `version`.                                        |
 | `open-lyric/internal` | **Not public.** Shared internals the two first-party plugin packages import instead of duplicating. Do not depend on it. |
+
+`version` is this package's own version, taken from its `package.json` at build
+time — so it always matches the release you installed:
+
+```js
+import { version } from 'open-lyric';
+```
+
+The plugin packages export a `version` of their own. They bump independently of
+the core, so import them under distinct names rather than treating one as the
+build number for all three:
+
+```js
+import { version as coreVersion } from 'open-lyric';
+import { version as kmKhVersion } from 'open-lyric-plugin-km-kh';
+```
 
 ## Requirements and caveats
 

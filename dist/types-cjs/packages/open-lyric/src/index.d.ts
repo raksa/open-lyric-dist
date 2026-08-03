@@ -7,6 +7,7 @@
  * published package can never drift.
  */
 export * from '../../../src/editor/components/index.js';
+export { version } from './version.js';
 export { EditorOpenLyricPlugin } from '../../../src/plugins/OpenLyric/open-lyric_component_plugin.js';
 export { olEditorOpenLyricPluginData } from '../../../src/plugins/OpenLyric/index.js';
 export { registerPlugin, unregisterPlugin, } from '../../../src/editor/scripts/editor-plugin-registry.js';

@@ -8,8 +8,23 @@
  */
 /** The four component kinds a plugin (or the bridge) can target. */
 export type OpenLyricSurface = 'editor' | 'markdown' | 'lyric' | 'dashboard';
-/** Theme preset selector. Every visual is driven by `--ol-*` variables underneath. */
-export type OpenLyricTheme = 'light' | 'dark';
+/**
+ * Theme preset selector. Every visual is driven by `--ol-*` variables
+ * underneath.
+ *
+ * The `-bs` pair repaints the same token set in Bootstrap's own palette
+ * (`#0d6efd` primary, `#212529`/`#fff` bodies, `#dee2e6`/`#495057` borders …)
+ * so a page that already ships `bootstrap.min.css` reads as one design. They
+ * are full themes, not modifiers: each has its own token block, Monaco theme,
+ * and preview palette.
+ */
+export type OpenLyricTheme = 'light' | 'dark' | 'light-bs' | 'dark-bs';
+/**
+ * The light/dark half of a theme. Anything that only understands two values —
+ * `color-scheme`, Bootstrap's own `data-bs-theme`, the Monaco `vs`/`vs-dark`
+ * base — keys off this rather than off the theme name.
+ */
+export type OpenLyricThemeBase = 'light' | 'dark';
 /** Lifecycle phase of a component, mirroring the state diagram in the redesign doc. */
 export type OpenLyricLifecycleState = 'created' | 'mounted' | 'unmounted' | 'destroyed';
 export interface OpenLyricChangePayload {
