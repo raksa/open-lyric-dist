@@ -17,7 +17,21 @@ export declare class OpenLyricMarkdownStandaloneChrome {
     private els;
     private fontSizePx;
     private fontFamilyOverride;
-    private defaultFontFamily;
+    /**
+     * The font family the host assigned before mount — the control's starting
+     * VALUE, not a hidden base; see the same field on
+     * {@link OpenLyricStandaloneChrome}. The invisible base is a language
+     * plugin's contribution, which resolves behind `component.fontFamily`
+     * ({@link OpenLyricMarkdownManager.resolvedFontFamily}). Kept to restore the
+     * boot state on Reset.
+     */
+    private hostFontFamily;
+    /**
+     * Whether the loaded setting carried a family at all — a persisted empty
+     * string is the reader's "use the preview default" and must not be
+     * re-seeded from the host's configuration.
+     */
+    private hasPersistedFontFamily;
     private actionPending;
     private progressResetTimer;
     private readonly unsubscribes;

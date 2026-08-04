@@ -10,7 +10,26 @@ export declare class OpenLyricStandaloneChrome {
     private fontFamilyOverride;
     private keyOverride;
     private actionPending;
-    private defaultFontFamily;
+    /**
+     * The font family the host assigned before mount — the control's starting
+     * VALUE, not a hidden base. A host naming a face (`preview.fontFamily = …`)
+     * is making the same choice a reader makes in the popup, so the input shows
+     * it and the picker marks it selected.
+     *
+     * The invisible base is what a language plugin contributes: that never
+     * reaches `component.fontFamily`, it resolves behind it
+     * ({@link OpenLyric.resolvedFontFamily}), so clearing the override here
+     * falls through to it — which is what "Use preview default" means. This is
+     * kept only to restore the boot state on Reset.
+     */
+    private hostFontFamily;
+    /**
+     * Whether the loaded setting carried a family at all. A persisted empty
+     * string is a reader's "use the preview default" and must not be re-seeded
+     * from the host's configuration; a missing one means the host's choice
+     * still stands.
+     */
+    private hasPersistedFontFamily;
     private progressResetTimer;
     private readonly unsubscribes;
     private readonly documentListeners;
