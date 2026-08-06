@@ -13,9 +13,11 @@
  * that is worth failing a render over, so a bad read is simply "nothing
  * persisted" and a bad write is dropped.
  *
- * Adopt-mode previews never come through here — an app page owns its own
- * preferences store (`EditorPreferencesStore`), and two writers on one surface
- * would fight.
+ * An adopt-mode preview comes through here only for a control it actually owns
+ * — the lyric panel's typography slot, which is the sole writer of that panel's
+ * fonts once it is attached (`OpenLyricStandaloneChrome.attachSettingsSlot`).
+ * Everything else on an app page stays with that page's own preferences store
+ * (`EditorPreferencesStore`): two writers on one surface would fight.
  */
 import type { OpenLyricPreviewSetting } from './types.js';
 export declare const OPEN_LYRIC_PREVIEW_SETTING_STORAGE_KEY = "openLyricStandalone.previewTypography";

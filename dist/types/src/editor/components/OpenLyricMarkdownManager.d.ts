@@ -11,6 +11,14 @@ export interface OpenLyricMarkdownOptions extends OpenLyricPreviewOptions {
      * via the `isControlHidden` accessor.
      */
     isControlHidden?: boolean;
+    /**
+     * Show the document's comment lines — the `// …` authoring notes inside the
+     * `ol:` fences, which the preview drops by default. Shown muted and
+     * verbatim. Comments inside `ol:Config` stay hidden either way; they already
+     * speak through the preview as strumming-pattern labels. (A `//` line in
+     * plain markdown is ordinary text and was never dropped.)
+     */
+    isShowingCommentText?: boolean;
 }
 export interface OpenLyricMarkdownInfo {
     /** Best-effort document title (OL Config title, first heading, or line). */
@@ -41,6 +49,7 @@ export interface OpenLyricMarkdownInfo {
 export declare class OpenLyricMarkdownManager extends OpenLyricPreviewComponent {
     readonly surface: OpenLyricSurface;
     private controlHiddenValue;
+    private showingCommentTextValue;
     private standaloneChrome;
     constructor(options?: OpenLyricMarkdownOptions);
     protected handleMount(container: HTMLElement): void;
@@ -52,6 +61,14 @@ export declare class OpenLyricMarkdownManager extends OpenLyricPreviewComponent 
      */
     get isControlHidden(): boolean;
     set isControlHidden(next: boolean);
+    /**
+     * Whether the `// …` authoring notes inside the document's fences are shown
+     * — see {@link OpenLyricMarkdownOptions.isShowingCommentText}. Emits
+     * `display-change` so the settings popup's checkbox and any host UI follow a
+     * programmatic set, not just a click in the popup.
+     */
+    get isShowingCommentText(): boolean;
+    set isShowingCommentText(next: boolean);
     /**
      * Restore the preview settings to their defaults — the programmatic
      * equivalent of the standalone chrome's "Reset" button, and the markdown
@@ -98,5 +115,6 @@ export declare class OpenLyricMarkdownManager extends OpenLyricPreviewComponent 
     getInfo(): OpenLyricMarkdownInfo;
     protected rootClassName(): string;
     protected renderMarkup(value: string, options: Record<string, unknown>): string;
+    protected getRenderOptions(): Record<string, unknown>;
     private deriveTitle;
 }

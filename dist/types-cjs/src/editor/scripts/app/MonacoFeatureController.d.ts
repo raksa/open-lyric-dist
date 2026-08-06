@@ -276,6 +276,20 @@ declare class MonacoFeatureController {
     pruneStoredSpellcheckCustomDictionaryWords(languageCode: any): Promise<boolean>;
     prunePendingSpellcheckCustomDictionaryWords(): Promise<boolean>;
     runNativeCommandPaletteAction(): Promise<boolean>;
+    /**
+     * Put Toggle Line Comment in the right-click menu.
+     *
+     * This surfaces Monaco's own `editor.action.commentLine` rather than an
+     * `open-lyric.*` wrapper, so there is a single command: the menu renders the
+     * real Ctrl/Cmd+/ label, and the `//` prefix keeps coming from the language
+     * configuration (`comments.lineComment` in the OpenLyric plugin) instead of
+     * being spelled out a second time here.
+     *
+     * `MenuRegistry` is global while this runs per editor boot, so the previous
+     * entry is disposed first — otherwise a second dashboard on the page would
+     * stack a duplicate item.
+     */
+    registerLineCommentMenuItem(): void;
     registerActions(): void;
     getEditorMenuActions(): ({
         disabled: boolean;

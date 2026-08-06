@@ -95,6 +95,14 @@ export interface OpenLyricElementMapOptions extends OpenLyricImageOptions {
      */
     isWithKeyNote?: boolean;
     /**
+     * Override the `// …` authoring notes inside the sections. `true` puts them
+     * in, `false` leaves them out. Omit to follow what the preview is showing
+     * (see {@link OpenLyricOptions.isShowingCommentText}) — so a map taken off a
+     * preview with the notes on carries them, and one taken off a preview
+     * without them does not.
+     */
+    isShowingCommentText?: boolean;
+    /**
      * Scope the map to ONE section (part) name — `'Verse 1'` yields
      * `{ 'Verse 1': … }`. The render pipeline is scoped too, so the rest of the
      * song is never built (and, for images, never rasterized): this is the cheap
@@ -228,6 +236,12 @@ export interface OpenLyricValueOptions extends OpenLyricImageOptions {
      */
     isWithKeyNote?: boolean;
     /**
+     * Override the `// …` authoring notes inside the sections. `true` puts them
+     * in, `false` leaves them out. Omit to follow what the preview is showing
+     * (see {@link OpenLyricOptions.isShowingCommentText}).
+     */
+    isShowingCommentText?: boolean;
+    /**
      * Image and HTML. The font family the song is rendered in — a CSS
      * `font-family` value (`'Georgia, serif'`), overriding whatever face this
      * preview is displaying in, so a slide can be drawn in one face and the
@@ -289,6 +303,14 @@ export interface OpenLyricOptions extends OpenLyricPreviewOptions {
     isBarsHidden?: boolean;
     /** Hide inline `[chord]` key markers. */
     isKeyNotesHidden?: boolean;
+    /**
+     * Show the song's comment lines — the `// …` authoring notes inside the
+     * `ol:` fences, which the preview drops by default. Shown muted and
+     * verbatim: never transposed, simplified, or read as notation. Comments
+     * inside `ol:Config` stay hidden either way; they already speak through the
+     * preview as strumming-pattern labels.
+     */
+    isShowingCommentText?: boolean;
     /** Transpose the song to this key (empty = original Config key). */
     keyNote?: string;
     /**
@@ -360,6 +382,7 @@ export declare class OpenLyric extends OpenLyricPreviewComponent {
     private simplifyChordsValue;
     private barsHiddenValue;
     private keyNotesHiddenValue;
+    private showingCommentTextValue;
     private keyNoteValue;
     private controlHiddenValue;
     private standaloneChrome;
@@ -383,6 +406,12 @@ export declare class OpenLyric extends OpenLyricPreviewComponent {
     get isKeyNotesHidden(): boolean;
     set isKeyNotesHidden(next: boolean);
     /**
+     * Whether the `// …` authoring notes inside the song's fences are shown —
+     * see {@link OpenLyricOptions.isShowingCommentText}.
+     */
+    get isShowingCommentText(): boolean;
+    set isShowingCommentText(next: boolean);
+    /**
      * Whether the standalone chrome's floating controls (the settings gear and
      * the actions `⋮` menu) are hidden. Only affects a standalone (non-adopt)
      * embed; a no-op where the host owns the chrome.
@@ -394,9 +423,14 @@ export declare class OpenLyric extends OpenLyricPreviewComponent {
      * equivalent of the standalone chrome's "Reset" button: clears chord
      * simplification, hidden bars/keys, and transposition, and returns the font
      * size/family to the preview defaults. On a standalone embed the settings
-     * popup drives the reset (so its controls and persisted typography reset too);
-     * where the host owns the chrome, this resets the component's own state and
-     * clears any font overrides.
+     * popup drives the reset (so its controls and persisted typography reset too).
+     *
+     * Where the host owns the popup and the component fills only its typography
+     * slot, this resets exactly that — font size and family, controls and
+     * persisted record included — and leaves the display options alone, because
+     * there they are the host's to clear (the app page's Reset does both: its own
+     * state, then this). With no chrome at all it falls back to resetting the
+     * component's own state and clearing any font override.
      */
     resetPreviewSetting(): void;
     /**
@@ -408,8 +442,10 @@ export declare class OpenLyric extends OpenLyricPreviewComponent {
      * on mount.
      *
      * One record covers every standalone embed on the page: the settings popup
-     * is a reader preference, not a per-song one. Adopt-mode embeds are not part
-     * of it — there the host page owns preferences (the app's own store).
+     * is a reader preference, not a per-song one. An adopt-mode embed joins it
+     * only for the typography slot it fills in a host popup — the one control
+     * there whose value is a reader's; the host page owns everything else
+     * (through the app's own store).
      *
      * Override this (and {@link saveSetting}) in a subclass to keep the setting
      * somewhere else — a server, a host profile — without touching the chrome.
@@ -535,6 +571,9 @@ export declare class OpenLyric extends OpenLyricPreviewComponent {
      * section, so only that part is built. It is applied over
      * `extraRenderOptions` — a host's standing render context cannot pin the
      * getter to a different section than the one it asked for.
+     *
+     * `showComments` is the getters' `isShowingCommentText`, and reads the same
+     * way as `keyNote`: omitted, the content follows what the preview shows.
      */
     private getContentRenderOptions;
     private buildTextElementMap;

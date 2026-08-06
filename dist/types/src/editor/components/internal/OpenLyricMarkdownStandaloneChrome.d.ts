@@ -158,6 +158,8 @@ export declare class OpenLyricMarkdownStandaloneChrome {
      * settings popup reflects the API. Font size is px-based (the slider's unit);
      * a value carrying another unit clamps into the slider's range.
      */
+    /** Mirror the component's comment-text state into the popup's checkbox. */
+    private syncCommentControl;
     private adoptComponentTypography;
     private syncTypographyControls;
     private loadPersistedTypography;

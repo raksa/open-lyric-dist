@@ -3,8 +3,10 @@ declare const STRUCTURE_TOKEN_DEFINITIONS: {
     header: string;
     allowsNumbering: boolean;
 }[];
+declare const STRUCTURE_MAX_CODE_LENGTH: number;
 declare const STRUCTURE_SYNTAX_EXAMPLE = "IV1x2CV1V2CO";
 declare const STRUCTURE_CODE_LIST: string;
+declare function isStructureCodePrefix(text: any): boolean;
 declare function formatStructureStepLabel(step: any): any;
 declare function findAdjacentDuplicateStructureError(steps: any): {
     startOffset: any;
@@ -58,4 +60,4 @@ declare function parseStructureValue(value: any): {
     }[];
     error: null;
 };
-export { STRUCTURE_CODE_LIST, STRUCTURE_SYNTAX_EXAMPLE, STRUCTURE_TOKEN_DEFINITIONS, findAdjacentDuplicateStructureError, formatStructureStepLabel, parseStructureValue, };
+export { STRUCTURE_CODE_LIST, STRUCTURE_MAX_CODE_LENGTH, STRUCTURE_SYNTAX_EXAMPLE, STRUCTURE_TOKEN_DEFINITIONS, findAdjacentDuplicateStructureError, formatStructureStepLabel, isStructureCodePrefix, parseStructureValue, };

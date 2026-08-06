@@ -4,9 +4,8 @@
  */
 declare class PreviewController {
     [key: string]: any;
-    constructor({ getCurrentValue, onOpenLyricPluginEnabledChange, preferences, }: {
+    constructor({ getCurrentValue, preferences }: {
         getCurrentValue: any;
-        onOpenLyricPluginEnabledChange?: null | undefined;
         preferences?: null | undefined;
     });
 }

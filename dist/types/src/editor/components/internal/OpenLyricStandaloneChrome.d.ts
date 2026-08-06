@@ -1,10 +1,19 @@
 import type { OpenLyric } from '../OpenLyric.js';
+/**
+ * The typography mount of the host panel an adopt-mode preview was placed in,
+ * or `null` where the host ships none (then it owns all of its chrome, as
+ * before). Scoped through the nearest panel ancestor, never `document`, so a
+ * page with two lyric panels never fills the wrong one.
+ */
+export declare function findOpenLyricTypographyMount(container: HTMLElement): HTMLElement | null;
 export declare class OpenLyricStandaloneChrome {
     private readonly component;
     private readonly uid;
     private container;
     private renderRoot;
     private panel;
+    /** The typography fields built into a host slot (adopt mode only). */
+    private typographyRoot;
     private els;
     private fontSizePx;
     private fontFamilyOverride;
@@ -36,13 +45,53 @@ export declare class OpenLyricStandaloneChrome {
     constructor(component: OpenLyric);
     attach(renderRoot: HTMLElement, container: HTMLElement): void;
     /**
+     * Adopt-mode variant: render **only** the typography fields, into a host slot.
+     *
+     * An app page owns the lyric panel and the settings popup inside it — the gear,
+     * the Open Lyric plugin toggle, and the key/display controls are all app-wired,
+     * against the app's own render state and exports — so the component must not
+     * build a second panel or a second popup. What the app does not implement is
+     * the font-face picker, and rather than keep a page-side copy of it, the
+     * shipped panel fragment leaves a
+     * `<template data-ol-mount="openLyricPreviewTypography">` inside its popup and
+     * the component fills it here with the very same slider, picker, and font
+     * options a standalone embed builds. A host that ships no such mount gets no
+     * chrome at all, exactly as before.
+     *
+     * Only the typography, deliberately: everything else in that popup stays the
+     * host's, which is why this wires {@link wireTypographyControls} rather than
+     * the whole {@link wire}, and why Reset (an app button here) resets only what
+     * this chrome owns — see {@link resetPreferences}.
+     */
+    attachSettingsSlot(slot: Element, renderRoot: HTMLElement): void;
+    /**
+     * Resolve the typography (a reader's persisted pick over the host's
+     * configured default) and push it onto the component.
+     *
+     * Family before size: each set emits `typography-change`, and the listener
+     * re-derives the override from the component — so the persisted pick has to
+     * be on the component before the next emit re-reads it. Setting size first
+     * made that emit see the still-default family and clear the override,
+     * dropping the persisted font family on every mount.
+     */
+    private startTypography;
+    /**
      * Show or hide the floating controls (the settings gear + actions `⋮` menu).
-     * Driven by `OpenLyric.isControlHidden`; open menus close when hidden.
+     * Driven by `OpenLyric.isControlHidden`; open menus close when hidden. A no-op
+     * in slot mode, where the host owns every control on the panel.
      */
     setControlHidden(hidden: boolean): void;
     destroy(): void;
     private buildPanel;
     private floatingToolsMarkup;
+    /**
+     * The typography half of the settings popup — the font-size slider and the
+     * font-family picker. Split out of the panel markup because it is the one
+     * piece an adopt-mode embed also renders, into the host popup's typography
+     * mount (see {@link attachSettingsSlot}); the caller supplies whatever wrapper
+     * belongs around it.
+     */
+    private typographyFieldsMarkup;
     private captureRefs;
     /**
      * (Re)builds the font-family option panel from the component's `fontFaces`
@@ -65,7 +114,20 @@ export declare class OpenLyricStandaloneChrome {
     private focusFontOption;
     private handleFontInputKeyDown;
     private handleFontOptionsKeyDown;
+    private on;
     private wire;
+    /**
+     * The typography controls' own wiring — everything both the standalone popup
+     * and an adopt-mode typography slot need, and nothing that belongs to the
+     * actions menu, the song-display controls, or the export progress bar.
+     */
+    private wireTypographyControls;
+    /**
+     * Close-on-outside-click and Escape. Both modes need them: in slot mode the
+     * app's own document handlers close the app-owned menus and these close the
+     * font picker, so the two still behave as one set of menus.
+     */
+    private wireDocumentListeners;
     private wireChordPopup;
     private triggerFromEvent;
     private handleChordClick;

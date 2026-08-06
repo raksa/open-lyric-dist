@@ -7,7 +7,16 @@ declare function normalizeMarkdownRenderableUrls(value: any): string;
 declare function createPreviewTargetId(value: any): string;
 declare function getEditorDataAttributes(lineNumber: any, column?: number): string;
 declare function getFenceHeaderEditorDataAttributes(startLineNumber: any): string;
-declare function createPreviewLineEntries(body: any, sourceLocation?: null, allowZwspSeparators?: boolean): {
+/**
+ * Split a fence body into the entries every preview renders from.
+ *
+ * Comment lines (`// …`) are authoring notes, so they are dropped by default —
+ * that is what both previews have always shown. `includeComments` keeps them
+ * instead, flagged `isComment` so the renderer can style them and every
+ * consumer that counts or exports lines can filter them back out.
+ */
+declare function createPreviewLineEntries(body: any, sourceLocation?: null, allowZwspSeparators?: boolean, includeComments?: boolean): {
+    isComment?: boolean | undefined;
     text: string;
     lineNumber: any;
     column: number;
@@ -57,7 +66,12 @@ declare function createPreviewHelpers(viewOptions?: {}): {
         timeSignatureText: string;
     } | null;
     createPreviewTargetId: typeof createPreviewTargetId;
-    createPreviewLineEntries: typeof createPreviewLineEntries;
+    createPreviewLineEntries(body: any, sourceLocation: any, allowZwspSeparators: any): {
+        isComment?: boolean | undefined;
+        text: string;
+        lineNumber: any;
+        column: number;
+    }[];
     escapeHtml: typeof escapeHtml;
     getEditorDataAttributes: typeof getEditorDataAttributes;
     getFenceHeaderEditorDataAttributes: typeof getFenceHeaderEditorDataAttributes;
@@ -82,7 +96,12 @@ declare const previewHelpers: {
         timeSignatureText: string;
     } | null;
     createPreviewTargetId: typeof createPreviewTargetId;
-    createPreviewLineEntries: typeof createPreviewLineEntries;
+    createPreviewLineEntries(body: any, sourceLocation: any, allowZwspSeparators: any): {
+        isComment?: boolean | undefined;
+        text: string;
+        lineNumber: any;
+        column: number;
+    }[];
     escapeHtml: typeof escapeHtml;
     getEditorDataAttributes: typeof getEditorDataAttributes;
     getFenceHeaderEditorDataAttributes: typeof getFenceHeaderEditorDataAttributes;
@@ -107,7 +126,12 @@ declare function renderOpenLyricFenceHtml(info: any, body: any, sourceLocation?:
         timeSignatureText: string;
     } | null;
     createPreviewTargetId: typeof createPreviewTargetId;
-    createPreviewLineEntries: typeof createPreviewLineEntries;
+    createPreviewLineEntries(body: any, sourceLocation: any, allowZwspSeparators: any): {
+        isComment?: boolean | undefined;
+        text: string;
+        lineNumber: any;
+        column: number;
+    }[];
     escapeHtml: typeof escapeHtml;
     getEditorDataAttributes: typeof getEditorDataAttributes;
     getFenceHeaderEditorDataAttributes: typeof getFenceHeaderEditorDataAttributes;

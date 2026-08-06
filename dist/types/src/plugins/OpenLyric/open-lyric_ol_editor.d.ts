@@ -39,6 +39,7 @@ declare const olEditorOpenLyricPluginData: {
                 OLInterlude: typeof fenceParser.OLInterlude;
                 OLIntro: typeof fenceParser.OLIntro;
                 OLLyricFence: typeof fenceParser.OLLyricFence;
+                OLNote: typeof fenceParser.OLNote;
                 OLOutro: typeof fenceParser.OLOutro;
                 OLPostChorus: typeof fenceParser.OLPostChorus;
                 OLPreChorus: typeof fenceParser.OLPreChorus;
@@ -47,7 +48,7 @@ declare const olEditorOpenLyricPluginData: {
                 OLTag: typeof fenceParser.OLTag;
                 OLVamp: typeof fenceParser.OLVamp;
                 OLVerse: typeof fenceParser.OLVerse;
-                definitions: (fenceParser.OLBridge | fenceParser.OLBreakdown | fenceParser.OLChorus | fenceParser.OLConfig | fenceParser.OLFinalChorus | fenceParser.OLInstrumental | fenceParser.OLInterlude | fenceParser.OLIntro | fenceParser.OLOutro | fenceParser.OLPostChorus | fenceParser.OLPreChorus | fenceParser.OLRefrain | fenceParser.OLSolo | fenceParser.OLTag | fenceParser.OLVamp | fenceParser.OLVerse)[];
+                definitions: (fenceParser.OLBridge | fenceParser.OLBreakdown | fenceParser.OLChorus | fenceParser.OLConfig | fenceParser.OLFinalChorus | fenceParser.OLInstrumental | fenceParser.OLInterlude | fenceParser.OLIntro | fenceParser.OLNote | fenceParser.OLOutro | fenceParser.OLPostChorus | fenceParser.OLPreChorus | fenceParser.OLRefrain | fenceParser.OLSolo | fenceParser.OLTag | fenceParser.OLVamp | fenceParser.OLVerse)[];
                 definitionsByClassName: any;
                 findFenceDefinition: typeof fenceParser.findFenceDefinition;
                 formatDeclaredPartName: typeof fenceParser.formatDeclaredPartName;
@@ -68,6 +69,7 @@ declare const olEditorOpenLyricPluginData: {
                         OLBridge: typeof fenceParser.OLBridge;
                         OLChorus: typeof fenceParser.OLChorus;
                         OLVerse: typeof fenceParser.OLVerse;
+                        OLNote: typeof fenceParser.OLNote;
                         OLTag: typeof fenceParser.OLTag;
                         OLOutro: typeof fenceParser.OLOutro;
                         OLInstrumental: typeof fenceParser.OLInstrumental;
@@ -99,6 +101,7 @@ declare const olEditorOpenLyricPluginData: {
                     OLBridge: typeof fenceParser.OLBridge;
                     OLChorus: typeof fenceParser.OLChorus;
                     OLVerse: typeof fenceParser.OLVerse;
+                    OLNote: typeof fenceParser.OLNote;
                     OLTag: typeof fenceParser.OLTag;
                     OLOutro: typeof fenceParser.OLOutro;
                     OLInstrumental: typeof fenceParser.OLInstrumental;

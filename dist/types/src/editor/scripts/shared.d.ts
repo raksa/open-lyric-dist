@@ -134,6 +134,7 @@ declare const state: {
     openLyricHideKeys: boolean;
     openLyricHideLeadingBars: boolean;
     openLyricSimplifyChords: boolean;
+    openLyricShowComments: boolean;
     openLyricStructureKeys: {};
     theme: string;
     highlightInvisibleCharacters: boolean;
@@ -166,6 +167,7 @@ declare const runtime: {
     segmentationSelectionContextKey: null;
     dictionaryMenuDisposables: never[];
     dictionaryLookupKey: string;
+    lineCommentMenuDisposable: null;
     manualWordCompletionProviderDisposable: null;
     manualWordSuggestionInitialExpiryMs: number;
     manualWordSuggestionSessionExpiryMs: number;
@@ -276,8 +278,6 @@ declare const refs: {
     openLyricOptions: Element | null;
     openLyricOptionsBtn: Element | null;
     openLyricOptionsMenu: Element | null;
-    openLyricPluginStatusNote: Element | null;
-    openLyricPluginToggle: Element | null;
     openLyricExportProgress: Element | null;
     openLyricExportProgressBar: Element | null;
     openLyricExportProgressLabel: Element | null;
@@ -293,12 +293,9 @@ declare const refs: {
     goToMarkdownDocBtn: Element | null;
     printOpenLyricBtn: Element | null;
     printMarkdownPreviewBtn: Element | null;
-    previewFontFamilyInput: Element | null;
-    previewFontFamilySuggestions: Element | null;
-    previewFontSizeInput: Element | null;
-    previewFontSizeValue: Element | null;
     previewOpenLyricHideBarsBtn: Element | null;
     previewOpenLyricHideKeysBtn: Element | null;
+    previewOpenLyricShowCommentsToggle: Element | null;
     previewOpenLyricSimplifyBtn: Element | null;
     previewSettings: Element | null;
     previewSettingsBtn: Element | null;
