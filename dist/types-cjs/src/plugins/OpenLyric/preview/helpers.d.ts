@@ -146,4 +146,15 @@ declare function renderOpenLyricFenceHtml(info: any, body: any, sourceLocation?:
     renderStrummingPatternCards: typeof renderStrummingPatternCards;
     renderStructureValue: typeof renderStructureValue;
 }): any;
-export { DEFAULT_STRUMMING_PATTERN_TEXT, OPEN_LYRIC_PATTERN_TARGET_ID_PREFIX, createChordedLyricTextLines, createPreviewHelpers, createPreviewLineEntries, createStrummingPatternPreviewContextFromConfigBody, createStrummingPatternPreviewContextFromMarkdown, escapeHtml, getPreviewSourceLocation, isChordOnlyLineText, normalizeMarkdownRenderableUrls, parseStrummingPatterns, parseStrummingPatternSteps, previewHelpers, renderInlineTextPlainText, renderOpenLyricFenceHtml, renderStrummingPatternGrid, sanitizeHtml, };
+/**
+ * Open every Config attachments disclosure inside `root`.
+ *
+ * The panel renders the list closed (`renderConfigAttachments`), which is a
+ * reader's convenience — a picture of the song has nothing to click, so a
+ * printout, an export image, an exported HTML surface and the `Info` card all
+ * run this over the markup they were built from and show the links the way the
+ * plain-text forms list them. A render that was asked to leave the attachments
+ * out (`hideAttachments`) has no disclosure here to open.
+ */
+declare function expandOpenLyricAttachments(root: any): void;
+export { DEFAULT_STRUMMING_PATTERN_TEXT, OPEN_LYRIC_PATTERN_TARGET_ID_PREFIX, createChordedLyricTextLines, createPreviewHelpers, createPreviewLineEntries, createStrummingPatternPreviewContextFromConfigBody, createStrummingPatternPreviewContextFromMarkdown, escapeHtml, expandOpenLyricAttachments, getPreviewSourceLocation, isChordOnlyLineText, normalizeMarkdownRenderableUrls, parseStrummingPatterns, parseStrummingPatternSteps, previewHelpers, renderInlineTextPlainText, renderOpenLyricFenceHtml, renderStrummingPatternGrid, sanitizeHtml, };
