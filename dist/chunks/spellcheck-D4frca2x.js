@@ -1,72 +1,72 @@
-import{_ as e,c as t,f as n,g as r,h as i,m as a,s as o}from"./editor-plugin-registry-C7CLjuN8.js";import{get as s,tokenize as c}from"@tonaljs/chord";import{fromSemitones as l,semitones as u}from"@tonaljs/interval";import{majorKey as d,minorKey as f}from"@tonaljs/key";import{chroma as p,enharmonic as ee,pitchClass as te,simplify as ne,transpose as re}from"@tonaljs/note";import ie from"typo-js";var ae=Object.defineProperty,m=(e,t)=>{let n={};for(var r in e)ae(n,r,{get:e[r],enumerable:!0});return t||ae(n,Symbol.toStringTag,{value:`Module`}),n},oe=[`light`,`dark`,`light-bs`,`dark-bs`],se={light:`Light`,dark:`Dark`,"light-bs":`Bootstrap Light`,"dark-bs":`Bootstrap Dark`},ce={light:{bg:`#ffffff`,fg:`#1f2328`,accent:`#2f6feb`,chordColor:`#9a6700`},dark:{bg:`#0f1115`,fg:`#e6e6e6`,accent:`#7aa2f7`,chordColor:`#f4b860`},"light-bs":{bg:`#ffffff`,fg:`#212529`,accent:`#0d6efd`,chordColor:`#d63384`},"dark-bs":{bg:`#212529`,fg:`#dee2e6`,accent:`#6ea8fe`,chordColor:`#e685b5`}};function h(e){return oe.includes(e)}function le(e){if(!h(e))throw Error(`OpenLyric: invalid theme ${JSON.stringify(e)} — expected one of ${oe.map(e=>`'${e}'`).join(`, `)}.`)}function ue(e){return e===`dark`||e===`dark-bs`?`dark`:`light`}function de(e){return e.endsWith(`-bs`)}var fe={light:`#ffffff`,dark:`#101923`,"light-bs":`#ffffff`,"dark-bs":`#2b3035`};function pe(e){return h(e)?fe[e]:fe.light}function me(e,t){let n=ce[t];e.style.background=`var(--ol-bg, ${n.bg})`,e.style.color=`var(--ol-fg, ${n.fg})`,e.style.fontFamily=`var(--ol-font-family, inherit)`,e.style.fontSize=`var(--ol-font-size, inherit)`}var he=`arc.af-ZA.am-ET.ar-AE.ar-BH.ar-DZ.ar-EG.ar-IQ.ar-JO.ar-KW.ar-LB.ar-LY.ar-MA.arn-CL.ar-OM.ar-QA.ar-SA.ar-SD.ar-SY.ar-TN.ar-YE.as-IN.az-az.az-Cyrl-AZ.az-Latn-AZ.ba-RU.be-BY.bg-BG.bn-BD.bn-IN.bo-CN.br-FR.bs-Cyrl-BA.bs-Latn-BA.ca-ES.co-FR.cs-CZ.cy-GB.da-DK.de-AT.de-CH.de-DE.de-LI.de-LU.dsb-DE.dv-MV.el-CY.el-GR.en-029.en-AU.en-BZ.en-CA.en-cb.en-GB.en-IE.en-IN.en-JM.en-MT.en-MY.en-NZ.en-PH.en-SG.en-TT.en-US.en-ZA.en-ZW.es-AR.es-BO.es-CL.es-CO.es-CR.es-DO.es-EC.es-ES.es-GT.es-HN.es-MX.es-NI.es-PA.es-PE.es-PR.es-PY.es-SV.es-US.es-UY.es-VE.et-EE.eu-ES.fa-IR.fi-FI.fil-PH.fo-FO.fr-BE.fr-CA.fr-CH.fr-FR.fr-LU.fr-MC.fy-NL.ga-IE.gd-GB.gd-ie.gl-ES.gsw-FR.gu-IN.ha-Latn-NG.he-IL.hi-IN.hr-BA.hr-HR.hsb-DE.hu-HU.hy-AM.id-ID.ig-NG.ii-CN.in-ID.is-IS.it-CH.it-IT.iu-Cans-CA.iu-Latn-CA.iw-IL.ja-JP.ka-GE.kk-KZ.kl-GL.km-KH.kn-IN.kok-IN.ko-KR.ky-KG.lb-LU.lo-LA.lt-LT.lv-LV.mi-NZ.mk-MK.ml-IN.mn-MN.mn-Mong-CN.moh-CA.mr-IN.ms-BN.ms-MY.mt-MT.nb-NO.ne-NP.nl-BE.nl-NL.nn-NO.no-no.nso-ZA.oc-FR.or-IN.pa-IN.pl-PL.prs-AF.ps-AF.pt-BR.pt-PT.qut-GT.quz-BO.quz-EC.quz-PE.rm-CH.ro-mo.ro-RO.ru-mo.ru-RU.rw-RW.sah-RU.sa-IN.se-FI.se-NO.se-SE.si-LK.sk-SK.sl-SI.sma-NO.sma-SE.smj-NO.smj-SE.smn-FI.sms-FI.sq-AL.sr-BA.sr-CS.sr-Cyrl-BA.sr-Cyrl-CS.sr-Cyrl-ME.sr-Cyrl-RS.sr-Latn-BA.sr-Latn-CS.sr-Latn-ME.sr-Latn-RS.sr-ME.sr-RS.sr-sp.sv-FI.sv-SE.sw-KE.syr-SY.ta-IN.te-IN.tg-Cyrl-TJ.th-TH.tk-TM.tlh-QS.tn-ZA.tr-TR.tt-RU.tzm-Latn-DZ.ug-CN.uk-UA.ur-PK.uz-Cyrl-UZ.uz-Latn-UZ.uz-uz.vi-VN.wo-SN.xh-ZA.yo-NG.zh-CN.zh-HK.zh-MO.zh-SG.zh-TW.zu-ZA`.split(`.`),ge=`# Extended Worship Build\r
-\r
-Use this example to test an extended worship flow with multiple bridges, instrumentals, repeat counts, and a final chorus.\r
-\r
-\`\`\`ol:Config\r
-- Title: Extended Worship Build\r
-- Artist: Open Lyric Team\r
-- Copyright: 2026 Open Lyric\r
-- Key: E\r
-- Tempo: 70bpm\r
-- Time: 4/4\r
-- Strumming Patterns:\r
-	// Slow rolling pulse\r
-	d--u-- | d-u-d-\r
-	// Lift on the chorus\r
-	ddu--u | d-d-du\r
-- Structure: IV1x2Cx2V2x2Cx4IS1B1x6IS2B2x4B1x6IS1Cx4FO\r
-\`\`\`\r
-\r
-\`\`\`ol:Verse 1\r
-To the earth You humbly came,  The King of kings to take my place\r
-On the cross You died for me,  Your mercy made a way for grace\r
-\`\`\`\r
-\r
-\`\`\`ol:Verse 2\r
-When I look upon Your face,  I see compassion without end\r
-The Name of Jesus Christ our King,  My faithful healer and my friend\r
-\`\`\`\r
-\r
-\`\`\`ol:Intro\r
-||: C#m | B/D# | E | E :|| E |\r
-\`\`\`\r
-\r
-\`\`\`ol:Chorus\r
-|[C#m]Jesus, You carried my [B/D#]burden\r
-|[E]far beyond the reach of night\r
-|[C#m]Jesus, You opened my [B/D#]future\r
-|[E]with resurrection light\r
-\`\`\`\r
-\r
-\`\`\`ol:Bridge 1\r
-|[E]I am healed now      |[C#m]I am standing free\r
-    You have called me out  From all my slavery\r
-|[A]Every chain is broken |[B]Faith is rising here\r
-    Hearts awake in wonder  Love has drawn us near\r
-\`\`\`\r
-\r
-\`\`\`ol:Instrumental 1\r
-{c: Gtr Solo } | E | C#m | A | B | (2x)\r
-\`\`\`\r
-\r
-\`\`\`ol:Instrumental 2\r
-{c: Keys + Gtr Solo } | E | C#m | A | B | (4x)\r
-\`\`\`\r
-\r
-\`\`\`ol:Bridge 2\r
-|[E]Oh....     |[C#m]Oh....     |[A]Oh....     |[B]Oh....\r
-\`\`\`\r
-\r
-\`\`\`ol:Outro\r
-{c: Piano + pads } | E | C#m | A | B |\r
-\`\`\`\r
-\r
-\`\`\`ol:Final-Chorus\r
-|[F#m]Jesus, You carried my [C#]burden\r
-|[B]far beyond the reach of night\r
-|[F#m]Jesus, You opened my [C#]future\r
-|[B]with resurrection light\r
-\`\`\`\r
+import{_ as e,c as t,f as n,g as r,h as i,m as a,s as o}from"./editor-plugin-registry-C7CLjuN8.js";import{get as s,tokenize as c}from"@tonaljs/chord";import{fromSemitones as l,semitones as u}from"@tonaljs/interval";import{majorKey as d,minorKey as f}from"@tonaljs/key";import{chroma as p,enharmonic as ee,pitchClass as te,simplify as ne,transpose as re}from"@tonaljs/note";import ie from"typo-js";var ae=Object.defineProperty,m=(e,t)=>{let n={};for(var r in e)ae(n,r,{get:e[r],enumerable:!0});return t||ae(n,Symbol.toStringTag,{value:`Module`}),n},oe=[`light`,`dark`,`light-bs`,`dark-bs`],se={light:`Light`,dark:`Dark`,"light-bs":`Bootstrap Light`,"dark-bs":`Bootstrap Dark`},ce={light:{bg:`#ffffff`,fg:`#1f2328`,accent:`#2f6feb`,chordColor:`#9a6700`},dark:{bg:`#0f1115`,fg:`#e6e6e6`,accent:`#7aa2f7`,chordColor:`#f4b860`},"light-bs":{bg:`#ffffff`,fg:`#212529`,accent:`#0d6efd`,chordColor:`#d63384`},"dark-bs":{bg:`#212529`,fg:`#dee2e6`,accent:`#6ea8fe`,chordColor:`#e685b5`}};function h(e){return oe.includes(e)}function le(e){if(!h(e))throw Error(`OpenLyric: invalid theme ${JSON.stringify(e)} — expected one of ${oe.map(e=>`'${e}'`).join(`, `)}.`)}function ue(e){return e===`dark`||e===`dark-bs`?`dark`:`light`}function de(e){return e.endsWith(`-bs`)}var fe={light:`#ffffff`,dark:`#101923`,"light-bs":`#ffffff`,"dark-bs":`#2b3035`};function pe(e){return h(e)?fe[e]:fe.light}function me(e,t){let n=ce[t];e.style.background=`var(--ol-bg, ${n.bg})`,e.style.color=`var(--ol-fg, ${n.fg})`,e.style.fontFamily=`var(--ol-font-family, inherit)`,e.style.fontSize=`var(--ol-font-size, inherit)`}var he=`arc.af-ZA.am-ET.ar-AE.ar-BH.ar-DZ.ar-EG.ar-IQ.ar-JO.ar-KW.ar-LB.ar-LY.ar-MA.arn-CL.ar-OM.ar-QA.ar-SA.ar-SD.ar-SY.ar-TN.ar-YE.as-IN.az-az.az-Cyrl-AZ.az-Latn-AZ.ba-RU.be-BY.bg-BG.bn-BD.bn-IN.bo-CN.br-FR.bs-Cyrl-BA.bs-Latn-BA.ca-ES.co-FR.cs-CZ.cy-GB.da-DK.de-AT.de-CH.de-DE.de-LI.de-LU.dsb-DE.dv-MV.el-CY.el-GR.en-029.en-AU.en-BZ.en-CA.en-cb.en-GB.en-IE.en-IN.en-JM.en-MT.en-MY.en-NZ.en-PH.en-SG.en-TT.en-US.en-ZA.en-ZW.es-AR.es-BO.es-CL.es-CO.es-CR.es-DO.es-EC.es-ES.es-GT.es-HN.es-MX.es-NI.es-PA.es-PE.es-PR.es-PY.es-SV.es-US.es-UY.es-VE.et-EE.eu-ES.fa-IR.fi-FI.fil-PH.fo-FO.fr-BE.fr-CA.fr-CH.fr-FR.fr-LU.fr-MC.fy-NL.ga-IE.gd-GB.gd-ie.gl-ES.gsw-FR.gu-IN.ha-Latn-NG.he-IL.hi-IN.hr-BA.hr-HR.hsb-DE.hu-HU.hy-AM.id-ID.ig-NG.ii-CN.in-ID.is-IS.it-CH.it-IT.iu-Cans-CA.iu-Latn-CA.iw-IL.ja-JP.ka-GE.kk-KZ.kl-GL.km-KH.kn-IN.kok-IN.ko-KR.ky-KG.lb-LU.lo-LA.lt-LT.lv-LV.mi-NZ.mk-MK.ml-IN.mn-MN.mn-Mong-CN.moh-CA.mr-IN.ms-BN.ms-MY.mt-MT.nb-NO.ne-NP.nl-BE.nl-NL.nn-NO.no-no.nso-ZA.oc-FR.or-IN.pa-IN.pl-PL.prs-AF.ps-AF.pt-BR.pt-PT.qut-GT.quz-BO.quz-EC.quz-PE.rm-CH.ro-mo.ro-RO.ru-mo.ru-RU.rw-RW.sah-RU.sa-IN.se-FI.se-NO.se-SE.si-LK.sk-SK.sl-SI.sma-NO.sma-SE.smj-NO.smj-SE.smn-FI.sms-FI.sq-AL.sr-BA.sr-CS.sr-Cyrl-BA.sr-Cyrl-CS.sr-Cyrl-ME.sr-Cyrl-RS.sr-Latn-BA.sr-Latn-CS.sr-Latn-ME.sr-Latn-RS.sr-ME.sr-RS.sr-sp.sv-FI.sv-SE.sw-KE.syr-SY.ta-IN.te-IN.tg-Cyrl-TJ.th-TH.tk-TM.tlh-QS.tn-ZA.tr-TR.tt-RU.tzm-Latn-DZ.ug-CN.uk-UA.ur-PK.uz-Cyrl-UZ.uz-Latn-UZ.uz-uz.vi-VN.wo-SN.xh-ZA.yo-NG.zh-CN.zh-HK.zh-MO.zh-SG.zh-TW.zu-ZA`.split(`.`),ge=`# Extended Worship Build
+
+Use this example to test an extended worship flow with multiple bridges, instrumentals, repeat counts, and a final chorus.
+
+\`\`\`ol:Config
+- Title: Extended Worship Build
+- Artist: Open Lyric Team
+- Copyright: 2026 Open Lyric
+- Key: E
+- Tempo: 70bpm
+- Time: 4/4
+- Strumming Patterns:
+	// Slow rolling pulse
+	d--u-- | d-u-d-
+	// Lift on the chorus
+	ddu--u | d-d-du
+- Structure: IV1x2Cx2V2x2Cx4IS1B1x6IS2B2x4B1x6IS1Cx4FO
+\`\`\`
+
+\`\`\`ol:Verse 1
+To the earth You humbly came,  The King of kings to take my place
+On the cross You died for me,  Your mercy made a way for grace
+\`\`\`
+
+\`\`\`ol:Verse 2
+When I look upon Your face,  I see compassion without end
+The Name of Jesus Christ our King,  My faithful healer and my friend
+\`\`\`
+
+\`\`\`ol:Intro
+||: C#m | B/D# | E | E :|| E |
+\`\`\`
+
+\`\`\`ol:Chorus
+|[C#m]Jesus, You carried my [B/D#]burden
+|[E]far beyond the reach of night
+|[C#m]Jesus, You opened my [B/D#]future
+|[E]with resurrection light
+\`\`\`
+
+\`\`\`ol:Bridge 1
+|[E]I am healed now      |[C#m]I am standing free
+    You have called me out  From all my slavery
+|[A]Every chain is broken |[B]Faith is rising here
+    Hearts awake in wonder  Love has drawn us near
+\`\`\`
+
+\`\`\`ol:Instrumental 1
+{c: Gtr Solo } | E | C#m | A | B | (2x)
+\`\`\`
+
+\`\`\`ol:Instrumental 2
+{c: Keys + Gtr Solo } | E | C#m | A | B | (4x)
+\`\`\`
+
+\`\`\`ol:Bridge 2
+|[E]Oh....     |[C#m]Oh....     |[A]Oh....     |[B]Oh....
+\`\`\`
+
+\`\`\`ol:Outro
+{c: Piano + pads } | E | C#m | A | B |
+\`\`\`
+
+\`\`\`ol:Final-Chorus
+|[F#m]Jesus, You carried my [C#]burden
+|[B]far beyond the reach of night
+|[F#m]Jesus, You opened my [C#]future
+|[B]with resurrection light
+\`\`\`
 `,_e=`# Community Update Draft
 
 ## Summary
@@ -112,4 +112,4 @@ before converting it into anything else.
 `).length-1;for(let e=n;e<=r+i;e+=1)t.add(e)}),t}function fo(e){return e?.isFlush?!0:Array.isArray(e?.changes)?e.changes.some(e=>{let t=Number(e?.range?.startLineNumber)||1,n=Number(e?.range?.endLineNumber)||t,r=String(e?.text||``).replace(/\r\n?/g,`
 `);return t!==n||r.includes(`
 `)}):!1}function po(e=x.editor?.getModel(),t=null){if(!e||!(Array.isArray(t?.changes)?t.changes:[]).length)return!1;if(fo(t))return Z(),Q(),oo(e),!0;let n=uo(t);return n.size?(Z(),lo(e,n)):!1}function mo(){let e=x.editor?.getModel();if(Z(),Q(),e){if(!J()){$(e);return}if(!Ha()){$(e);return}V.timer=window.setTimeout(()=>{let e=x.editor?.getModel();if(!e||!J()||!Ha()){$(e);return}oo(e)},ha)}}async function ho(e=x.editor?.getModel()){if(Z(),Q(),!e)return;let t=T();try{await zo(q()),await oo(e)}finally{t()}}function go(e){return new monaco.Range(e.startLineNumber,e.startColumn,e.endLineNumber,e.endColumn)}function _o(e,t,n){return F(n)===`en`?e.toUpperCase()===e?t.toUpperCase():e[0]&&e[0].toUpperCase()===e[0]&&e.slice(1).toLowerCase()===e.slice(1)?t[0].toUpperCase()+t.slice(1):t:t}function vo(e){return Array.isArray(e)?e.filter(e=>typeof e==`string`&&e):[]}function yo(e){return String(e||``).replace(/\u200B/g,` `).replace(/\u200C/g,`[ZWNJ]`).replace(/\u200D/g,`[ZWJ]`)}function bo(e){return e===`​`?`[ZWSP]`:e===`‌`?`[ZWNJ]`:e===`‍`?`[ZWJ]`:e}function xo(e){let t=Array.from(String(e||``)).map(bo),n=t.join(`​`);return n.length>la&&(n=`${n.slice(0,la)}...`),t.length?`'${n}'`:`""`}function So(e,t=``){return ya(t)?xo(e):`"${yo(e)}"`}function Co(e){return Array.from(String(e||``)).map(e=>`${bo(e)}`).join(`​`)}function wo(e,t=``){let n=yo(e);if(!n||!ya(t))return n;let r=Co(e);return r?`${n}: ${r}`:n}function To(e){let t=yo(e);return t?`Add "${t}" to Custom Dictionary`:`Add to Custom Dictionary`}async function Eo(e,t,n){if(!e?.getSuggestions||!t)return[];try{return vo(await e.getSuggestions(t))}catch(e){return console.error(`Failed to load ${n} spellcheck suggestions for "${t}".`,e),[]}}async function Do(e,t,n,r){if(!e||!t)return[];if(typeof e.getPrefixSuggestions==`function`)try{return vo(await e.getPrefixSuggestions(t,r))}catch(e){return console.error(`Failed to load ${n} spellcheck prefix suggestions for "${t}".`,e),[]}return Eo(e,t,n)}async function Oo(e,t,n){let r=I(e);if(!r||!t||typeof r.providerFactory==`function`)return[];let i=Oa(e,r);if(!i||i===n)return[];try{return await i.initialize?.(),i.isReady?.()?vo(await i.getSuggestions(t)):[]}catch(n){return console.error(`Failed to recover ${e} spellcheck suggestions for "${t}".`,n),[]}finally{i.dispose?.()}}function ko(e){let t=[],n=pi(e);return n&&t.push(n),q().forEach(n=>{t.includes(n)||G(n)?.shouldCheckWord?.(e)&&t.push(n)}),Array.from(new Set(t.map(F).filter(Boolean)))}function Ao(e,t=``){let n=F(t);return n?W(n)?[n]:[]:ko(e).filter(W)}async function jo(e,t){let n=Array.isArray(t)?t:Ao(e),r=n.some(ya),i=r?H():0,a=0,o=``,s=0;try{for(let t of n){let n=G(t);if(!n||(await Y(t),!n.isReady()))continue;let r=[e],i=R(e,t);i&&i!==e&&r.push(i);for(let e of r){a+=1;let r=await Eo(n,e,t);if(!r.length&&F(t)!==`en`&&(r=await Oo(t,e,n)),r.length)return o=F(t)||t,s=r.length,{languageCode:t,suggestions:r}}}return null}finally{r&&U(`quick fix resolve`,i,`chars=${ba(e)} candidates=${n.length} candidateCodes=${n.join(`,`)||`none`} attempts=${a} language=${o||`none`} suggestions=${s}`)}}async function Mo(e,t,n){let r=go(t),i=e.getValueInRange(r),a=Ao(i,t?.origin),o=Po(e,t),s=o?H():0,c=0,l=``;if(!a.length)return[];try{let o=await jo(i,a),s=[];if(l=F(t?.origin)||F(o?.languageCode)||F(a[0])||``,l&&!Pa(l,i)){let e=K(i,l),r=e?`custom-dictionary:${l}:${e}`:``;if(r&&!n.has(r)){let e=To(i);n.add(r),s.push({title:e,kind:pa,diagnostics:[t],command:{id:fa,title:e,arguments:[{languageCode:l,word:i}]},isPreferred:!0})}}if(o){let{languageCode:a,suggestions:c}=o;l=F(a)||a,c.forEach((o,c)=>{let u=_o(i,o,a),d=`${t.startLineNumber}:${t.startColumn}:${u}`;n.has(d)||(n.add(d),s.push({title:wo(u,l||a),kind:pa,diagnostics:[t],edit:{edits:[{resource:e.uri,textEdit:{range:r,text:u}}]},isPreferred:c===0&&!s.length}))})}return c=s.length,s}finally{o&&U(`quick fix marker actions`,s,`line=${t.startLineNumber} chars=${ba(i)} language=${l||`none`} actions=${c}`)}}function No(e,t){return!e||!t?``:e.getValueInRange(go(t))}function Po(e,t){if(String(t?.code)!==da)return!1;let n=L().map(({languageCode:e})=>e);if(!n.length)return!1;let r=F(t?.origin);if(n.includes(r))return!0;let i=No(e,t);return n.some(e=>{let t=R(i,e);return!!(t&&li(t))})}async function Fo(e,t){let n=No(e,t),r=!!(e&&Po(e,t)),i=r?H():0,a=0,o=0,s=!1,c=!1;try{if(!e||!Po(e,t))return``;let r=L()[0]?.languageCode;if(!r)return``;let i=G(r);if(!i?.getSegmentationSuggestion||(await Y(r),c=i.isReady(),!c))return``;let l=[n],u=R(n,r);u&&u!==n&&l.push(u),o=l.length;for(let e of l){a+=1;try{let t=await i.getSegmentationSuggestion(e);if(typeof t==`string`&&t&&t!==e)return s=!0,t}catch(t){console.error(`Failed to load a segmentation suggestion for "${e}".`,t)}}return``}finally{r&&U(`segmentation lookup`,i,`chars=${ba(n)} candidates=${o} attempts=${a} found=${String(s)} ready=${String(c)}`)}}async function Io(e,t){let n=e?.getModel?.();if(!n)return!1;let r=T(),i=H(),a=0,o=0,s=0,c=!1;try{let r=H();await new Promise(e=>{if(typeof globalThis.requestAnimationFrame==`function`){globalThis.requestAnimationFrame(()=>e());return}globalThis.setTimeout(e,0)}),a=H()-r;let i=H(),l=await Fo(n,t);if(o=H()-i,!l)return!1;let u=H();return c=e.executeEdits(`open-lyric-segmentation`,[{range:go(t),text:l}]),s=H()-u,c}finally{r(),U(`segmentation apply`,i,`paintWait=${a.toFixed(1)}ms lookup=${o.toFixed(1)}ms edit=${s.toFixed(1)}ms applied=${String(c)}`)}}function Lo(){V.codeActionProviderDisposable?.dispose?.(),V.codeActionProviderDisposable=null,V.codeActionProviderRegistered=!1}function Ro(e=[]){if(!(Array.isArray(e)&&e.some(W))){Lo();return}if(V.codeActionProviderRegistered)return;let t={async provideCodeActions(e,t,n){let r=n.markers.filter(e=>String(e.code)===da),i=xa(e,r),a=i?H():0,o=0;if(!r.length||!Sa(n))return{actions:[],dispose(){}};let s=T();try{let t=new Set,n=(await Promise.all(r.map(n=>Mo(e,n,t)))).flat();return o=n.length,{actions:n,dispose(){}}}finally{s(),i&&U(`quick fix search`,a,`markers=${r.length} actions=${o}`)}}},n=ma.map(e=>monaco.languages.registerCodeActionProvider(e,t));V.codeActionProviderDisposable={dispose(){n.forEach(e=>{e?.dispose?.()})}},V.codeActionProviderRegistered=!0}async function zo(e=q()){let t=Array.from(new Set(e.map(F).filter(Boolean)));if(Ro(t),!t.length)return new Map;let n=await Promise.all(t.map(async e=>[e,await Y(e)]));return new Map(n)}async function Bo(e,{languageCodes:t=q(),limit:n=8}={}){let r=String(e||``),i=Math.max(1,Number(n)||8),a=Array.from(new Set((Array.isArray(t)?t:[t]).map(F).filter(Boolean))),o=Math.max(1,Math.ceil(i/Math.max(1,a.length)));if(!r||!a.length)return[];zo(a);let s=new Set,c=[],l=(e,t,n)=>{let i=_o(r,n,e),a=`${F(e)||e}:${R(i,e)||i.toLocaleLowerCase()}`;return!s.has(a)&&(s.add(a),c.push({languageCode:e,sourceLabel:t,suggestion:i}),!0)};for(let e of a){let t=G(e),n=I(e),a=n?.displayName?`${n.displayName} dictionary`:`${String(e||``).toUpperCase()} dictionary`,s=n?.displayName?`${n.displayName} custom dictionary`:`${String(e||``).toUpperCase()} custom dictionary`;if(Ia(e,r,o).forEach(t=>{l(e,s,t)}),c.length>=i)return c.slice(0,i);if(!t?.isReady?.())continue;let u=[r],d=R(r,e);d&&d!==r&&u.push(d);for(let n of u){let r=await Do(t,n,e,o);if(r.length&&(r.forEach(t=>{l(e,a,t)}),c.length>=i))return c.slice(0,i)}}return c.slice(0,i)}export{Vt as $,we as $t,Wr as A,St as At,Yn as B,Sn as Bt,ii as C,Xt as Ct,z as D,wt as Dt,li as E,gt as Et,Br as F,C as Ft,Un as G,yn as Gt,Zn as H,Tn as Ht,Ir as I,gn as It,qn as J,dn as Jt,M as K,x as Kt,N as L,S as Lt,Lr as M,ht as Mt,Rr as N,Ct as Nt,F as O,Dt as Ot,zr as P,tn as Pt,Ht as Q,xn as Qt,nr as R,wn as Rt,L as S,On as St,fi as T,bn as Tt,Bn as U,sn as Ut,rr as V,on as Vt,A as W,mt as Wt,Ie as X,vt as Xt,Le as Y,yt as Yt,Wt as Z,bt as Zt,pi as _,m as _n,xt as _t,po as a,ye as an,_ as at,si as b,Cn as bt,Ma as c,oe as cn,qt as ct,Aa as d,me as dn,Je as dt,Oe as en,rt as et,ja as f,le as fn,Ve as ft,vi as g,h as gn,Jt as gt,Gi as h,de as hn,Ge as ht,Ea as i,xe as in,Zt as it,Ar as j,Et as jt,R as k,En as kt,ho as l,se as ln,Ne as lt,oa as m,pe as mn,Ke as mt,Na as n,Ee as nn,nt,Bo as o,ge as on,Kt as ot,sa as p,ue as pn,Re as pt,Jn as q,un as qt,$ as r,Ce as rn,Fe as rt,za as s,he as sn,Gt as st,fa as t,De as tn,v as tt,mo as u,ce as un,Pe as ut,P as v,g as vt,ui as w,pt as wt,di as x,_t as xt,ri as y,Tt as yt,tr as z,Dn as zt};
-//# sourceMappingURL=spellcheck-DJAwvk5q.js.map
+//# sourceMappingURL=spellcheck-D4frca2x.js.map

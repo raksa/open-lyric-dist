@@ -9,7 +9,7 @@
  * consumers, so the live app is the integration example).
  */
 export { OpenLyric } from './OpenLyric.js';
-export type { OpenLyricContentType, OpenLyricElementMapOptions, OpenLyricImageOptions, OpenLyricInfo, OpenLyricOptions, OpenLyricSectionInfo, OpenLyricValueOptions, } from './OpenLyric.js';
+export type { OpenLyricAttachment, OpenLyricAttachmentType, OpenLyricContentType, OpenLyricElementMapOptions, OpenLyricImageOptions, OpenLyricInfo, OpenLyricOptions, OpenLyricSectionInfo, OpenLyricValueOptions, } from './OpenLyric.js';
 export { OpenLyricMarkdownManager } from './OpenLyricMarkdownManager.js';
 export type { OpenLyricMarkdownInfo, OpenLyricMarkdownOptions, } from './OpenLyricMarkdownManager.js';
 export { Editor } from './Editor.js';

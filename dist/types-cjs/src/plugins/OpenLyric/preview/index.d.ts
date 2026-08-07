@@ -13,6 +13,7 @@ declare function renderOpenLyricPreviewSectionsForLine(markdown: any, lineNumber
 } | null;
 declare function renderSongSectionPlainTextData(sectionData: any): any;
 declare function createOpenLyricPresentationData(markdown: any, options?: {}): {
+    attachments: import("open-lyric").OpenLyricAttachment[];
     configFieldLines: string[];
     title: any;
     secondaryText: string;
