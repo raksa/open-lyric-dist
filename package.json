@@ -1,6 +1,6 @@
 {
   "name": "open-lyric",
-  "version": "0.1.40",
+  "version": "0.1.42",
   "description": "Embeddable, framework-free Open Lyric components: song editor, markdown preview, lyric preview, and dashboard shell.",
   "license": "MIT",
   "author": "raksa <eng.raksa@gmail.com>",
