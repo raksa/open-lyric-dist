@@ -130,6 +130,25 @@ export interface OpenLyricElementMapOptions extends OpenLyricImageOptions {
      */
     isShowingAttachments?: boolean;
     /**
+     * Keep the Config `Strumming Patterns` — the song's strum-hand grids — in the
+     * `Info` entry, which is the only entry they can reach: they are drawn under
+     * the song's header, and a section carries none of them. On by default, the
+     * way the preview panel shows them; pass `false` to leave them out of the
+     * card.
+     *
+     * They say how the song is played rather than what is sung, so a lyric slide
+     * usually wants them gone while the preview keeps them. It drops the grids
+     * from every form the entry comes out in — `'text'`, `'html'` and
+     * `'png-image'` — so the three stay in agreement, and it is the section
+     * counterpart of {@link OpenLyricValueOptions.isShowingStrummingPatterns}.
+     *
+     * A map without the card ({@link isWithInfo} off, or one scoped to a real
+     * part) has nothing for this to hide. It hides the Config field alone: a
+     * `{p: 1}` marker inside a section is notation the section carries, and it
+     * stays where it is.
+     */
+    isShowingStrummingPatterns?: boolean;
+    /**
      * Scope the map to ONE section (part) name — `'Verse 1'` yields
      * `{ 'Verse 1': … }`. The render pipeline is scoped too, so the rest of the
      * song is never built (and, for images, never rasterized): this is the cheap
@@ -284,6 +303,21 @@ export interface OpenLyricValueOptions extends OpenLyricImageOptions {
      * this.
      */
     isShowingAttachments?: boolean;
+    /**
+     * Keep the Config `Strumming Patterns` — the song's strum-hand grids, drawn
+     * under the header in the rendered forms and listed as a
+     * `Strumming Pattern(s):` block in the text. On by default, the way the
+     * preview panel shows them; pass `false` to leave them out of the value.
+     *
+     * They say how the song is played rather than what is sung, so a lyric slide
+     * or a hand-out for singers usually wants them gone while the preview keeps
+     * them. It drops the grids from every form — `'text'`, `'html'` and
+     * `'png-image'` — so the three stay in agreement.
+     *
+     * It hides the Config field alone: a `{p: 1}` marker inside a section is
+     * notation that section carries, and it stays where it is.
+     */
+    isShowingStrummingPatterns?: boolean;
     /**
      * Image and HTML. The font family the song is rendered in — a CSS
      * `font-family` value (`'Georgia, serif'`), overriding whatever face this
@@ -548,7 +582,10 @@ export declare class OpenLyric extends OpenLyricPreviewComponent {
      *
      * The song's Config `Attachments` come along inside that entry the way the
      * panel lists them — under the header, so no section carries any —
-     * and `isShowingAttachments: false` leaves the links out of it.
+     * and `isShowingAttachments: false` leaves the links out of it. The Config
+     * `Strumming Patterns` ride along in that entry for the same reason — they
+     * are drawn under the header — and `isShowingStrummingPatterns: false`
+     * leaves the grids out of it.
      *
      * `{ key: 'Verse 1' }` narrows it to that one entry and renders only that
      * section, so asking for one part costs one part's work; `{ key: 'Info' }`
@@ -584,7 +621,9 @@ export declare class OpenLyric extends OpenLyricPreviewComponent {
      * `isWithKeyNote: true` to force them on or `false` to force them off.
      *
      * The song's Config `Attachments` come along the way the panel lists them;
-     * `isShowingAttachments: false` leaves the links out of all three forms.
+     * `isShowingAttachments: false` leaves the links out of all three forms, and
+     * `isShowingStrummingPatterns: false` does the same for the Config
+     * `Strumming Patterns`.
      *
      * The image can also be asked for in another look than the one on screen:
      * `{ theme }` renders it in that theme's colours and `{ css }` adds rules
@@ -647,7 +686,9 @@ export declare class OpenLyric extends OpenLyricPreviewComponent {
      *
      * `showAttachments` is the getters' `isShowingAttachments`, and turns into
      * the render pipeline's `hideAttachments`: omitted, the Config links are
-     * carried the way the preview panel lists them.
+     * carried the way the preview panel lists them. `showStrummingPatterns` is
+     * the getters' `isShowingStrummingPatterns` and reads the same way, turning
+     * into `hideStrummingPatterns`.
      */
     private getContentRenderOptions;
     private buildTextElementMap;

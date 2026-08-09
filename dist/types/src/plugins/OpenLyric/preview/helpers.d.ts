@@ -1,10 +1,10 @@
 import { hasChordProgressionText } from '../../../editor/scripts/shared.js';
+import { createPreviewTargetId } from '../domain/fence-locations.js';
 declare const DEFAULT_STRUMMING_PATTERN_TEXT = "---- | ---- | ---- | ----";
 declare const OPEN_LYRIC_PATTERN_TARGET_ID_PREFIX = "ol-song-view-pattern";
 declare function escapeHtml(input: any): string;
 declare function sanitizeHtml(html: any): string;
 declare function normalizeMarkdownRenderableUrls(value: any): string;
-declare function createPreviewTargetId(value: any): string;
 declare function getEditorDataAttributes(lineNumber: any, column?: number): string;
 declare function getFenceHeaderEditorDataAttributes(startLineNumber: any): string;
 /**

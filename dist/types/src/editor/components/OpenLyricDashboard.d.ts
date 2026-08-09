@@ -16,6 +16,15 @@ export interface OpenLyricDashboardDraftContext {
 export type OpenLyricDashboardLoadValue = () => Promise<OpenLyricDashboardDraft | string | null> | OpenLyricDashboardDraft | string | null;
 export type OpenLyricDashboardOnValueChange = (value: string, context: OpenLyricDashboardDraftContext) => void | Promise<void>;
 export type OpenLyricDashboardSaveValue = (value: string, context: OpenLyricDashboardDraftContext) => void | Promise<void>;
+/** Options for {@link OpenLyricDashboard.reset}. */
+export interface OpenLyricDashboardResetOptions {
+    /**
+     * Ask the user to confirm before discarding, exactly as the topbar Reset
+     * button does. Off by default: a programmatic reset is the host's own
+     * command, not a stray click, so it has already decided.
+     */
+    confirmFirst?: boolean;
+}
 export interface OpenLyricDashboardOptions extends OpenLyricComponentOptions {
     /**
      * Show web-only chrome (`gif` info disclosure, share-link menu entry,
@@ -123,6 +132,15 @@ export declare class OpenLyricDashboard extends OpenLyricComponent {
     private openLyricMarkdownManagerRef;
     private editorRef;
     private isWebValue;
+    /**
+     * Panel visibility the host asked for before the app booted, keyed by panel.
+     * `layoutController.loadPreferences()` runs inside `app.initialize()` and
+     * would overwrite anything applied earlier, so these wait for it — see
+     * {@link applyPendingPanelVisibility}.
+     */
+    private readonly pendingPanelVisibility;
+    /** True once that drain has run: panel writes go straight through after it. */
+    private isApplicationBooted;
     private readonly explicitTheme;
     private applicationInstance;
     private lastValueText;
@@ -184,8 +202,68 @@ export declare class OpenLyricDashboard extends OpenLyricComponent {
     getSlot(slotNumber: number): HTMLDivElement;
     get isWeb(): boolean;
     set isWeb(next: boolean);
+    /**
+     * Whether the Monaco editor panel is showing — the topbar's editor toggle as
+     * an accessor, and it behaves like one: the write goes through
+     * `ShellLayoutController.setEditorVisible()`, so the shell reconciles
+     * (display, toggle button state, panel sizes, resize handles), relayouts the
+     * editor, and persists the new panel set exactly as a click would.
+     *
+     * The read side is the shell's **effective** truth rather than the value last
+     * assigned, and the two can differ: hiding the last visible panel shows
+     * another one instead (the app never leaves all three hidden), and a panel
+     * this page shell has no element for reads `false` however it was set.
+     *
+     * Assigning before the app has booted is buffered and applied right after —
+     * the stored panel preference is read during `mount()` and would otherwise
+     * overwrite it — and reads back the buffered request until then.
+     */
+    get isEditorOpened(): boolean;
+    set isEditorOpened(next: boolean);
+    /**
+     * Whether the markdown preview panel is showing; same contract as
+     * {@link isEditorOpened}.
+     */
+    get isMarkdownPreviewOpened(): boolean;
+    set isMarkdownPreviewOpened(next: boolean);
+    /**
+     * Whether the Open Lyric preview panel is showing; same contract as
+     * {@link isEditorOpened}, plus one more gate: the panel belongs to the
+     * notation plugin, so while that plugin is off the panel stays hidden and
+     * this reads `false` whatever was assigned — which is why the topbar toggle
+     * offers to enable the plugin there rather than showing the panel.
+     */
+    get isLyricPreviewOpened(): boolean;
+    set isLyricPreviewOpened(next: boolean);
     /** The current document markdown (empty until mounted). */
     get value(): string;
+    /**
+     * Issue the **explicit save command** — the one Ctrl/Cmd+S, both topbar Save
+     * buttons and the editor tools menu's Save all reach,
+     * `DocumentController.saveCurrentDocument()`. With {@link saveValue} assigned
+     * that lands on the host hook (the dashboard shadows the method for the
+     * lifetime of the mount, so this needs no separate route); without it the
+     * built-in `.md` download runs, exactly as a click would.
+     *
+     * More permissive than those buttons in one way: `syncEditorDirtyState()`
+     * disables them while the document is clean and this stays available — a
+     * host driving saves from its own chrome decides for itself whether a clean
+     * document is worth writing. A no-op before the app has booted.
+     */
+    save(): void;
+    /**
+     * Reset — the topbar's Reset button and the counterpart of {@link save}: drop
+     * the edits made since the last save and put the saved text back through the
+     * app's own document pipeline, so the previews, the draft
+     * ({@link onValueChange}) and the dirty flag all follow. A no-op when there
+     * is nothing unsaved, and before the app has booted.
+     *
+     * The button confirms first, because the text it drops is the one thing
+     * browser storage will not bring back. This does not: the caller is the
+     * host's own chrome, which either already asked or knows it need not. Pass
+     * `{ confirmFirst: true }` for the button's full behavior, prompt included.
+     */
+    reset({ confirmFirst }?: OpenLyricDashboardResetOptions): void;
     /** The previews this dashboard owns, in mount order. */
     private get ownedPreviews();
     protected handleMount(container: HTMLElement): Promise<void>;
@@ -316,5 +394,32 @@ export declare class OpenLyricDashboard extends OpenLyricComponent {
      * on whatever the page has by then.
      */
     private applyWebOnlyChrome;
+    /**
+     * Which panels the shell is actually showing, clamped exactly as the app
+     * clamps them: `getEffectivePanelVisibility()` zeroes a panel this page shell
+     * has no element for, gates the Open Lyric panel on the notation plugin, and
+     * force-shows a fallback rather than let all three hide. Before boot there is
+     * no controller worth asking, so the raw `state` seed
+     * (`DEFAULT_PANEL_VISIBILITY` for this page shell) stands in.
+     *
+     * Read off `applicationInstance`, never `application`: a getter must not be
+     * the thing that constructs the composition root.
+     */
+    private panelVisibility;
+    /** One panel's read side: the buffered request until boot, the shell after. */
+    private panelOpened;
+    /** One panel's write side: the controller owns the rules, we only ask. */
+    private setPanelOpened;
+    /**
+     * Apply the panel visibility the host asked for before boot.
+     *
+     * Opens go first, then hides — deliberately. Each controller setter carries
+     * its own "never leave all three hidden" rescue, so hiding two panels before
+     * showing the third trips that rescue and forces a panel the host asked to
+     * hide back on. Three reconciles instead of one is the price of letting the
+     * app's own rules decide, and each is cheap (style writes plus a coalesced
+     * relayout frame).
+     */
+    private applyPendingPanelVisibility;
     private normalizeDraft;
 }

@@ -13,9 +13,11 @@ export type { OpenLyricAttachment, OpenLyricAttachmentType, OpenLyricContentType
 export { OpenLyricMarkdownManager } from './OpenLyricMarkdownManager.js';
 export type { OpenLyricMarkdownInfo, OpenLyricMarkdownOptions, } from './OpenLyricMarkdownManager.js';
 export { Editor } from './Editor.js';
-export type { EditorOptions, EditorSharedSurfaceBridge } from './Editor.js';
+export type { EditorFenceFocusOptions, EditorFenceFocusTarget, EditorOptions, EditorSharedSurfaceBridge, EditorVerticalLine, ResolvedEditorVerticalLine, } from './Editor.js';
+export { listOpenLyricFences } from '../../plugins/OpenLyric/domain/fence-locations.js';
+export type { OpenLyricFenceLocation } from '../../plugins/OpenLyric/domain/fence-locations.js';
 export { getActiveOpenLyricDashboard, OpenLyricDashboard, } from './OpenLyricDashboard.js';
-export type { OpenLyricDashboardDraft, OpenLyricDashboardDraftContext, OpenLyricDashboardLoadValue, OpenLyricDashboardOnValueChange, OpenLyricDashboardOptions, OpenLyricDashboardSaveValue, } from './OpenLyricDashboard.js';
+export type { OpenLyricDashboardDraft, OpenLyricDashboardDraftContext, OpenLyricDashboardLoadValue, OpenLyricDashboardOnValueChange, OpenLyricDashboardOptions, OpenLyricDashboardResetOptions, OpenLyricDashboardSaveValue, } from './OpenLyricDashboard.js';
 export { OpenLyricComponent } from './internal/OpenLyricComponent.js';
 export { OpenLyricPreviewComponent } from './internal/OpenLyricPreviewComponent.js';
 export { OPEN_LYRIC_PLUGIN_API_VERSION } from './internal/types.js';

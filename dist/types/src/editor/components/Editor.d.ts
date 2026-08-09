@@ -1,8 +1,11 @@
 import { OpenLyricComponent } from './internal/OpenLyricComponent.js';
 import { type LoadMonacoResources } from './internal/monaco-boot.js';
 import type { OpenLyricComponentOptions, OpenLyricEditorLike, OpenLyricSurface, OpenLyricTheme } from './internal/types.js';
+import { type OpenLyricFenceLocation } from '../../plugins/OpenLyric/domain/fence-locations.js';
+import { type EditorVerticalLine, type ResolvedEditorVerticalLine } from './internal/vertical-lines.js';
 /** Which surface a mounted `Editor` is currently editing through. */
 export type EditorSurfaceKind = 'monaco' | 'textarea' | 'none';
+export type { EditorVerticalLine, ResolvedEditorVerticalLine, } from './internal/vertical-lines.js';
 export interface EditorOptions extends OpenLyricComponentOptions {
     /** Initial editor content. */
     value?: string;
@@ -48,6 +51,12 @@ export interface EditorOptions extends OpenLyricComponentOptions {
      * {@link Editor.isSaveShortcutEnabled}, which toggles it at any time.
      */
     saveShortcut?: boolean;
+    /**
+     * Vertical rules down the editing surface, at a column each — the guides a
+     * host draws a line length at. See {@link Editor.setVerticalLines}, which
+     * replaces them at any time; empty (the default) draws none.
+     */
+    verticalLines?: Array<EditorVerticalLine | number>;
 }
 /**
  * Wrap-phase bridge to an editor surface owned by something else (the
@@ -61,6 +70,23 @@ export interface EditorSharedSurfaceBridge {
     focus?(): void;
     getMonaco?(): unknown;
     getMonacoEditor?(): unknown;
+}
+/** Where inside a fence {@link Editor.focusFence} leaves the caret. */
+export type EditorFenceFocusTarget = 'header' | 'body';
+export interface EditorFenceFocusOptions {
+    /**
+     * Which match to use when more than one fence answers — a document that
+     * declares the same part twice. Validation flags that, but the caret still
+     * has to be able to reach the second one. 1-based; defaults to the first.
+     */
+    occurrence?: number;
+    /**
+     * `'header'` (the default) lands on the part name in the ```` ```ol: ````
+     * opening line — where double-clicking a preview section title lands.
+     * `'body'` lands at the start of the first body line, falling back to the
+     * header line for a fence with no body.
+     */
+    target?: EditorFenceFocusTarget;
 }
 /**
  * `Editor` — the standalone code editor (`gep`).
@@ -131,6 +157,13 @@ export declare class Editor extends OpenLyricComponent implements OpenLyricEdito
     private fontSizeApplied;
     /** Monaco's own font size, captured before we ever override it. */
     private monacoDefaultFontSizePx;
+    private verticalLineList;
+    /** True once rules were pushed onto the surfaces (see applyVerticalLines). */
+    private verticalLinesApplied;
+    /** The width-override sheet, built only for a rule thicker than Monaco's. */
+    private verticalLinesStyleEl;
+    /** Ties that sheet to this instance's surface, and to no other on the page. */
+    private readonly verticalLinesScopeId;
     private monaco;
     private editorInstance;
     private model;
@@ -282,6 +315,39 @@ export declare class Editor extends OpenLyricComponent implements OpenLyricEdito
      * leaving the panel stylesheet and Monaco's own defaults in charge.
      */
     get resolvedFontFamily(): string;
+    /**
+     * The vertical rules currently drawn, normalized and ordered by column —
+     * what {@link setVerticalLines} last accepted. A copy, so a host cannot edit
+     * the live list behind the component's back.
+     */
+    get verticalLines(): ResolvedEditorVerticalLine[];
+    /**
+     * Draw vertical rules down the editing surface, one per entry, at a column
+     * counted in characters:
+     *
+     * ```ts
+     * editor.setVerticalLines([{ characters: 80, width: 1, color: '#000000FF' }]);
+     * ```
+     *
+     * `width` (pixels, default 1) and `color` (any CSS color; default is the
+     * surface's own faint ruler color) are optional, and a bare number is
+     * shorthand for a rule at that column. Replaces the whole set, so an empty
+     * array — or no argument — clears them. Applies immediately, and the setting
+     * survives unmount/mount as the typography settings do.
+     *
+     * Both surfaces draw them, so flipping to the Simple Editor keeps the guides:
+     * Monaco through its own `rulers`, the textareas through a background layer
+     * per rule. A column is the width of one `x` in the surface's font, which is
+     * how Monaco itself counts — exact on a monospace face, an approximation on
+     * any other, and the same approximation on both surfaces.
+     *
+     * In shared-surface (facade) mode the rules are pushed onto the host
+     * application's Monaco, which is the surface this instance is speaking for —
+     * so call this once that surface exists (after the dashboard's `mount()`
+     * resolves, say). A facade is never `mounted` in the component's own sense,
+     * which is why there is no later hook that would re-assert them for you.
+     */
+    setVerticalLines(lines?: ReadonlyArray<EditorVerticalLine | number>): void;
     /** True while this instance is a facade over a host-owned surface. */
     get isSharedSurface(): boolean;
     /**
@@ -307,6 +373,42 @@ export declare class Editor extends OpenLyricComponent implements OpenLyricEdito
     /** Move the caret to a source position, reveal it, and focus the surface. */
     focusRange(line: number, column: number): void;
     focus(): void;
+    /**
+     * Every Open Lyric fence the current document declares, in source order,
+     * keyed the way the previews key them: `id` is the markdown preview's fence
+     * element id and `songViewId` the lyric preview's, so the same value
+     * addresses a fence in either direction — hand it to `focusFence` here, or
+     * to `document.getElementById` / `PreviewController.jumpToPreviewFence` over
+     * there.
+     *
+     * Read from the live document text on each call, so it is always current;
+     * unrecognized ```` ```ol:… ```` headers are skipped, exactly as the
+     * previews skip them.
+     */
+    getFences(): OpenLyricFenceLocation[];
+    /**
+     * Move the caret to a fence named by id, and return whether one matched.
+     *
+     * Tolerant about what "id" means: either preview's element id
+     * (`ol-preview-target-chorus-1`, `ol-song-view-target-chorus-1`) or the part
+     * name itself (`Chorus 1`) all resolve to the same fence, so a host can pass
+     * back whatever it happens to be holding — the id it read off a clicked
+     * preview element, or a name from {@link getFences}.
+     */
+    focusFence(fenceId: string, options?: EditorFenceFocusOptions): boolean;
+    /**
+     * Move the caret to the fence declaring `partName` (`'Chorus 1'`, `'Verse
+     * 2'`, `'Config'`), and return whether one matched. Matching ignores case
+     * and surrounding/repeated whitespace.
+     */
+    focusPart(partName: string, options?: EditorFenceFocusOptions): boolean;
+    /**
+     * The shared half of `focusFence`/`focusPart`: pick the requested occurrence
+     * and hand the source position to {@link focusRange}, which is what makes
+     * both work on every surface — Monaco, the simple textarea, and the shared
+     * surface of a dashboard facade.
+     */
+    private focusMatchingFence;
     /**
      * Swap between the Monaco surface and the plain "Simple Editor" textarea,
      * carrying the document across. Monaco stays alive (and keeps its undo
@@ -415,6 +517,40 @@ export declare class Editor extends OpenLyricComponent implements OpenLyricEdito
      * stylesheet's own size and hands Monaco back the size it booted with.
      */
     private applyFontSize;
+    /**
+     * Draw {@link verticalLines} on whichever surfaces exist — Monaco through its
+     * `rulers` option, the textareas as background layers, so both surfaces of
+     * one panel guide the eye to the same columns.
+     *
+     * Mirrors {@link applyFontFamily}: with nothing to draw it does nothing
+     * unless rules were drawn before, in which case it clears them — that is what
+     * `verticalLinesApplied` tracks, so an empty `setVerticalLines([])` really
+     * does erase the guides instead of leaving the last set painted on.
+     *
+     * The textarea half measures, so it must run after the surfaces are in the
+     * DOM they will render in (the chrome moves them into its panel, whose
+     * stylesheet sets the font they are measured in).
+     */
+    private applyVerticalLines;
+    /**
+     * Keep the width-override sheet in step with the rules — built on the first
+     * rule thicker than the 1px Monaco draws, and dropped again when none is
+     * left, so the default case ships no CSS at all.
+     */
+    private syncVerticalLineWidthStyle;
+    /**
+     * What the width CSS is scoped to: this instance's own surface host when it
+     * has one, else — facade mode — the host application's Monaco root, which is
+     * the surface the rules were pushed onto. Null when there is neither, and the
+     * sheet is then not built at all.
+     */
+    private getVerticalLineScopeElement;
+    /**
+     * Drop everything the rules put outside this component — the width sheet in
+     * `document.head`, and the scope marker, which in facade mode sits on an
+     * element the host owns and must be handed back clean.
+     */
+    private teardownVerticalLines;
     private setValueInternal;
     private emitValueChange;
     private lineColumnToOffset;
