@@ -240,6 +240,13 @@ export interface OpenLyricRenderContext {
     /** The component's mounted render root. */
     root: HTMLElement;
 }
+/**
+ * A HOST's render notification — the preview counterpart of a plugin's
+ * `onBeforeRender`/`onAfterRender`, assigned rather than subscribed
+ * (`preview.onRendered = …`). See `OpenLyricPreviewComponent.onWillRender` /
+ * `onRendered`.
+ */
+export type OpenLyricRenderHook = (context: OpenLyricRenderContext) => void;
 /** What a plugin receives on install — a stable, read-only view of its host. */
 export interface OpenLyricComponentHost extends OpenLyricEmitter {
     readonly surface: OpenLyricSurface;

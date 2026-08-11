@@ -1,5 +1,5 @@
 import { OpenLyricComponent } from './OpenLyricComponent.js';
-import { type OpenLyricEditorLike, type OpenLyricFontFaceList, type OpenLyricFontFaceSection, type OpenLyricPreviewOptions, type OpenLyricTheme } from './types.js';
+import { type OpenLyricEditorLike, type OpenLyricFontFaceList, type OpenLyricFontFaceSection, type OpenLyricPreviewOptions, type OpenLyricRenderHook, type OpenLyricTheme } from './types.js';
 /**
  * Shared base for the two read-only previews (`OpenLyric`, the lyric preview,
  * and `OpenLyricMarkdownManager`, the markdown preview).
@@ -21,6 +21,48 @@ export declare abstract class OpenLyricPreviewComponent extends OpenLyricCompone
      * component without subclassing.
      */
     extraRenderOptions: Record<string, unknown> | null;
+    /**
+     * Called immediately BEFORE every full re-render of the mounted preview, with
+     * `{ value, root }` — the value about to be rendered, and the render root
+     * still holding the PREVIOUS render's markup (the last chance to read it:
+     * measure a scroll position, remember which section was in view, tear down
+     * anything the host hung off the old nodes, which a render replaces
+     * wholesale).
+     *
+     * Assigned, not subscribed — one hook per component, `null` to clear:
+     *
+     * ```ts
+     * preview.onWillRender = ({ value }) => console.log('rendering', value.length);
+     * ```
+     *
+     * It is a notification: returning anything (or throwing — a throw is logged
+     * and swallowed) neither cancels nor delays the render.
+     */
+    onWillRender: OpenLyricRenderHook | null;
+    /**
+     * Called after every full re-render of the mounted preview, with
+     * `{ value, root }` — `root.innerHTML` is the fresh markup, decorated and
+     * with the attached plugins' `onAfterRender` + `renderers` contributions
+     * already applied, so a host reads the preview exactly as the reader sees it
+     * (query the new nodes, re-apply its own decorations, measure a height):
+     *
+     * ```ts
+     * preview.onRendered = () => console.log('rendered');
+     * ```
+     *
+     * Fires for every render path — the initial `mount()`, a `value` assignment,
+     * an attached editor's edit, a theme/typography/display change, `reload()`,
+     * and a plugin attach/detach that requests one — so treat it as "the preview
+     * HTML is now current", not as a value-change event (`on('change', …)` is
+     * that). The off-screen renders behind `getValue()`/`getElementMap()` never
+     * fire it: they build their own surface and leave this preview alone.
+     *
+     * The one gap is a host that patches the rendered DOM ITSELF: the app panels'
+     * incremental single-line fast paths write one segment directly and report the
+     * result through {@link syncRenderedValue}, which by design does not
+     * re-render — and so does not fire these hooks.
+     */
+    onRendered: OpenLyricRenderHook | null;
     private valueText;
     private renderRoot;
     private adoptContainerValue;
@@ -144,10 +186,22 @@ export declare abstract class OpenLyricPreviewComponent extends OpenLyricCompone
     protected renderCurrentHtml(): string;
     /**
      * Re-render into the mounted root; safe to call any time. Each pass fires
-     * the plugin render hooks (`onBeforeRender` → render → `onAfterRender`) and
-     * re-applies `renderers` contributions on the fresh markup.
+     * the host hooks and the plugin render hooks (`onWillRender` /
+     * `onBeforeRender` → render → `onAfterRender` / `onRendered`) and re-applies
+     * `renderers` contributions on the fresh markup.
+     *
+     * The host's {@link onWillRender} runs first — before the typography pass and
+     * the plugins, so it sees the previous render untouched — and its
+     * {@link onRendered} runs last, on markup nothing will change again.
      */
     protected renderNow(): void;
+    /**
+     * Run a host render hook. A host's callback is arbitrary page code, so a
+     * throw from it is reported and swallowed the way a plugin hook's is
+     * (`PluginHost.safe`): the render pass — and, on `onWillRender`, the render
+     * that has not happened yet — must not be lost to it.
+     */
+    private notifyRenderHook;
     /**
      * Style freshly rendered markup from `--ol-*` variables (theme-aware).
      *

@@ -45,6 +45,18 @@ declare function createStrummingPatternPreviewContextFromMarkdown(markdown: any,
 } | null;
 declare function renderInlineTextPlainText(value: any): string;
 declare function isChordOnlyLineText(value: any): boolean;
+/**
+ * Is this line pure chord notation — bars, chord symbols, repeat suffixes and
+ * `{p:}`/`{c:}` cues, with no lyric left over?
+ *
+ * `hasChordProgressionText` is the cheaper cousin but only says yes when a bar
+ * is present, and `isChordOnlyLineText` deliberately counts a cue directive as
+ * content. A mixed section (`Intro`, `Outro`) needs the strict reading to pick
+ * a rendering: a bar-less `C Am F G` and a bare `{c: Piano}` are both notation
+ * and must transpose, simplify and lay out as such, while `Still You are near`
+ * must not.
+ */
+declare function isProgressionLineText(value: any): boolean;
 declare function createChordedLyricTextLines(value: any, viewOptions?: {}): string[];
 declare function renderEmptyFenceBody(): string;
 declare function parseStrummingPatterns(lines: any, options?: {}): any[];
@@ -157,4 +169,4 @@ declare function renderOpenLyricFenceHtml(info: any, body: any, sourceLocation?:
  * out (`hideAttachments`) has no disclosure here to open.
  */
 declare function expandOpenLyricAttachments(root: any): void;
-export { DEFAULT_STRUMMING_PATTERN_TEXT, OPEN_LYRIC_PATTERN_TARGET_ID_PREFIX, createChordedLyricTextLines, createPreviewHelpers, createPreviewLineEntries, createStrummingPatternPreviewContextFromConfigBody, createStrummingPatternPreviewContextFromMarkdown, escapeHtml, expandOpenLyricAttachments, getPreviewSourceLocation, isChordOnlyLineText, normalizeMarkdownRenderableUrls, parseStrummingPatterns, parseStrummingPatternSteps, previewHelpers, renderInlineTextPlainText, renderOpenLyricFenceHtml, renderStrummingPatternGrid, sanitizeHtml, };
+export { DEFAULT_STRUMMING_PATTERN_TEXT, OPEN_LYRIC_PATTERN_TARGET_ID_PREFIX, createChordedLyricTextLines, createPreviewHelpers, createPreviewLineEntries, createStrummingPatternPreviewContextFromConfigBody, createStrummingPatternPreviewContextFromMarkdown, escapeHtml, expandOpenLyricAttachments, getPreviewSourceLocation, isChordOnlyLineText, isProgressionLineText, normalizeMarkdownRenderableUrls, parseStrummingPatterns, parseStrummingPatternSteps, previewHelpers, renderInlineTextPlainText, renderOpenLyricFenceHtml, renderStrummingPatternGrid, sanitizeHtml, };

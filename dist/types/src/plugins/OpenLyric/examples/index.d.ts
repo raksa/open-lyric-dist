@@ -82,3 +82,9 @@ export declare const TWELVE_EIGHT_LANTERNS_EXAMPLE: string;
  * and font color examples rendered directly inside Open Lyric fences.
  */
 export declare const MARKDOWN_DECORATION_DEMO_EXAMPLE: string;
+/**
+ * Before the Light (`example13-sung-intro`) — a sung `Intro`: the cue and
+ * progression line followed by the lyric that opens the song over it, showing
+ * the per-line reading `Intro` shares with `Outro`.
+ */
+export declare const BEFORE_THE_LIGHT_EXAMPLE: string;
