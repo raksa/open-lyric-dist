@@ -100,6 +100,21 @@ export declare class OpenLyricStandaloneChrome {
      * mount is reflected. Built with DOM calls (not markup) so face names, which
      * are host data, never reach an HTML/CSS parser as text.
      */
+    /**
+     * Fill the font-picker panel. Called ONLY from {@link openFontPicker}.
+     *
+     * It used to also run at mount, which built one `<button>` per installed
+     * face — ~230 of them on an ordinary desktop — into a panel that starts
+     * `hidden` and is re-rendered on open anyway. Every embed on the page paid
+     * that DOM (and the `getFontFaceSections()` enumeration behind it) whether or
+     * not the reader ever opened the picker; a host app embedding the preview in
+     * several panes paid it once per pane.
+     *
+     * Nothing needs the options to exist before then: every consumer
+     * ({@link syncFontOptionSelection}, {@link fontOptionElements},
+     * {@link focusFontOption}) is a no-op on an empty panel, and each path that
+     * reaches an option — click, ArrowDown, the toggle — opens the picker first.
+     */
     private renderFontOptions;
     private createFontOption;
     private get isFontPickerOpen();

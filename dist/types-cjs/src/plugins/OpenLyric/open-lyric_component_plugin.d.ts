@@ -40,9 +40,10 @@ declare class EditorOpenLyricPlugin implements OpenLyricPlugin {
                 OLRefrain: typeof import("./domain/parser/fences.js").OLRefrain;
                 OLSolo: typeof import("./domain/parser/fences.js").OLSolo;
                 OLTag: typeof import("./domain/parser/fences.js").OLTag;
+                OLTurnaround: typeof import("./domain/parser/fences.js").OLTurnaround;
                 OLVamp: typeof import("./domain/parser/fences.js").OLVamp;
                 OLVerse: typeof import("./domain/parser/fences.js").OLVerse;
-                definitions: (import("./domain/parser/fences.js").OLBridge | import("./domain/parser/fences.js").OLBreakdown | import("./domain/parser/fences.js").OLChorus | import("./domain/parser/fences.js").OLConfig | import("./domain/parser/fences.js").OLFinalChorus | import("./domain/parser/fences.js").OLInstrumental | import("./domain/parser/fences.js").OLInterlude | import("./domain/parser/fences.js").OLIntro | import("./domain/parser/fences.js").OLNote | import("./domain/parser/fences.js").OLOutro | import("./domain/parser/fences.js").OLPostChorus | import("./domain/parser/fences.js").OLPreChorus | import("./domain/parser/fences.js").OLRefrain | import("./domain/parser/fences.js").OLSolo | import("./domain/parser/fences.js").OLTag | import("./domain/parser/fences.js").OLVamp | import("./domain/parser/fences.js").OLVerse)[];
+                definitions: (import("./domain/parser/fences.js").OLBridge | import("./domain/parser/fences.js").OLBreakdown | import("./domain/parser/fences.js").OLChorus | import("./domain/parser/fences.js").OLConfig | import("./domain/parser/fences.js").OLFinalChorus | import("./domain/parser/fences.js").OLInstrumental | import("./domain/parser/fences.js").OLInterlude | import("./domain/parser/fences.js").OLIntro | import("./domain/parser/fences.js").OLNote | import("./domain/parser/fences.js").OLOutro | import("./domain/parser/fences.js").OLPostChorus | import("./domain/parser/fences.js").OLPreChorus | import("./domain/parser/fences.js").OLRefrain | import("./domain/parser/fences.js").OLSolo | import("./domain/parser/fences.js").OLTag | import("./domain/parser/fences.js").OLTurnaround | import("./domain/parser/fences.js").OLVamp | import("./domain/parser/fences.js").OLVerse)[];
                 definitionsByClassName: any;
                 findFenceDefinition: typeof import("./domain/parser/fences.js").findFenceDefinition;
                 formatDeclaredPartName: typeof import("./domain/parser/fences.js").formatDeclaredPartName;
@@ -65,6 +66,7 @@ declare class EditorOpenLyricPlugin implements OpenLyricPlugin {
                         OLVerse: typeof import("./domain/parser/fences.js").OLVerse;
                         OLNote: typeof import("./domain/parser/fences.js").OLNote;
                         OLTag: typeof import("./domain/parser/fences.js").OLTag;
+                        OLTurnaround: typeof import("./domain/parser/fences.js").OLTurnaround;
                         OLOutro: typeof import("./domain/parser/fences.js").OLOutro;
                         OLInstrumental: typeof import("./domain/parser/fences.js").OLInstrumental;
                         OLInterlude: typeof import("./domain/parser/fences.js").OLInterlude;
@@ -97,6 +99,7 @@ declare class EditorOpenLyricPlugin implements OpenLyricPlugin {
                     OLVerse: typeof import("./domain/parser/fences.js").OLVerse;
                     OLNote: typeof import("./domain/parser/fences.js").OLNote;
                     OLTag: typeof import("./domain/parser/fences.js").OLTag;
+                    OLTurnaround: typeof import("./domain/parser/fences.js").OLTurnaround;
                     OLOutro: typeof import("./domain/parser/fences.js").OLOutro;
                     OLInstrumental: typeof import("./domain/parser/fences.js").OLInstrumental;
                     OLInterlude: typeof import("./domain/parser/fences.js").OLInterlude;

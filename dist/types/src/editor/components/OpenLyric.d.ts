@@ -60,6 +60,25 @@ export interface OpenLyricImageOptions {
      * be re-alpha'd and is used as-is unless the value is `0`.
      */
     backgroundAlpha?: number;
+    /**
+     * Device-pixel multiplier the PNG is rasterized at — its real pixel size is
+     * `width × pixelRatio` by `height × pixelRatio`. Ignored by the `'text'` and
+     * `'html'` variants, which have no raster.
+     *
+     * Defaults to the screen's own ratio clamped to **2–3**, which is what
+     * **Download as Image** wants: a file the user keeps and may print or zoom,
+     * so erring crisp costs them nothing.
+     *
+     * That floor is wrong for an embedder that already knows the exact box it
+     * will paint into — a slide renderer, a thumbnail job. There, a ratio of 2
+     * on a 1.5-ratio screen is 4× the pixels and 4× the decoded bitmap held in
+     * memory for detail that cannot be shown, which is a real cost on low-end
+     * hardware. Such a caller should pass its own ratio (`devicePixelRatio`, or
+     * `1` for a thumbnail) alongside `width`/`height`.
+     *
+     * Values are clamped to `(0, 4]`; anything else falls back to the default.
+     */
+    pixelRatio?: number;
 }
 export interface OpenLyricElementMapOptions extends OpenLyricImageOptions {
     /**
@@ -148,6 +167,37 @@ export interface OpenLyricElementMapOptions extends OpenLyricImageOptions {
      * stays where it is.
      */
     isShowingStrummingPatterns?: boolean;
+    /**
+     * Keep the section's flow-index badge — the 1-based position the structure
+     * counts it off at, drawn in the corner of the card. On by default, the way
+     * the preview panel shows it; pass `false` to leave it out.
+     *
+     * Worth turning off for a slide deck, because the map is keyed by PART: a
+     * Chorus sung twice is one entry, so it can only carry one of the positions
+     * it is sung at, and a map read end to end then counts with a gap in it.
+     * The structure is the thing that sequences the parts, and a caller walking
+     * it already knows which step each entry is standing in for.
+     *
+     * Image and HTML only — a `'text'` map has no badge to keep, and the number
+     * is not part of the section's words.
+     */
+    isShowingIndex?: boolean;
+    /**
+     * Write the flow-index badge as `index/total` — `3/6` rather than `3` — so a
+     * tile says how far into the song it is without the rest of the map in hand.
+     * Off by default, and it needs {@link isShowingIndex} (which is on by
+     * default): with the badge gone there is nothing to total.
+     *
+     * `total` is the length of the FLOW, not the number of entries in the map:
+     * `Structure: IV1CV2CO` totals 6 while the map holds 5, because the Chorus
+     * sung at steps 3 and 5 is one entry. So the numbers describe the song's own
+     * running order, and a deck built straight off the map — where they would
+     * count `1/6, 2/6, 3/6, 4/6, 6/6` — usually wants {@link isShowingIndex}
+     * off instead.
+     *
+     * Image and HTML only, like {@link isShowingIndex}.
+     */
+    isShowingTotalIndex?: boolean;
     /**
      * Scope the map to ONE section (part) name — `'Verse 1'` yields
      * `{ 'Verse 1': … }`. The render pipeline is scoped too, so the rest of the

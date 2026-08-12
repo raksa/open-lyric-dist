@@ -18,6 +18,7 @@ import { OLPreChorus } from './fences/OLPreChorus.js';
 import { OLRefrain } from './fences/OLRefrain.js';
 import { OLSolo } from './fences/OLSolo.js';
 import { OLTag } from './fences/OLTag.js';
+import { OLTurnaround } from './fences/OLTurnaround.js';
 import { OLVamp } from './fences/OLVamp.js';
 import { OLVerse } from './fences/OLVerse.js';
 declare const types: {
@@ -33,6 +34,7 @@ declare const types: {
     OLVerse: typeof OLVerse;
     OLNote: typeof OLNote;
     OLTag: typeof OLTag;
+    OLTurnaround: typeof OLTurnaround;
     OLOutro: typeof OLOutro;
     OLInstrumental: typeof OLInstrumental;
     OLInterlude: typeof OLInterlude;
@@ -40,7 +42,7 @@ declare const types: {
     OLVamp: typeof OLVamp;
     OLSolo: typeof OLSolo;
 };
-declare const definitions: (OLBridge | OLBreakdown | OLChorus | OLConfig | OLFinalChorus | OLInstrumental | OLInterlude | OLIntro | OLNote | OLOutro | OLPostChorus | OLPreChorus | OLRefrain | OLSolo | OLTag | OLVamp | OLVerse)[];
+declare const definitions: (OLBridge | OLBreakdown | OLChorus | OLConfig | OLFinalChorus | OLInstrumental | OLInterlude | OLIntro | OLNote | OLOutro | OLPostChorus | OLPreChorus | OLRefrain | OLSolo | OLTag | OLTurnaround | OLVamp | OLVerse)[];
 declare const registry: OLFenceRegistry;
 declare const definitionsByClassName: any;
 declare const parser: {
@@ -57,6 +59,7 @@ declare const parser: {
         OLVerse: typeof OLVerse;
         OLNote: typeof OLNote;
         OLTag: typeof OLTag;
+        OLTurnaround: typeof OLTurnaround;
         OLOutro: typeof OLOutro;
         OLInstrumental: typeof OLInstrumental;
         OLInterlude: typeof OLInterlude;
@@ -81,4 +84,4 @@ declare function getFenceBlockKind(info: any): any;
 declare function getFenceHeaderError(info: any): string;
 declare function getFenceSnippetDefinitions(): any;
 declare function getRequiredDeclaredPartNames(): any;
-export { OLBridge, OLBreakdown, OLChorus, OLConfig, OLFenceDefinition, OLFinalChorus, OLFreeTextFence, OLInstrumental, OLInstrumentalFence, OLInterlude, OLIntro, OLLyricFence, OLNote, OLOutro, OLPostChorus, OLPreChorus, OLRefrain, OLSolo, OLTag, OLVamp, OLVerse, definitions, definitionsByClassName, findFenceDefinition, formatDeclaredPartName, getFenceBlockKind, getFenceHeaderError, getFenceSnippetDefinitions, getRequiredDeclaredPartNames, parseFenceHeader, parser, registry, types, };
+export { OLBridge, OLBreakdown, OLChorus, OLConfig, OLFenceDefinition, OLFinalChorus, OLFreeTextFence, OLInstrumental, OLInstrumentalFence, OLInterlude, OLIntro, OLLyricFence, OLNote, OLOutro, OLPostChorus, OLPreChorus, OLRefrain, OLSolo, OLTag, OLTurnaround, OLVamp, OLVerse, definitions, definitionsByClassName, findFenceDefinition, formatDeclaredPartName, getFenceBlockKind, getFenceHeaderError, getFenceSnippetDefinitions, getRequiredDeclaredPartNames, parseFenceHeader, parser, registry, types, };

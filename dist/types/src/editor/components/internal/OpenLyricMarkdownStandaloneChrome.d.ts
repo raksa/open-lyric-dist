@@ -93,6 +93,14 @@ export declare class OpenLyricMarkdownStandaloneChrome {
      * override. Rebuilt on every open so a host that assigns `fontFaces` after
      * mount is reflected. Built with DOM calls (not markup) so face names, which
      * are host data, never reach an HTML/CSS parser as text.
+     *
+     * Called ONLY from {@link openFontPicker}. It used to also run at mount,
+     * building one `<button>` per installed face — ~230 on an ordinary desktop —
+     * into a panel that starts `hidden` and is rebuilt on open anyway, so every
+     * embed paid that DOM (and the `getFontFaceSections()` enumeration behind it)
+     * whether or not the picker was ever opened. Nothing needs the options before
+     * then: every consumer is a no-op on an empty panel, and each path that
+     * reaches an option opens the picker first.
      */
     private renderFontOptions;
     private createFontOption;

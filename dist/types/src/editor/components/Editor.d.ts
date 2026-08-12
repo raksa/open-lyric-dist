@@ -188,8 +188,10 @@ export declare class Editor extends OpenLyricComponent implements OpenLyricEdito
     /**
      * Assigning replaces the document *and* the {@link isDirty} baseline: a
      * host writing here is loading a document, not editing one, exactly as the
-     * app shell's `applyDocumentContent()` marks itself clean. Use
-     * {@link revertToSaved} to go back to the baseline instead of replacing it.
+     * app shell's `applyDocumentContent()` marks a restored document clean (it
+     * keeps the flag only for the ones it fabricates — example, blank, import).
+     * Use {@link revertToSaved} to go back to the baseline instead of replacing
+     * it.
      */
     set value(next: string);
     getValue(): string;
