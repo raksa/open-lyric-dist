@@ -1,6 +1,6 @@
 {
   "name": "open-lyric",
-  "version": "0.1.55",
+  "version": "0.1.58",
   "description": "Embeddable, framework-free Open Lyric components: song editor, markdown preview, lyric preview, and dashboard shell.",
   "license": "MIT",
   "author": "raksa <eng.raksa@gmail.com>",
@@ -39,6 +39,7 @@
         "default": "./dist/internal.cjs"
       }
     },
+    "./*.md": "./*.md",
     "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
@@ -46,7 +47,7 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
-    "README.md",
+    "*.md",
     "LICENSE"
   ],
   "keywords": [
