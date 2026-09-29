@@ -12,6 +12,12 @@ declare function normalizeStructureKeyOption(value: any): string;
 declare function transposePitchClass(noteText: any, semitoneOffset: any, targetKeyText: any): string;
 declare function transposeChordSymbol(chordText: any, semitoneOffset: any, targetKeyText: any): string;
 declare function simplifyChordSymbol(chordText: any): string;
+/**
+ * The seven diatonic triads of a song key, tonic first — the chords a song in
+ * that key most often reaches for (`E` → `E F#m G#m A B C#m D#dim`). Minor
+ * keys use the natural minor scale. An unparseable key yields `[]`.
+ */
+declare function getKeyDiatonicTriads(keyText: any): string[];
 declare function createChordTransposition(sourceKeyText: any, targetKeyText: any): {
     isActive: boolean;
     semitoneOffset: number;
@@ -31,4 +37,4 @@ declare function createChordDatabaseSearchData(chordKey: any): {
     suffixCandidates: any[];
 } | null;
 declare function describeChordKey(chordKey: any): string;
-export { createChordDatabaseSearchData, createChordDegreeHints, createChordTransposition, describeChordKey, getAdjacentChromaticKey, normalizeChordText, normalizeStructureKeyOption, parseMainKey, simplifyChordSymbol, transposeChordSymbol, transposePitchClass, intervalSemitones, };
+export { createChordDatabaseSearchData, createChordDegreeHints, createChordTransposition, describeChordKey, getAdjacentChromaticKey, getKeyDiatonicTriads, normalizeChordText, normalizeStructureKeyOption, parseMainKey, simplifyChordSymbol, transposeChordSymbol, transposePitchClass, intervalSemitones, };

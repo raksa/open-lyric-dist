@@ -159,6 +159,44 @@ declare function renderOpenLyricFenceHtml(info: any, body: any, sourceLocation?:
     renderStructureValue: typeof renderStructureValue;
 }): any;
 /**
+ * What the markdown preview renders for a document with nothing in it.
+ *
+ * The markup belongs to the `Config` fence definition — the one part every
+ * song needs, and so the one a blank document starts from — so this only
+ * looks the definition up, the way `renderOpenLyricFenceHtml` does for a
+ * written fence.
+ */
+declare function renderOpenLyricEmptyDocumentHtml(helpers?: {
+    createStrummingPatternPreviewContextFromConfigBody(configBody: any, options?: {}): {
+        allowZwspSeparators: boolean;
+        keyText: string;
+        patterns: any[];
+        patternsByIndex: Map<any, any>;
+        tempoText: string;
+        timeSignatureText: string;
+    } | null;
+    createPreviewTargetId: typeof createPreviewTargetId;
+    createPreviewLineEntries(body: any, sourceLocation: any, allowZwspSeparators: any): {
+        isComment?: boolean | undefined;
+        text: string;
+        lineNumber: any;
+        column: number;
+    }[];
+    escapeHtml: typeof escapeHtml;
+    getEditorDataAttributes: typeof getEditorDataAttributes;
+    getFenceHeaderEditorDataAttributes: typeof getFenceHeaderEditorDataAttributes;
+    hasChordProgressionText: typeof hasChordProgressionText;
+    renderChordProgressionLineCollection(lines: any): string;
+    renderConfigStrummingPatternValue(patternLines: any, timeSignatureText: any, options: any): string;
+    renderInlineText(value: any): string;
+    renderEmptyBody: typeof renderEmptyFenceBody;
+    renderLineCollection(lines: any, options?: {}): string;
+    renderLyricLineCollection(lines: any): string;
+    renderMixedLineCollection(lines: any): string;
+    renderStrummingPatternCards: typeof renderStrummingPatternCards;
+    renderStructureValue: typeof renderStructureValue;
+}): any;
+/**
  * Open every Config attachments disclosure inside `root`.
  *
  * The panel renders the list closed (`renderConfigAttachments`), which is a
@@ -169,4 +207,4 @@ declare function renderOpenLyricFenceHtml(info: any, body: any, sourceLocation?:
  * out (`hideAttachments`) has no disclosure here to open.
  */
 declare function expandOpenLyricAttachments(root: any): void;
-export { DEFAULT_STRUMMING_PATTERN_TEXT, OPEN_LYRIC_PATTERN_TARGET_ID_PREFIX, createChordedLyricTextLines, createPreviewHelpers, createPreviewLineEntries, createStrummingPatternPreviewContextFromConfigBody, createStrummingPatternPreviewContextFromMarkdown, escapeHtml, expandOpenLyricAttachments, getPreviewSourceLocation, isChordOnlyLineText, isProgressionLineText, normalizeMarkdownRenderableUrls, parseStrummingPatterns, parseStrummingPatternSteps, previewHelpers, renderInlineTextPlainText, renderOpenLyricFenceHtml, renderStrummingPatternGrid, sanitizeHtml, };
+export { DEFAULT_STRUMMING_PATTERN_TEXT, OPEN_LYRIC_PATTERN_TARGET_ID_PREFIX, createChordedLyricTextLines, createPreviewHelpers, createPreviewLineEntries, createStrummingPatternPreviewContextFromConfigBody, createStrummingPatternPreviewContextFromMarkdown, escapeHtml, expandOpenLyricAttachments, getPreviewSourceLocation, isChordOnlyLineText, isProgressionLineText, normalizeMarkdownRenderableUrls, parseStrummingPatterns, parseStrummingPatternSteps, previewHelpers, renderInlineTextPlainText, renderOpenLyricEmptyDocumentHtml, renderOpenLyricFenceHtml, renderStrummingPatternGrid, sanitizeHtml, };

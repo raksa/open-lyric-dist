@@ -208,6 +208,134 @@ markdown.getImageList();
 markdown.getInfo();
 ```
 
+### Editing a section from the rendered card
+
+On a surface that also has an editor — `OpenLyricDashboard`, or the full
+three-panel shell — every rendered section card carries an edit pencil at the
+right end of its header. Clicking it replaces that card's body with a textarea
+holding the section's own Open Lyric source lines; **Save** writes them back
+into the document (one line per lyric line, added and removed lines included)
+and the panels re-render from the new text, **Cancel** or `Escape` discards, and
+`Ctrl`/`Cmd`+`Enter` saves — plain `Enter` inserts a lyric line. One save is one
+undo step. `ol:Config` has no pencil: its fields are edited through their own
+controls.
+
+Under the textarea, **Insert chord** opens a chord panel so a chord never has to
+be typed by hand: the chords the song already uses, the seven chords of the
+`Config` `Key`, and a builder (root note, chord type — major, `m`, `7`, `m7`,
+`maj7`, `sus2`, `sus4`, `add9`, `6`, `dim`, `aug` — and an optional bass note).
+A tap puts the chord at the textarea's cursor in the notation the section
+needs: `[G]` before the syllable in a lyric section, a bare space-separated `G`
+in `Instrumental`/`Interlude`, and per line in `Intro`/`Outro`/`Turnaround`
+(bare on a line that already reads as a progression). With the cursor on an
+existing chord, the tap replaces that chord instead of adding a second one. The
+chord goes into the textarea only — the document changes on **Save**, and
+**Cancel** discards it with the rest of the edit. `Escape` closes the chord panel
+first, then the editor.
+
+A read-only embed — a bare `OpenLyricMarkdownManager` with no editor behind it —
+renders the same cards without the pencils, and they never appear in a printout
+or an exported image.
+
+### Starting a song from a blank preview
+
+When the document is empty (or only blank lines), the markdown preview shows a
+card with a **Start a new song** button instead of nothing. Pressing it writes
+the smallest song the notation accepts — an `ol:Config` fence with every
+required field filled with a placeholder (`Title`, `Artist`, `Copyright`,
+`Key: G`, `Tempo: 70bpm`, `Time: 4/4`, `Structure: V1`) followed by an
+empty `ol:Verse 1` — and opens the **Title** field's editor with the
+placeholder selected, so typing replaces it. The starter validates with no
+diagnostics, the write is one undo step, and nothing is written if the
+document stopped being blank in the meantime. Optional fields are added
+afterwards from the Config card.
+
+The card is a control, not content: export and print treat a blank document as
+empty. A read-only embed — a bare `OpenLyricMarkdownManager` with no editor
+behind it — renders a blank document as blank.
+
+### Adding, renaming and removing a section from the preview
+
+Between the `ol:Config` card and the first section card sits an **Add Lyric**
+button. It opens a picker with two controls — the section type (every fence the
+notation defines: `Verse`, `Chorus`, `Bridge`, `Intro`, `Outro`, `Vamp`,
+`Instrumental`, `Final-Chorus`, …) and a number, which is hidden for the types
+that cannot be numbered. The number is pre-filled with the lowest one that type
+has no section for yet, and leaving it blank gives an unnumbered section
+(`ol:Chorus`). **Add section** writes an empty fence in after the last fence in
+the document and opens that new card's lyric editor, so the next thing you do is
+type. It does not touch `- Structure:` — use the **+** on the Structure row to
+put the new section into the running order.
+
+Every section card but `ol:Config` also carries a rename tag beside its title.
+It opens the same picker over that section's current name, so `Verse 1` becomes
+`Verse 3` — or `Bridge` — by picking rather than typing. A rename rewrites the
+fence's ```` ```ol: ```` line *and* every `- Structure:` step that named the old
+part, repeat counts included, as a single edit and a single undo step; a name
+another section already has is refused in the picker before anything is written.
+
+Each card also carries a bin, last in the header. It asks before anything is
+written, and the question says what else goes: **"Delete Verse 1? It is used 2
+times in the running order — those steps will be removed too."** Confirming
+removes the fence *and* every `- Structure:` step that named it, as a single
+edit and a single undo step; `Escape`, **Cancel** or a click outside dismisses
+it. If removing a step leaves the same part on both sides of the gap, the two
+merge and their repeat counts add up (`V1CV1` minus the `Chorus` becomes
+`V1x2`), because the notation spells a part sung twice as a repeat rather than
+as two tokens in a row. Emptying the running order entirely leaves
+`- Structure:` declared with no value, the same as clearing any other field.
+`ol:Config` has no bin — every song has exactly one.
+
+Same availability rule as the pencils: a read-only `OpenLyricMarkdownManager`
+embed shows none of these controls, and none of them reaches a printout or an
+exported image.
+
+### Editing a `Config` field from the rendered card
+
+The `ol:Config` card edits field by field rather than as a block. `Key`, `Time`,
+`Tempo`, `Locales`, `Structure` and `Attachments` each open their own picker,
+and the free-text fields — `Title`, `Subtitle`, `Description`, `Artist`,
+`Copyright`, `Theme`, `Genre` and `Style` — are edited in place: click the value
+(or the pencil beside it, which is what a keyboard reaches) and it becomes a
+text input holding that field's source value. **Save** or `Enter` writes the one
+source line back, **Cancel** or `Escape` discards, and one save is one undo
+step. Clearing the input leaves the field declared but empty (`- Artist:`), and
+an empty field shows an "Add <field>" prompt in its place.
+
+The value is always written after the `- Field:` prefix the document already
+has, so an in-place edit cannot rename a field or split it across lines; a
+pasted multi-line value is joined onto one line. Fields whose value spans more
+than one source line keep their read-only rendering.
+
+Same availability rule as the section pencils: a read-only
+`OpenLyricMarkdownManager` embed shows neither the pencils nor the "Add" prompts,
+and neither reaches a printout or an exported image.
+
+### Undo and Redo from the preview
+
+The markdown preview's tool row (top right, beside the settings gear) carries
+**Undo** and **Redo**, so a reader who never opens the text panel can take back
+a saved verse, a rename, a deletion or a Config change. They walk the
+document's own history: on the Monaco editor that is the same undo stack as the
+editor toolbar and `Ctrl`/`Cmd`+`Z` in the text panel, so one in-preview
+action is one step whichever button undoes it. Each button is disabled when
+there is nothing to undo or redo, and both stand down while an in-preview
+editor (a section textarea, a Config field, a rename picker) is open — undoing
+then would re-render the panel and lose the unsaved draft; save or cancel it
+first.
+
+With focus anywhere in the markdown panel outside a text field,
+`Ctrl`/`Cmd`+`Z` undoes and `Ctrl`/`Cmd`+`Shift`+`Z` (or `Ctrl`+`Y`)
+redoes. Inside a text field those keys keep undoing the typing in that field.
+
+On the simple textarea editor, and before Monaco has loaded, the history these
+buttons walk holds the in-preview edits only; typing directly in the textarea
+afterwards ends it, and the buttons will not replay an old step over text that
+has changed since.
+
+The lyric panel has no Undo/Redo of its own, and a read-only
+`OpenLyricMarkdownManager` embed shows neither button.
+
 ---
 
 ## The editor
@@ -351,6 +479,78 @@ registerPlugin('open-lyric', olEditorOpenLyricPluginData);
 
 `addPlugin(id, plugin)` is the same door any other plugin package goes through;
 whatever a host composes is its own choice, and this package requires none.
+
+### Adding to a preview's settings popup and page
+
+A plugin attached to `OpenLyric` or `OpenLyricMarkdownManager` can add fields
+to the preview's settings popup (the gear) through `contributes.settings`:
+
+```js
+const plugin = {
+  id: 'my-plugin',
+  surfaces: ['lyric', 'markdown'],
+  contributes: {
+    settings: [
+      {
+        // `mount` is an empty `.topbar-settings__field` placed above Reset.
+        render(mount, host) {
+          mount.innerHTML = '<label class="topbar-settings__label">…</label>';
+          return () => {}; // optional teardown
+        },
+        reset() {}, // optional; run by the popup's Reset
+      },
+    ],
+  },
+};
+```
+
+The fields follow the composition: they appear when the plugin is added and
+go when it is removed, before or after `mount()`. They sit above the popup's
+Reset. An adopt-mode `OpenLyric` puts them in its host's popup, above the
+host's own `.topbar-settings__actions` row, or after the typography fields
+when the popup has no such row; `resetPreviewSetting()` resets them. A
+preview with no such plugin shows exactly the built-in popup.
+
+The chord popup (the chord diagram a chord shows on hover or click) takes
+controls too. Each time it opens it dispatches `OPEN_LYRIC_CHORD_POPUP_EVENT`
+(`'open-lyric:chord-popup'`), bubbling, on the chord or `{p:#n}` pattern
+reference that opened it:
+
+```js
+import { OPEN_LYRIC_CHORD_POPUP_EVENT } from 'open-lyric';
+
+previewRoot.addEventListener(OPEN_LYRIC_CHORD_POPUP_EVENT, (event) => {
+  const { kind, text, actions, panel } = event.detail; // kind: 'chord' | 'pattern'
+  actions.append(myButton); // a row in the popup's header
+});
+```
+
+`text` is the chord symbol or the pattern's notation. `actions` is emptied
+each time the popup opens or closes, and stays hidden while empty, so the
+popup looks as before on a preview nothing listens on. Listen on the preview's
+own root to add controls only for that preview's chords.
+
+`panel` is a slot below the header, likewise emptied and hidden each time the
+popup opens or closes. To show content there, append it and set
+`panel.hidden = false` — during the event or later, say from a button in
+`actions`. While the panel shows, it takes the place of the popup's own guitar
+diagram and chord variants, and the popup stays placed on its chord as its
+size changes.
+
+A plugin that puts its own elements into the rendered song (from
+`onAfterRender`) should mark each one with the `data-ol-plugin-ui` attribute.
+The popup's **Download as Image** and **Print** copy the preview on the page,
+and they leave marked elements out, as do the dashboard panels' image and
+print exports. `getValue()` and `getElementMap()` render
+fresh markup, so plugin elements never reach them.
+
+On `OpenLyric`, each strumming-pattern card carries what it is played in:
+`data-pattern-source`, `data-pattern-index`, `data-pattern-label`,
+`data-pattern-preview-time`, and, when the song has them,
+`data-pattern-preview-key` (the key the song is shown in, a transposition
+included) and `data-pattern-preview-tempo`. The Markdown preview's `Config`
+card puts the same attributes on its pattern cards, with the `Key` as written.
+`open-lyric-plugin-player` reads them to play the patterns.
 
 ---
 

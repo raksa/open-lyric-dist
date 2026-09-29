@@ -36,6 +36,8 @@ export declare class OpenLyricMarkdownStandaloneChrome {
     private progressResetTimer;
     private readonly unsubscribes;
     private readonly documentListeners;
+    /** Fields attached plugins add to the settings popup (`contributes.settings`). */
+    private pluginSettings;
     constructor(component: OpenLyricMarkdownManager);
     attach(renderRoot: HTMLElement, container: HTMLElement): void;
     /**

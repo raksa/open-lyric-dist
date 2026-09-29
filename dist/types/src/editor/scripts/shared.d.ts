@@ -282,6 +282,9 @@ declare const refs: {
     openLyricExportProgressBar: Element | null;
     openLyricExportProgressLabel: Element | null;
     markdownPreviewOptions: Element | null;
+    markdownPreviewHistory: Element | null;
+    markdownPreviewUndoBtn: Element | null;
+    markdownPreviewRedoBtn: Element | null;
     markdownPreviewOptionsBtn: Element | null;
     markdownPreviewOptionsMenu: Element | null;
     markdownPreviewExportProgress: Element | null;
@@ -417,6 +420,50 @@ declare function setSimpleEditorValue(value: any): void;
  * there, and `setEditorMode()` re-syncs it on the way back.
  */
 declare function replaceDocumentText(value: any): void;
+/**
+ * The pure text half of {@link replaceDocumentLineRange} — kept separate so the
+ * write-back rule ("given this source and this input, the document becomes
+ * exactly that") can be asserted without an editor surface in play.
+ *
+ * `endLineNumber === startLineNumber - 1` is the insertion form: nothing is
+ * consumed and `nextLines` land before `startLineNumber`. That is what an
+ * empty fence body needs, since it has no lines of its own to replace.
+ */
+declare function replaceTextLineRange(text: any, startLineNumber: any, endLineNumber: any, nextLines: any): string | null;
+/**
+ * Read lines `startLineNumber`..`endLineNumber` of the live document.
+ *
+ * The preview seeds its in-place editors from here rather than from the
+ * rendered DOM: a rendered line is escaped, comment-filtered, possibly
+ * transposed output, while this is the notation the user is about to edit.
+ *
+ * Returns `null` when the range is not addressable, which callers read as
+ * "do not open an editor over this".
+ */
+declare function readDocumentLineRange(startLineNumber: any, endLineNumber: any): string[] | null;
+/**
+ * Replace a line range of the document, whichever surface is live.
+ *
+ * Every in-preview edit has to end up here rather than in the DOM: the preview
+ * is a projection of the document, so an edit is a text edit and the panel
+ * re-renders from the new text. Monaco gets a ranged `executeEdits` between two
+ * undo stops, so one user action is one undo step and the surrounding selection
+ * survives; a page whose Monaco has not booted (or that is on the simple
+ * textarea) falls back to the whole-document write, which is history-aware on
+ * its own surface. Both paths produce the text {@link replaceTextLineRange}
+ * computes.
+ */
+declare function replaceDocumentLineRange(startLineNumber: any, endLineNumber: any, nextLines: any): boolean;
+declare function clearDocumentEditSnapshots(): void;
+declare function canUndoDocumentEdit(): boolean;
+declare function canRedoDocumentEdit(): boolean;
+/**
+ * Undo the last document edit on whichever surface is live, without moving
+ * focus. Returns whether anything changed.
+ */
+declare function undoDocumentEdit(): boolean;
+/** The {@link undoDocumentEdit} counterpart. */
+declare function redoDocumentEdit(): boolean;
 declare function markDirty(nextDirty: any): void;
 declare function setDropActive(active: any): void;
 declare const constants: {
@@ -502,4 +549,4 @@ declare const helpers: {
     supportsClipboardCopy: typeof supportsClipboardCopy;
     supportsClipboardPaste: typeof supportsClipboardPaste;
 };
-export { CHORD_ANNOTATION_RE, CHORD_KEY_GROUPS, CHORD_SYMBOL_RE, CHORD_SYMBOL_SOURCE, collapseSpaceLikeText, CONFIG_ENUM_FIELD_VALUES, CONFIG_FIELD_ALIASES, CONFIG_FIELD_NAMES, CONFIG_FIELD_MATCH_NAMES, CONFIG_HEADER_RE, CONFIG_KEY_VALUES, CONFIG_LOCALE_SEPARATOR, CONFIG_LOCALE_VALUES, CONFIG_MULTILINE_FIELD_NAMES, CONFIG_PATTERN_FIELD_VALUES, CONFIG_REQUIRED_FIELD_NAMES, BS_DARK_LANGUAGE_THEME, BS_LANGUAGE_THEME, DARK_LANGUAGE_THEME, MONACO_THEME_BY_APP_THEME, DEFAULT_CONTENT, DEFAULT_EDITOR_MODE, DEFAULT_PANEL_VISIBILITY, DEFAULT_THEME, DRAFT_STORAGE_KEY, FORM_SECTION_NAMES, FREE_TEXT_HEADER_RE, FREE_TEXT_SECTION_NAMES, getLeadingSpaceLikeLength, hasScriptBaseLetter, INSTRUMENTAL_DIRECTIVE_RE, INSTRUMENTAL_HEADER_RE, INSTRUMENTAL_SECTION_NAMES, INTRO_DIRECTIVE_RE, INTRO_OR_CUE_DIRECTIVE_RE, INTRO_HEADER_RE, isSpaceLikeCharacter, isValidStrummingPatternValue, LANGUAGE_ID, LANGUAGE_THEME, LEGACY_THEME_STORAGE_KEY, LYRIC_HEADER_RE, LYRIC_SECTION_NAMES, MARKER_OWNER, MONACO_WORD_PATTERN, MONACO_WORD_SEPARATORS, NUMBERED_SECTION_NAMES, normalizeWordSeparators, normalizeStrummingPatternValue, REPEAT_SUFFIX_RE, THEME_STORAGE_KEY, VALIDATION_DELAY_MS, ZERO_WIDTH_SPACE, constants, escapeRegex, findCanonicalConfigLocale, getCurrentValue, grammar, hasChordProgressionText, helpers, hideUnsavedChangesToast, isSupportedConfigLocale, markDirty, normalizeConfigFieldName, parseConfigLocaleEntries, refreshElementRefs, refs, registerUnloadAttempt, replaceDocumentText, resetUnloadAttempts, runtime, shouldAllowInvisibleWordSeparators, showUnsavedChangesToast, startEditorActivity, setCurrentDocumentContent, setDropActive, setErrorCount, setSimpleEditorValue, setSharedDocumentDate, setStatus, state, supportsClipboardCopy, supportsClipboardPaste, syncEditorActivityState, syncEditorDirtyState, trimSpaceLikeEnd, trimSpaceLikeStart, trimSpaceLikeText, updateStatus, };
+export { CHORD_ANNOTATION_RE, CHORD_KEY_GROUPS, CHORD_SYMBOL_RE, CHORD_SYMBOL_SOURCE, collapseSpaceLikeText, CONFIG_ENUM_FIELD_VALUES, CONFIG_FIELD_ALIASES, CONFIG_FIELD_NAMES, CONFIG_FIELD_MATCH_NAMES, CONFIG_HEADER_RE, CONFIG_KEY_VALUES, CONFIG_LOCALE_SEPARATOR, CONFIG_LOCALE_VALUES, CONFIG_MULTILINE_FIELD_NAMES, CONFIG_PATTERN_FIELD_VALUES, CONFIG_REQUIRED_FIELD_NAMES, BS_DARK_LANGUAGE_THEME, BS_LANGUAGE_THEME, DARK_LANGUAGE_THEME, MONACO_THEME_BY_APP_THEME, DEFAULT_CONTENT, DEFAULT_EDITOR_MODE, DEFAULT_PANEL_VISIBILITY, DEFAULT_THEME, DRAFT_STORAGE_KEY, FORM_SECTION_NAMES, FREE_TEXT_HEADER_RE, FREE_TEXT_SECTION_NAMES, getLeadingSpaceLikeLength, hasScriptBaseLetter, INSTRUMENTAL_DIRECTIVE_RE, INSTRUMENTAL_HEADER_RE, INSTRUMENTAL_SECTION_NAMES, INTRO_DIRECTIVE_RE, INTRO_OR_CUE_DIRECTIVE_RE, INTRO_HEADER_RE, isSpaceLikeCharacter, isValidStrummingPatternValue, LANGUAGE_ID, LANGUAGE_THEME, LEGACY_THEME_STORAGE_KEY, LYRIC_HEADER_RE, LYRIC_SECTION_NAMES, MARKER_OWNER, MONACO_WORD_PATTERN, MONACO_WORD_SEPARATORS, NUMBERED_SECTION_NAMES, normalizeWordSeparators, normalizeStrummingPatternValue, REPEAT_SUFFIX_RE, THEME_STORAGE_KEY, VALIDATION_DELAY_MS, ZERO_WIDTH_SPACE, canRedoDocumentEdit, canUndoDocumentEdit, clearDocumentEditSnapshots, constants, escapeRegex, findCanonicalConfigLocale, redoDocumentEdit, undoDocumentEdit, getCurrentValue, grammar, hasChordProgressionText, helpers, hideUnsavedChangesToast, isSupportedConfigLocale, markDirty, normalizeConfigFieldName, parseConfigLocaleEntries, refreshElementRefs, refs, registerUnloadAttempt, readDocumentLineRange, replaceDocumentLineRange, replaceDocumentText, replaceTextLineRange, resetUnloadAttempts, runtime, shouldAllowInvisibleWordSeparators, showUnsavedChangesToast, startEditorActivity, setCurrentDocumentContent, setDropActive, setErrorCount, setSimpleEditorValue, setSharedDocumentDate, setStatus, state, supportsClipboardCopy, supportsClipboardPaste, syncEditorActivityState, syncEditorDirtyState, trimSpaceLikeEnd, trimSpaceLikeStart, trimSpaceLikeText, updateStatus, };

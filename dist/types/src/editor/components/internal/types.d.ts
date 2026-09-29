@@ -218,10 +218,25 @@ export interface OpenLyricRendererTargetSpec {
     getText(element: Element): string;
 }
 /**
- * Typed contribution bag. `style`, `renderers`, and the validated keys of
- * `language`/`transcript`/`notation` are wired; the open index keeps the shape
- * forward-compatible with the remaining kinds (exportStyle, examples, storage,
- * actions, …).
+ * A field a plugin adds to a standalone preview's settings popup (the gear
+ * menu), below the built-in fields and above Reset. The popup renders nothing
+ * for a composition without such a plugin.
+ */
+export interface OpenLyricSettingsContribution {
+    /** Build the field into `mount` (an empty `.topbar-settings__field`); may return a teardown. */
+    render(mount: HTMLElement, host: OpenLyricComponentHost): void | (() => void);
+    /** Return the field to its default — run by the popup's Reset button. */
+    reset?(): void;
+}
+/**
+ * Typed contribution bag. `style`, `renderers`, `settings`, and the validated
+ * keys of `language`/`transcript`/`notation` are wired; the open index keeps
+ * the shape forward-compatible with the remaining kinds (exportStyle,
+ * examples, storage, actions, …).
+ *
+ * Elements a plugin adds to a live preview should carry the
+ * `data-ol-plugin-ui` attribute: the standalone preview's image and print
+ * exports copy the live markup and drop every element marked with it.
  */
 export interface OpenLyricContributions {
     style?: OpenLyricStyleContribution | OpenLyricStyleContribution[];
@@ -231,6 +246,7 @@ export interface OpenLyricContributions {
     /** Singleton kind: at most one notation plugin per component. */
     notation?: unknown;
     renderers?: OpenLyricRendererContribution[];
+    settings?: OpenLyricSettingsContribution[];
     [contributionPoint: string]: unknown;
 }
 /** What `onBeforeRender`/`onAfterRender` receive for a mounted render pass. */
@@ -247,6 +263,32 @@ export interface OpenLyricRenderContext {
  * `onRendered`.
  */
 export type OpenLyricRenderHook = (context: OpenLyricRenderContext) => void;
+/**
+ * The event the chord popup dispatches, bubbling, on the chord or strumming
+ * pattern reference it opens for — every time it opens. See
+ * {@link OpenLyricChordPopupEventDetail}.
+ */
+export declare const OPEN_LYRIC_CHORD_POPUP_EVENT = "open-lyric:chord-popup";
+/**
+ * What {@link OPEN_LYRIC_CHORD_POPUP_EVENT} carries. `actions` is a row in the
+ * popup's header, emptied each time the popup opens or closes: a plugin
+ * decorating the preview the trigger lives in appends its controls there (a
+ * play button). With nothing appended the row stays hidden.
+ */
+export interface OpenLyricChordPopupEventDetail {
+    /** A chord marker, or a `{: #n }` strumming-pattern reference. */
+    kind: 'chord' | 'pattern';
+    /** The chord symbol (`D/F#`) or the pattern's notation. */
+    text: string;
+    actions: HTMLElement;
+    /**
+     * A slot below the header, emptied and hidden each time the popup opens or
+     * closes. A plugin may fill it and set `hidden = false` — at once or later
+     * (from one of its `actions`); while it shows, it takes the place of the
+     * popup's own guitar diagram and variants.
+     */
+    panel: HTMLElement;
+}
 /** What a plugin receives on install — a stable, read-only view of its host. */
 export interface OpenLyricComponentHost extends OpenLyricEmitter {
     readonly surface: OpenLyricSurface;

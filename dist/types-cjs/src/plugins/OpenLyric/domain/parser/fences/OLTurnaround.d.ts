@@ -11,6 +11,7 @@ import { OLFenceDefinition } from './OLFenceDefinition.js';
 declare class OLTurnaround extends OLFenceDefinition {
     constructor();
     validateBody(context: any): void;
+    getPreviewChordInsertStyle(): string;
     renderPreviewBody(context: any): any;
 }
 export { OLTurnaround };

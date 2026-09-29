@@ -21,3 +21,5 @@ export { getRegisteredKeyboardSpecifications, getRegisteredSpellcheckSpecificati
 export { EDITOR_ONLY_SHELL_MODE } from '../../../src/editor/scripts/page-config.js';
 export { createDictionarySnapshot, getDictionaryConfig, getDictionaryPrefixSuggestions, getSuggestionDictionaryConfigs, hasAnyWordBaseCharacter, loadDictionary, normalizeWord, } from '../../../src/editor/scripts/spellcheck-common.js';
 export { postProcessTranscriptText } from '../../../src/editor/scripts/spellcheck.js';
+export { CHORD_KEY_GROUPS, CONFIG_ENUM_FIELD_VALUES, CONFIG_KEY_VALUES, isValidStrummingPatternValue, } from '../../../src/editor/scripts/shared.js';
+export { parseStrummingPatterns, parseStrummingPatternSteps, } from '../../../src/plugins/OpenLyric/preview/helpers.js';

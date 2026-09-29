@@ -42,6 +42,8 @@ export declare class OpenLyricStandaloneChrome {
     private progressResetTimer;
     private readonly unsubscribes;
     private readonly documentListeners;
+    /** Fields attached plugins add to the settings popup (`contributes.settings`). */
+    private pluginSettings;
     constructor(component: OpenLyric);
     attach(renderRoot: HTMLElement, container: HTMLElement): void;
     /**
