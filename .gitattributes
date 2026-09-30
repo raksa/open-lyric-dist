@@ -1,0 +1,12 @@
+# Written by open-lyric's `npm run copy-packages`.
+#
+# Everything under dist/ is build output, copied here byte for byte. Git must
+# not touch it: with `core.autocrlf=true` a commit normalises CRLF to LF *in
+# the blob* while the working tree still checks out as CRLF, so the mangling is
+# invisible here and lands on every consumer — npm installs a git dependency
+# from the blob, not from a checkout.
+#
+# That is not hypothetical. open-lyric-plugin-player@0.1.3 shipped a
+# WebAudioFont script 807 bytes shorter than the one its sha384 pin was taken
+# from, so every consumer's browser refused it and no chord could sound.
+dist/** -text
