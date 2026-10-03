@@ -178,12 +178,12 @@ allowed **only** under `Description`, `Attachments` and `Strumming Patterns`.
 | `Title`              | **yes**  |                                                           |
 | `Subtitle`           | no       |                                                           |
 | `Description`        | no       | multiline                                                 |
-| `Artist`             | **yes**  |                                                           |
-| `Copyright`          | **yes**  |                                                           |
+| `Artist`             | no       |                                                           |
+| `Copyright`          | no       |                                                           |
 | `Locales`            | no       | comma-separated, from the closed tag set                  |
-| `Key`                | **yes**  | enum                                                      |
-| `Tempo`              | **yes**  | `^[1-9]\d*bpm$` — no space, e.g. `68bpm`                  |
-| `Time`               | **yes**  | enum                                                      |
+| `Key`                | no       | enum                                                      |
+| `Tempo`              | no       | `^[1-9]\d*bpm$` — no space, e.g. `68bpm`                  |
+| `Time`               | no       | enum                                                      |
 | `Theme`              | no       |                                                           |
 | `Structure`          | **yes**  | see §5                                                    |
 | `Genre`              | no       |                                                           |
@@ -283,7 +283,7 @@ Every message the validator can emit, and what triggers it.
 | `<Field> must provide a value on the same line.`                                                                                                | A single-line field left empty, value on the next line. |
 | `<Field> must be one of: …`                                                                                                                     | A `Key` or `Time` value outside its enum.              |
 | `Tempo must match [1-9]\d*bpm.`                                                                                                                 | `70 bpm`, `70`, or `0bpm`.                             |
-| `Missing required config fields: …`                                                                                                             | One of the seven required fields is absent.            |
+| `Missing required config fields: …`                                                                                                             | `Title` or `Structure` is absent.            |
 | `Locales must be a comma-separated list of locales with no empty entry.`                                                                        | A trailing comma or an empty slot.                     |
 | `Duplicate locale. <tag> is already listed.`                                                                                                    | The same locale tag listed twice.                      |
 | `Strumming Patterns must use only d, D, v, V, u, U, ^, x, X, 1, *, +, -, _, ., 0, bar separators (\|), and spaces or tabs.`                      | Any other character inside a pattern.                  |
@@ -507,7 +507,7 @@ validating a song before serializing it to notation.
   },
   "config": {
     "fields": ["Title", "Subtitle", "Description", "Artist", "Copyright", "Locales", "Key", "Tempo", "Time", "Theme", "Structure", "Genre", "Style", "Attachments", "Strumming Patterns"],
-    "required": ["Title", "Artist", "Copyright", "Key", "Tempo", "Time", "Structure"],
+    "required": ["Title", "Structure"],
     "multiline": ["Description", "Attachments", "Strumming Patterns"],
     "aliases": { "Strumming Pattern": "Strumming Patterns" },
     "enums": {
@@ -611,7 +611,7 @@ validating a song before serializing it to notation.
     { "message": "<Field> must provide a value on the same line.", "cause": "A single-line field left empty with its value on the next line." },
     { "message": "<Field> must be one of: ...", "cause": "A Key or Time value outside its enum." },
     { "message": "Tempo must match [1-9]\\d*bpm.", "cause": "Tempo written as '70 bpm', '70', or '0bpm'." },
-    { "message": "Missing required config fields: ...", "cause": "One of the seven required Config fields is absent." },
+    { "message": "Missing required config fields: ...", "cause": "Title or Structure is absent from Config." },
     { "message": "Locales must be a comma-separated list of locales with no empty entry.", "cause": "A trailing comma or an empty slot." },
     { "message": "Duplicate locale. <tag> is already listed.", "cause": "The same locale tag listed twice." },
     { "message": "Strumming Patterns must use only d, D, v, V, u, U, ^, x, X, 1, *, +, -, _, ., 0, bar separators (|), and spaces or tabs.", "cause": "Any other character inside a pattern." },
@@ -685,7 +685,7 @@ schema can carry is enforced for you.
     "config": {
       "type": "object",
       "description": "The ol:Config fence.",
-      "required": ["Title", "Artist", "Copyright", "Key", "Tempo", "Time", "Structure"],
+      "required": ["Title", "Structure"],
       "additionalProperties": false,
       "properties": {
         "Title": { "type": "string", "minLength": 1 },

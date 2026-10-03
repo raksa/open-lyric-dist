@@ -241,10 +241,9 @@ or an exported image.
 
 When the document is empty (or only blank lines), the markdown preview shows a
 card with a **Start a new song** button instead of nothing. Pressing it writes
-the smallest song the notation accepts — an `ol:Config` fence with every
-required field filled with a placeholder (`Title`, `Artist`, `Copyright`,
-`Key: G`, `Tempo: 70bpm`, `Time: 4/4`, `Structure: V1`) followed by an
-empty `ol:Verse 1` — and opens the **Title** field's editor with the
+the smallest song the notation accepts — an `ol:Config` fence with only the
+two required fields (`Title` filled with a placeholder, `Structure: V1`)
+followed by an empty `ol:Verse 1` — and opens the **Title** field's editor with the
 placeholder selected, so typing replaces it. The starter validates with no
 diagnostics, the write is one undo step, and nothing is written if the
 document stopped being blank in the meantime. Optional fields are added
