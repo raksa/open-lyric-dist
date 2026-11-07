@@ -1,4 +1,4 @@
-# open-lyric
+# Open Lyric
 
 Embeddable, framework-free Open Lyric components: the song **editor**, the
 **markdown preview**, the **lyric preview**, and the **dashboard** shell that
