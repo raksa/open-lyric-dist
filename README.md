@@ -147,5 +147,5 @@ npm whoami                                  # run `npm login` if this fails
 npm version patch --tag-version-prefix=""   # or minor / major
 npm publish
 git push origin main --follow-tags
-npm view open-lyric version                   # confirm the new version is live
+npm view open-lyric version                 # confirm the new version is live
 ```
