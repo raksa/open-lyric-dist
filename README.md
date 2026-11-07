@@ -134,3 +134,18 @@ with flat entry points.
   packages share the core's stateful modules through `open-lyric/internal`
   instead of bundling copies. Their heavy data (dictionaries, workers, fonts,
   controllers) is their own; composing a plugin is what enables its feature.
+
+
+### Releasing to npm
+
+For maintainers, from a clean `main`:
+
+```bash
+npm test
+npm pack --dry-run                          # check which files go in the package
+npm whoami                                  # run `npm login` if this fails
+npm version patch --tag-version-prefix=""   # or minor / major
+npm publish
+git push origin main --follow-tags
+npm view lw-share version                   # confirm the new version is live
+```
