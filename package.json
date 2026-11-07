@@ -1,6 +1,6 @@
 {
   "name": "open-lyric",
-  "version": "0.1.77",
+  "version": "0.1.78",
   "description": "Embeddable, framework-free Open Lyric components: song editor, markdown preview, lyric preview, and dashboard shell.",
   "license": "MIT",
   "author": "raksa <eng.raksa@gmail.com>",
@@ -75,7 +75,7 @@
   },
   "peerDependencies": {
     "eruda": "^3.4.3",
-    "monaco-editor": "^0.56.0"
+    "monaco-editor": "^0.57.0"
   },
   "peerDependenciesMeta": {
     "eruda": {

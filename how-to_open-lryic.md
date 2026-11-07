@@ -18,7 +18,8 @@ Scope: this document covers the `open-lyric` package only.
 npm i open-lyric
 ```
 
-`monaco-editor` (**0.56 or newer**) is an **optional peer dependency**: install
+`monaco-editor` (**0.57.x** — the peer range is `^0.57.0`, one minor, because
+`Editor` imports some of Monaco's internal modules) is an **optional peer dependency**: install
 it only if you use `Editor` or `OpenLyricDashboard`. Neither preview loads
 Monaco. Its stylesheets need no wiring — the ESM modules import the CSS they
 need, and those imports stay external for your bundler to pick up.

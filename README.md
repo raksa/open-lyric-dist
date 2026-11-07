@@ -17,8 +17,9 @@ npm i open-lyric-plugin-km-kh        # optional: Khmer language plugin
 npm i open-lyric-plugin-transcript   # optional: audio → text plugin
 ```
 
-`monaco-editor` (**0.56 or newer** — the release that reorganized its ESM entry
-points) is an **optional peer dependency**: install it only if you use `Editor`
+`monaco-editor` (**0.57.x** — the peer range is `^0.57.0`, one minor, because
+`Editor` imports some of Monaco's internal modules) is an **optional peer
+dependency**: install it only if you use `Editor`
 or `OpenLyricDashboard`. The two previews never load Monaco. Its styling needs
 no wiring either: the ESM modules we import pull in the `.css` they need module
 by module, and those imports stay external, so your bundler picks them up.
