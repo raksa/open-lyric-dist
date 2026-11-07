@@ -4,6 +4,9 @@ Embeddable, framework-free Open Lyric components: the song **editor**, the
 **markdown preview**, the **lyric preview**, and the **dashboard** shell that
 composes all three.
 
+This package is primarily used in
+[Open Worship app](https://github.com/OpenWorshipApp/open-worship-app-dt).
+
 The authoritative description of the component model, the lifecycle contract,
 the event API, theming, and the plugin system is
 [`research/editor-structure-implemented.md`](../../research/editor-structure-implemented.md).
