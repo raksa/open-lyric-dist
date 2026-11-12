@@ -72,7 +72,11 @@ declare class OpenLyricEditorApplication {
     getEditorMode(): string;
     listAllSpellErrorLines(): Set<any>;
     getSimpleEditor(): Element | null;
-    loadEditorModePreference(): void;
+    /**
+     * Every page load starts on Monaco: the simple editor (SE) switch lasts for
+     * the session only, so a reader is never left in it by an earlier visit.
+     */
+    resetEditorModeForSession(): void;
     getEditorLanguageId(): "markdown-ol" | "markdown";
     focusActiveEditorSurface(): void;
     shouldUseEditorActionsMenuForModeToggle(): boolean;

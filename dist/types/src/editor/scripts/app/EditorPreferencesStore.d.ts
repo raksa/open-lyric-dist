@@ -126,8 +126,13 @@ declare class EditorPreferencesStore {
     loadOpenLyricPluginEnabledPreference(): boolean;
     saveOpenLyricPluginEnabledPreference(enabled: any): void;
     normalizeEditorMode(mode: any): "monaco" | "simple";
-    loadEditorModePreference(): "monaco" | "simple";
-    saveEditorModePreference(mode: any): void;
+    /**
+     * The simple editor (SE) is deliberately not remembered: every page load
+     * starts on Monaco, whatever the last session switched to. Older builds
+     * stored the switch, which kept a reader who once turned SE on in it for
+     * good — so the stored value is deleted rather than read.
+     */
+    clearStoredEditorModePreference(): void;
     normalizeTheme(theme: any): import("open-lyric").OpenLyricTheme;
     loadStoredThemePreference(): import("open-lyric").OpenLyricTheme | null;
     hasStoredThemePreference(): boolean;
