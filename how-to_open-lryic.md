@@ -496,11 +496,8 @@ subtag boundaries, so `- Locales: km` matches a plugin keyed `km-KH`.
 | `fontFaces`    | Faces added to the settings popup's font picker. Not per document — listed whenever the plugin is attached.                               |
 | `labels`       | Translations for the fixed labels the preview prints around the song, keyed by the English label (`preview.resolvedLabels` is the result). |
 
-`labels` covers the `ol:Config` field names — `Title`, `Subtitle`,
-`Description`, `Artist`, `Copyright`, `Locales`, `Key`, `Tempo`, `Time`,
-`Theme`, `Structure`, `Genre`, `Style`, `Keywords`, `Year`, `Melody`,
-`Attachments`, `Strumming Patterns` — and `Untitled Song`, the title a song
-without one is shown under:
+`labels` is one table for all of a preview's fixed text, keyed by the English
+the preview prints:
 
 ```js
 preview.addPlugin('fr-FR', {
@@ -508,27 +505,57 @@ preview.addPlugin('fr-FR', {
   apiVersion: 1,
   surfaces: ['lyric'],
   contributes: {
-    language: { labels: { Attachments: 'Pièces jointes', Key: 'Tonalité' } },
+    language: {
+      labels: {
+        Attachments: 'Pièces jointes',
+        Key: 'Tonalité',
+        'Preview settings': 'Réglages',
+        'Verse {0}': 'Couplet {0}',
+        'Edit {0}': 'Modifier {0}',
+      },
+    },
   },
 });
 ```
 
-- In `OpenLyric` it translates the `Key` / `Time` / `Tempo` summary, the folded
-  details (`Theme`, `Genre`, `Style`, `Keywords`, `Year`, `Melody`,
-  `Attachments`) and the placeholder title — in the panel and in
-  `getValue({ type: 'html' | 'png-image' })`, which render the same markup.
-- In `OpenLyricMarkdownManager` it translates the field names of the `Config`
-  card. The card's edit actions still address a field by its notation name.
-- A label with no entry (or a blank one) stays in English, and with several
+What it reaches:
+
+- **The song header**, in both previews: the `ol:Config` field names (`Title`,
+  `Subtitle`, `Description`, `Artist`, `Copyright`, `Locales`, `Key`, `Tempo`,
+  `Time`, `Theme`, `Structure`, `Genre`, `Style`, `Keywords`, `Year`,
+  `Melody`, `Attachments`, `Strumming Patterns`) and `Untitled Song`. These
+  are rendered translated, so `getValue({ type: 'html' | 'png-image' })`
+  carries them too.
+- **Everything else a standalone preview builds**: the settings popup, the
+  actions menu, export progress, the Markdown preview's editing controls,
+  section titles and structure steps (`Verse 1`, `Chorus`), and every `title`,
+  `aria-label` and `placeholder`. This part is applied to the mounted DOM, and
+  kept applied as the preview rewrites its text. It also covers the fields
+  other plugins add to the settings popup.
+
+Rules of the table:
+
+- A key matches a whole piece of text exactly. A trailing colon is carried
+  over, so `Verse` also translates `Verse:`.
+- A key with `{0}` … `{9}` placeholders is a pattern for a caption built around
+  a name: `'Edit {0}'` translates `Edit Title`, and what a placeholder captured
+  is translated in turn (`Edit Verse 1 text` → the `Edit {0} text` and
+  `Verse {0}` entries together). The longest matching pattern wins.
+- A string with no entry (or a blank one) stays in English, and with several
   matching plugins the first attached one to translate a label wins.
+- Only the preview's own text is looked at — controls, the popup and menus,
+  section titles, structure steps. Lyrics, field values, chords and
+  attachments are never translated. Put `data-ol-no-translate` on an element
+  to keep its subtree as written, or `data-ol-translate` to opt one in.
+- A preview mounted with `adoptContainer` translates the song header only; the
+  page around an adopted panel is the host's own markup.
+- Not translated: the plain-text form (`getValue({ type: 'text' })`) and the
+  chord popup, which mounts on the page rather than in the preview.
 - `preview.labelLocale` overrides the per-document rule for the labels only
   (the font stays document-driven). `'auto'` is the default; a locale tag such
   as `'km-KH'` prints every song's labels in that plugin's language whatever
   its `Locales` say; `'en'`, or a tag no attached plugin claims, prints
   English. Assigning it re-renders a mounted preview.
-- Not translated: anything the author wrote (section names, lyrics, values),
-  the plain-text form (`getValue({ type: 'text' })`), and the controls'
-  tooltips and menus.
 
 ### Adding to a preview's settings popup and page
 

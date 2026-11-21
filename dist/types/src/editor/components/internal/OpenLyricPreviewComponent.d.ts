@@ -73,6 +73,7 @@ export declare abstract class OpenLyricPreviewComponent extends OpenLyricCompone
     private fontSizeValue;
     private fontFacesValue;
     private labelLocaleValue;
+    private labelLocalizer;
     private readonly boundDoubleClick;
     constructor(options?: OpenLyricPreviewOptions);
     /** See {@link OpenLyricPreviewOptions.adoptContainer}. */
