@@ -121,7 +121,9 @@ declare const olEditorOpenLyricPluginData: {
             language: {
                 registerMarkdownOlLanguage: typeof registerMarkdownOlLanguage;
                 checkOLMarkdown: typeof validation.checkOLMarkdown;
+                collectMarkdownOlMarkersFromLines: typeof validation.collectMarkdownOlMarkersFromLines;
                 scheduleValidation: typeof validation.scheduleValidation;
+                splitMarkdownOlText: typeof validation.splitMarkdownOlText;
                 validateMarkdownOlModel: typeof validation.validateMarkdownOlModel;
             };
         };

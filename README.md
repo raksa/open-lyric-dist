@@ -7,10 +7,10 @@ composes all three.
 This package is primarily used in
 [Open Worship app](https://github.com/OpenWorshipApp/open-worship-app-dt).
 
-The authoritative description of the component model, the lifecycle contract,
-the event API, theming, and the plugin system is
-[`research/editor-structure-implemented.md`](../../research/editor-structure-implemented.md).
-This README covers only what is specific to the published package.
+The components, their lifecycle, the event API, theming and the plugin system
+are described in `how-to_open-lryic.md`, and the notation in `schema.md` — both
+ship in this package. This README covers only what is specific to the
+published package.
 
 ## Install
 
@@ -101,21 +101,6 @@ import { version as kmKhVersion } from 'open-lyric-plugin-km-kh';
   `import.meta`, and the dictionaries, fonts, and workers will not resolve.
   Target ESM (or CJS, which carries a `document.currentScript` shim).
 
-## Build
-
-Built from the repo root, not from this directory:
-
-```bash
-npm run pack                  # all three packages
-npm run pack -- open-lyric    # just this one
-```
-
-Two passes (see `scripts/pack-packages.ts`): Vite bundles both flavors plus
-every asset the editor sources import — SCSS, `?raw` HTML fragments, `?url`
-dictionaries, the Monaco and spellcheck workers — then `tsc` emits
-declarations, which are post-processed into ESM and CommonJS flavored trees
-with flat entry points.
-
 ## Notes on the artifact
 
 - **ESM + CJS**, `es2022`, with sourcemaps.
@@ -138,18 +123,3 @@ with flat entry points.
   packages share the core's stateful modules through `open-lyric/internal`
   instead of bundling copies. Their heavy data (dictionaries, workers, fonts,
   controllers) is their own; composing a plugin is what enables its feature.
-
-
-### Releasing to npm
-
-For maintainers, from a clean `main`:
-
-```bash
-npm test
-npm pack --dry-run                          # check which files go in the package
-npm whoami                                  # run `npm login` if this fails
-npm version patch --tag-version-prefix=""   # or minor / major
-npm publish
-git push origin main --follow-tags
-npm view open-lyric version                 # confirm the new version is live
-```

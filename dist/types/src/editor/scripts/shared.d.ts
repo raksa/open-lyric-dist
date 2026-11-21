@@ -39,6 +39,12 @@ declare const CONFIG_ENUM_FIELD_VALUES: {
 };
 declare const CONFIG_PATTERN_FIELD_VALUES: {
     Tempo: RegExp;
+    Year: RegExp;
+};
+/** What a value failing its {@link CONFIG_PATTERN_FIELD_VALUES} pattern is told. */
+declare const CONFIG_PATTERN_FIELD_MESSAGES: {
+    Tempo: string;
+    Year: string;
 };
 declare const CONFIG_LOCALE_SEPARATOR = ",";
 /**
@@ -403,6 +409,27 @@ declare function showUnsavedChangesToast(remainingAttempts?: number): void;
 declare function hideUnsavedChangesToast(): void;
 declare function updateStatus(): void;
 declare function setErrorCount(nextErrorCount: any): void;
+/**
+ * A document this page shows but does not hold — the text lives with a host
+ * outside the page (the VS Code preview webview's extension host), so neither
+ * Monaco nor the simple-editor textarea is its surface. `getValue` must answer
+ * synchronously with the text as of the last write; `setValue` takes the whole
+ * next text and is the host's cue to persist it and re-render.
+ */
+interface ExternalDocumentSurface {
+    getValue(): string;
+    setValue(text: string): void;
+}
+/**
+ * Make `surface` the document every read and write here goes through —
+ * `getCurrentValue`, `replaceDocumentText`, `writeDocumentTextInPlace` and so
+ * `replaceDocumentLineRange` — ahead of Monaco and the textarea, and the
+ * reason the in-preview edit controls count as live (see
+ * `hasExternalDocumentSurface`). For a page with no editor surface of its own;
+ * `null` detaches it.
+ */
+declare function setExternalDocumentSurface(surface: ExternalDocumentSurface | null): void;
+declare function hasExternalDocumentSurface(): boolean;
 declare function getCurrentValue(): any;
 declare function setCurrentDocumentContent(value: any): void;
 declare function setSimpleEditorValue(value: any): void;
@@ -522,6 +549,11 @@ declare const grammar: {
     };
     CONFIG_PATTERN_FIELD_VALUES: {
         Tempo: RegExp;
+        Year: RegExp;
+    };
+    CONFIG_PATTERN_FIELD_MESSAGES: {
+        Tempo: string;
+        Year: string;
     };
     CHORD_KEY_GROUPS: {
         name: any;
@@ -549,4 +581,5 @@ declare const helpers: {
     supportsClipboardCopy: typeof supportsClipboardCopy;
     supportsClipboardPaste: typeof supportsClipboardPaste;
 };
-export { CHORD_ANNOTATION_RE, CHORD_KEY_GROUPS, CHORD_SYMBOL_RE, CHORD_SYMBOL_SOURCE, collapseSpaceLikeText, CONFIG_ENUM_FIELD_VALUES, CONFIG_FIELD_ALIASES, CONFIG_FIELD_NAMES, CONFIG_FIELD_MATCH_NAMES, CONFIG_HEADER_RE, CONFIG_KEY_VALUES, CONFIG_LOCALE_SEPARATOR, CONFIG_LOCALE_VALUES, CONFIG_MULTILINE_FIELD_NAMES, CONFIG_PATTERN_FIELD_VALUES, CONFIG_REQUIRED_FIELD_NAMES, BS_DARK_LANGUAGE_THEME, BS_LANGUAGE_THEME, DARK_LANGUAGE_THEME, MONACO_THEME_BY_APP_THEME, DEFAULT_CONTENT, DEFAULT_EDITOR_MODE, DEFAULT_PANEL_VISIBILITY, DEFAULT_THEME, DRAFT_STORAGE_KEY, FORM_SECTION_NAMES, FREE_TEXT_HEADER_RE, FREE_TEXT_SECTION_NAMES, getLeadingSpaceLikeLength, hasScriptBaseLetter, INSTRUMENTAL_DIRECTIVE_RE, INSTRUMENTAL_HEADER_RE, INSTRUMENTAL_SECTION_NAMES, INTRO_DIRECTIVE_RE, INTRO_OR_CUE_DIRECTIVE_RE, INTRO_HEADER_RE, isSpaceLikeCharacter, isValidStrummingPatternValue, LANGUAGE_ID, LANGUAGE_THEME, LEGACY_THEME_STORAGE_KEY, LYRIC_HEADER_RE, LYRIC_SECTION_NAMES, MARKER_OWNER, MONACO_WORD_PATTERN, MONACO_WORD_SEPARATORS, NUMBERED_SECTION_NAMES, normalizeWordSeparators, normalizeStrummingPatternValue, REPEAT_SUFFIX_RE, THEME_STORAGE_KEY, VALIDATION_DELAY_MS, ZERO_WIDTH_SPACE, canRedoDocumentEdit, canUndoDocumentEdit, clearDocumentEditSnapshots, constants, escapeRegex, findCanonicalConfigLocale, redoDocumentEdit, undoDocumentEdit, getCurrentValue, grammar, hasChordProgressionText, helpers, hideUnsavedChangesToast, isSupportedConfigLocale, markDirty, normalizeConfigFieldName, parseConfigLocaleEntries, refreshElementRefs, refs, registerUnloadAttempt, readDocumentLineRange, replaceDocumentLineRange, replaceDocumentText, replaceTextLineRange, resetUnloadAttempts, runtime, shouldAllowInvisibleWordSeparators, showUnsavedChangesToast, startEditorActivity, setCurrentDocumentContent, setDropActive, setErrorCount, setSimpleEditorValue, setSharedDocumentDate, setStatus, state, supportsClipboardCopy, supportsClipboardPaste, syncEditorActivityState, syncEditorDirtyState, trimSpaceLikeEnd, trimSpaceLikeStart, trimSpaceLikeText, updateStatus, };
+export { CHORD_ANNOTATION_RE, CHORD_KEY_GROUPS, CHORD_SYMBOL_RE, CHORD_SYMBOL_SOURCE, collapseSpaceLikeText, CONFIG_ENUM_FIELD_VALUES, CONFIG_FIELD_ALIASES, CONFIG_FIELD_NAMES, CONFIG_FIELD_MATCH_NAMES, CONFIG_HEADER_RE, CONFIG_KEY_VALUES, CONFIG_LOCALE_SEPARATOR, CONFIG_LOCALE_VALUES, CONFIG_MULTILINE_FIELD_NAMES, CONFIG_PATTERN_FIELD_MESSAGES, CONFIG_PATTERN_FIELD_VALUES, CONFIG_REQUIRED_FIELD_NAMES, BS_DARK_LANGUAGE_THEME, BS_LANGUAGE_THEME, DARK_LANGUAGE_THEME, MONACO_THEME_BY_APP_THEME, DEFAULT_CONTENT, DEFAULT_EDITOR_MODE, DEFAULT_PANEL_VISIBILITY, DEFAULT_THEME, DRAFT_STORAGE_KEY, FORM_SECTION_NAMES, FREE_TEXT_HEADER_RE, FREE_TEXT_SECTION_NAMES, getLeadingSpaceLikeLength, hasScriptBaseLetter, INSTRUMENTAL_DIRECTIVE_RE, INSTRUMENTAL_HEADER_RE, INSTRUMENTAL_SECTION_NAMES, INTRO_DIRECTIVE_RE, INTRO_OR_CUE_DIRECTIVE_RE, INTRO_HEADER_RE, isSpaceLikeCharacter, isValidStrummingPatternValue, LANGUAGE_ID, LANGUAGE_THEME, LEGACY_THEME_STORAGE_KEY, LYRIC_HEADER_RE, LYRIC_SECTION_NAMES, MARKER_OWNER, MONACO_WORD_PATTERN, MONACO_WORD_SEPARATORS, NUMBERED_SECTION_NAMES, normalizeWordSeparators, normalizeStrummingPatternValue, REPEAT_SUFFIX_RE, THEME_STORAGE_KEY, VALIDATION_DELAY_MS, ZERO_WIDTH_SPACE, canRedoDocumentEdit, canUndoDocumentEdit, clearDocumentEditSnapshots, constants, escapeRegex, findCanonicalConfigLocale, redoDocumentEdit, undoDocumentEdit, getCurrentValue, grammar, hasChordProgressionText, hasExternalDocumentSurface, helpers, hideUnsavedChangesToast, isSupportedConfigLocale, markDirty, normalizeConfigFieldName, parseConfigLocaleEntries, refreshElementRefs, refs, registerUnloadAttempt, readDocumentLineRange, replaceDocumentLineRange, replaceDocumentText, replaceTextLineRange, resetUnloadAttempts, runtime, shouldAllowInvisibleWordSeparators, showUnsavedChangesToast, startEditorActivity, setCurrentDocumentContent, setDropActive, setErrorCount, setExternalDocumentSurface, setSimpleEditorValue, setSharedDocumentDate, setStatus, state, supportsClipboardCopy, supportsClipboardPaste, syncEditorActivityState, syncEditorDirtyState, trimSpaceLikeEnd, trimSpaceLikeStart, trimSpaceLikeText, updateStatus, };
+export type { ExternalDocumentSurface };

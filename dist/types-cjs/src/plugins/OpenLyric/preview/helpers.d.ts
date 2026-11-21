@@ -197,14 +197,16 @@ declare function renderOpenLyricEmptyDocumentHtml(helpers?: {
     renderStructureValue: typeof renderStructureValue;
 }): any;
 /**
- * Open every Config attachments disclosure inside `root`.
+ * Unfold every Config extras disclosure inside `root` — the header's Theme,
+ * Genre, Style, Keywords, Year and Melody rows and its Attachments list.
  *
- * The panel renders the list closed (`renderConfigAttachments`), which is a
- * reader's convenience — a picture of the song has nothing to click, so a
- * printout, an export image, an exported HTML surface and the `Info` card all
- * run this over the markup they were built from and show the links the way the
- * plain-text forms list them. A render that was asked to leave the attachments
- * out (`hideAttachments`) has no disclosure here to open.
+ * The panel renders them folded (`renderConfigExtras`), which is a reader's
+ * convenience — a picture of the song has nothing to click, so a printout, an
+ * export image, an exported HTML surface and the `Info` card all run this over
+ * the markup they were built from and show the facts the way the plain-text
+ * forms list them. The `<details>` becomes a plain block of the same class and
+ * its summary goes: merely opening it would still draw the toggle row, and an
+ * empty `<details>` would grow the browser's own "Details" label instead.
  */
-declare function expandOpenLyricAttachments(root: any): void;
-export { DEFAULT_STRUMMING_PATTERN_TEXT, OPEN_LYRIC_PATTERN_TARGET_ID_PREFIX, createChordedLyricTextLines, createPreviewHelpers, createPreviewLineEntries, createStrummingPatternPreviewContextFromConfigBody, createStrummingPatternPreviewContextFromMarkdown, escapeHtml, expandOpenLyricAttachments, getPreviewSourceLocation, isChordOnlyLineText, isProgressionLineText, normalizeMarkdownRenderableUrls, parseStrummingPatterns, parseStrummingPatternSteps, previewHelpers, renderInlineTextPlainText, renderOpenLyricEmptyDocumentHtml, renderOpenLyricFenceHtml, renderStrummingPatternGrid, sanitizeHtml, };
+declare function expandOpenLyricExtras(root: any): void;
+export { DEFAULT_STRUMMING_PATTERN_TEXT, OPEN_LYRIC_PATTERN_TARGET_ID_PREFIX, createChordedLyricTextLines, createPreviewHelpers, createPreviewLineEntries, createStrummingPatternPreviewContextFromConfigBody, createStrummingPatternPreviewContextFromMarkdown, escapeHtml, expandOpenLyricExtras, getPreviewSourceLocation, isChordOnlyLineText, isProgressionLineText, normalizeMarkdownRenderableUrls, parseStrummingPatterns, parseStrummingPatternSteps, previewHelpers, renderInlineTextPlainText, renderOpenLyricEmptyDocumentHtml, renderOpenLyricFenceHtml, renderStrummingPatternGrid, sanitizeHtml, };

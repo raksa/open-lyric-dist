@@ -1,3 +1,4 @@
+import { createDictionarySnapshot, dictionaryTableHas, getDictionaryPrefixSuggestions, mergeDictionarySuggestions, restoreDictionaryFromSnapshot } from './typo-dictionary.js';
 declare function getAvailableSpellcheckSpecifications(): {
     actionLabel: string;
     aff: string;
@@ -25,16 +26,6 @@ declare function getSuggestionDictionaryConfigs(languageCodeOrSpecification: any
     dictionaryName: any;
     languageCode: any;
 }[];
-declare function mergeDictionarySuggestions(dictionaries: any, word: any, limit?: number): any[];
-/**
- * typo-js 1.3.2 keeps `dictionaryTable` as a `Map`; earlier releases — and
- * the plain-JSON side of a snapshot made before the upgrade — used a plain
- * word→flags object. Everything that reads a table goes through these two
- * helpers so both shapes behave identically, whichever a dictionary or a
- * restored snapshot happens to carry.
- */
-declare function dictionaryTableHas(dictionaryTable: any, word: any): boolean;
-declare function getDictionaryPrefixSuggestions(dictionaries: any, prefix: any, limit?: number): any[];
 declare function hasWordBaseCharacter(word: any, languageCode: any): boolean;
 /**
  * True when the word carries a base letter of ANY registered language whose
@@ -96,7 +87,5 @@ declare function getSpellcheckTokenPatterns(): {
     languageCode: string;
     pattern: RegExp;
 }[];
-declare function loadDictionary(languageCodeOrSpecification: any): Promise<any>;
-declare function createDictionarySnapshot(dictionary: any): any;
-declare function restoreDictionaryFromSnapshot(dictionarySnapshot: any): any;
+declare function loadDictionary(languageCodeOrSpecification: any): Promise<import("./typo-dictionary.js").TypoDictionary | null>;
 export { createDictionarySnapshot, detectLanguageCode, dictionaryTableHas, getAvailableSpellcheckSpecifications, getDictionaryPrefixSuggestions, getDictionaryConfig, getSuggestionDictionaryConfigs, getSpellcheckSpecification, getSpellcheckTokenPatterns, getInvisibleWordSeparators, getSegmentationActionLabel, getSegmentationCapableSpecifications, getWordSeparator, getWordSeparatorRewrites, getWordSuggestTriggerCharacters, hasAnyWordBaseCharacter, hasWordBaseCharacter, loadDictionary, mergeDictionarySuggestions, normalizeSpellcheckLookupWord, normalizeLanguageCode, normalizeWord, restoreDictionaryFromSnapshot, };

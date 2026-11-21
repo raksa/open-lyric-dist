@@ -360,7 +360,7 @@ declare class MonacoFeatureController {
      * that offers a segmentation command. Nothing to do when none does.
      */
     applySegmentationToSelection(): Promise<any>;
-    formatLineWhitespace(lineContent: any): any;
+    formatLineWhitespace(lineContent: any): string;
     toggleChordBars(): boolean;
     applyInvisibleCharacterHighlight(enabled: any): void;
     setInvisibleCharacterHighlight(enabled: any): void;

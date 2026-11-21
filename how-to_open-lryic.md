@@ -295,8 +295,9 @@ exported image.
 The `ol:Config` card edits field by field rather than as a block. `Key`, `Time`,
 `Tempo`, `Locales`, `Structure` and `Attachments` each open their own picker,
 and the free-text fields — `Title`, `Subtitle`, `Description`, `Artist`,
-`Copyright`, `Theme`, `Genre` and `Style` — are edited in place: click the value
-(or the pencil beside it, which is what a keyboard reaches) and it becomes a
+`Copyright`, `Theme`, `Genre`, `Style`, `Keywords`, `Year` and `Melody` — are
+edited in place: click the value (or the pencil beside it, which is what a
+keyboard reaches) and it becomes a
 text input holding that field's source value. **Save** or `Enter` writes the one
 source line back, **Cancel** or `Escape` discards, and one save is one undo
 step. Clearing the input leaves the field declared but empty (`- Artist:`), and

@@ -115,7 +115,9 @@ declare class EditorOpenLyricPlugin implements OpenLyricPlugin {
             language: {
                 registerMarkdownOlLanguage: typeof import("./monaco/language.js").registerMarkdownOlLanguage;
                 checkOLMarkdown: typeof import("./document/validation.js").checkOLMarkdown;
+                collectMarkdownOlMarkersFromLines: typeof import("./document/validation.js").collectMarkdownOlMarkersFromLines;
                 scheduleValidation: typeof import("./document/validation.js").scheduleValidation;
+                splitMarkdownOlText: typeof import("./document/validation.js").splitMarkdownOlText;
                 validateMarkdownOlModel: typeof import("./document/validation.js").validateMarkdownOlModel;
             };
         };

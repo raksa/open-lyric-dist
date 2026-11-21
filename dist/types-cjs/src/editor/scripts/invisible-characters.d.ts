@@ -32,6 +32,14 @@ export declare function createInvisibleCharacterRegex(): RegExp;
 /** Matches two or more adjacent invisible characters (what Format collapses). */
 export declare function createDuplicateInvisibleCharacterRunRegex(): RegExp;
 /**
+ * One line as the editor's Format Document command leaves it: word separators
+ * normalized for the line's script, every run of repeated invisible
+ * characters collapsed to its first, and trailing whitespace (visible or not)
+ * removed. Pure, so a host with no editor — the MCP server's `format_song` —
+ * formats a song exactly the way the Monaco surface does.
+ */
+export declare function formatDocumentLineWhitespace(lineContent: string): string;
+/**
  * Scan `model` and return one run per group of adjacent invisible characters.
  *
  * Adjacent characters merge into a single run so a stretch of them reads as one

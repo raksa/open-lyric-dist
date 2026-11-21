@@ -188,6 +188,9 @@ allowed **only** under `Description`, `Attachments` and `Strumming Patterns`.
 | `Structure`          | **yes**  | see §5                                                    |
 | `Genre`              | no       |                                                           |
 | `Style`              | no       |                                                           |
+| `Keywords`           | no       | comma-separated free text                                 |
+| `Year`               | no       | `^[1-9]\d{3}$` — four digits, e.g. `2024`                 |
+| `Melody`             | no       | free text — the tune the lyrics are sung to               |
 | `Attachments`        | no       | multiline, one URL per line                               |
 | `Strumming Patterns` | no       | multiline; alias `Strumming Pattern` is accepted          |
 
@@ -199,6 +202,17 @@ allowed **only** under `Description`, `Attachments` and `Strumming Patterns`.
 list, 229 entries: `en-US`, `km-KH`, `fr-FR`, `zh-CN`, …). Matching is
 case-insensitive; duplicates and empty entries are errors. The complete list is
 enumerated in the grammar JSON of §8, under `config.locales.values`.
+
+**`Keywords`** — free-text search terms on one line, separated by commas:
+`- Keywords: grace, morning, worship`. Any script is fine; nothing is checked
+beyond the value being present. The song object (§8.2) carries them as a list.
+
+**`Year`** — the year the song was written or released, as four ASCII digits
+(`2024`). A two-digit year, a range (`2023-2024`) or other-script digits are
+reported.
+
+**`Melody`** — the tune the lyrics are sung to, typically the name of an
+existing melody (`- Melody: Amazing Grace`). Free text, like `Genre`.
 
 **`Attachments`** — one per line, either a bare URL or a Markdown link:
 
@@ -283,6 +297,7 @@ Every message the validator can emit, and what triggers it.
 | `<Field> must provide a value on the same line.`                                                                                                | A single-line field left empty, value on the next line. |
 | `<Field> must be one of: …`                                                                                                                     | A `Key` or `Time` value outside its enum.              |
 | `Tempo must match [1-9]\d*bpm.`                                                                                                                 | `70 bpm`, `70`, or `0bpm`.                             |
+| `Year must be a four-digit year, such as 2024.`                                                                                                 | `24`, `2023-2024`, or other-script digits.             |
 | `Missing required config fields: …`                                                                                                             | `Title` or `Structure` is absent.            |
 | `Locales must be a comma-separated list of locales with no empty entry.`                                                                        | A trailing comma or an empty slot.                     |
 | `Duplicate locale. <tag> is already listed.`                                                                                                    | The same locale tag listed twice.                      |
@@ -333,6 +348,9 @@ Every message the validator can emit, and what triggers it.
 - Structure: IV1PCXV2CO
 - Genre: Worship
 - Style: Acoustic
+- Keywords: trust, morning, worship
+- Year: 2026
+- Melody: Original tune
 - Attachments: https://example.com/audio/quiet-river-demo.mp3
 - Strumming Patterns:
 	// Slow rolling pulse
@@ -506,7 +524,7 @@ validating a song before serializing it to notation.
     }
   },
   "config": {
-    "fields": ["Title", "Subtitle", "Description", "Artist", "Copyright", "Locales", "Key", "Tempo", "Time", "Theme", "Structure", "Genre", "Style", "Attachments", "Strumming Patterns"],
+    "fields": ["Title", "Subtitle", "Description", "Artist", "Copyright", "Locales", "Key", "Tempo", "Time", "Theme", "Structure", "Genre", "Style", "Keywords", "Year", "Melody", "Attachments", "Strumming Patterns"],
     "required": ["Title", "Structure"],
     "multiline": ["Description", "Attachments", "Strumming Patterns"],
     "aliases": { "Strumming Pattern": "Strumming Patterns" },
@@ -514,7 +532,7 @@ validating a song before serializing it to notation.
       "Key": ["C", "Db", "D", "Eb", "E", "F", "F#", "Gb", "G", "Ab", "A", "Bb", "B", "Am", "Bbm", "Bm", "Cm", "C#m", "Dm", "D#m", "Ebm", "Em", "Fm", "F#m", "Gm", "G#m"],
       "Time": ["4/4", "2/2", "2/4", "3/4", "3/8", "6/8", "9/8", "12/8"]
     },
-    "patterns": { "Tempo": "^[1-9]\\d*bpm$" },
+    "patterns": { "Tempo": "^[1-9]\\d*bpm$", "Year": "^[1-9]\\d{3}$" },
     "locales": {
       "separator": ",",
       "caseInsensitiveMatch": true,
@@ -611,6 +629,7 @@ validating a song before serializing it to notation.
     { "message": "<Field> must provide a value on the same line.", "cause": "A single-line field left empty with its value on the next line." },
     { "message": "<Field> must be one of: ...", "cause": "A Key or Time value outside its enum." },
     { "message": "Tempo must match [1-9]\\d*bpm.", "cause": "Tempo written as '70 bpm', '70', or '0bpm'." },
+    { "message": "Year must be a four-digit year, such as 2024.", "cause": "Year written as '24', '2023-2024', or with other-script digits." },
     { "message": "Missing required config fields: ...", "cause": "Title or Structure is absent from Config." },
     { "message": "Locales must be a comma-separated list of locales with no empty entry.", "cause": "A trailing comma or an empty slot." },
     { "message": "Duplicate locale. <tag> is already listed.", "cause": "The same locale tag listed twice." },
@@ -722,6 +741,13 @@ schema can carry is enforced for you.
         },
         "Genre": { "type": "string" },
         "Style": { "type": "string" },
+        "Keywords": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[^,]+$" },
+          "description": "Serialized as one comma-separated line."
+        },
+        "Year": { "type": "string", "pattern": "^[1-9]\\d{3}$", "examples": ["2024"] },
+        "Melody": { "type": "string", "description": "The tune the lyrics are sung to." },
         "Attachments": {
           "type": "array",
           "items": {

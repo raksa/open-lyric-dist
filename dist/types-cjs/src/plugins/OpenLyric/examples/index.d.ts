@@ -16,7 +16,7 @@
  * name a host writes in its own source should say what it is seeding. The
  * matching menu `id` is noted on each doc comment for the record.
  *
- * NOTE: `example-placeholder-song.md` is deliberately absent — it is a unit-test
+ * NOTE: `example-placeholder-song.ol.md` is deliberately absent — it is a unit-test
  * fixture (`OpenLyric.display.test.ts`, `OpenLyric.reset.test.ts`), not a
  * shipped example, and the plugin data does not list it either.
  */
