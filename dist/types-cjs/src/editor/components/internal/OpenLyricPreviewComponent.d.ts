@@ -72,6 +72,7 @@ export declare abstract class OpenLyricPreviewComponent extends OpenLyricCompone
     private fontFamilyValue;
     private fontSizeValue;
     private fontFacesValue;
+    private labelLocaleValue;
     private readonly boundDoubleClick;
     constructor(options?: OpenLyricPreviewOptions);
     /** See {@link OpenLyricPreviewOptions.adoptContainer}. */
@@ -139,6 +140,56 @@ export declare abstract class OpenLyricPreviewComponent extends OpenLyricCompone
      * own id (`km-KH`), so the usual case needs no `locales` list.
      */
     private resolvePluginFontFamily;
+    /**
+     * The `language` contributions of the attached plugins that claim a locale
+     * `value` declares, in attach order — what everything resolved per document
+     * (the font stack, the label translations) reads.
+     */
+    private getDocumentLanguageContributions;
+    /** The `language` contributions of the attached plugins claiming any of `wantedLocales`. */
+    private getLanguageContributionsFor;
+    /**
+     * The label translations this preview renders with: the `language.labels`
+     * of every composed plugin whose locale THIS document declares, keyed by the
+     * English label. Document-driven like {@link resolvedFontFamily} — an
+     * attached Khmer plugin translates a `- Locales: km-KH` song and leaves a
+     * Latin song on the same surface in English. Empty when nothing applies.
+     */
+    get resolvedLabels(): Record<string, string>;
+    /**
+     * Which language the fixed labels are printed in:
+     *
+     * - `'auto'` (the default) — the document decides: the labels of a composed
+     *   language plugin whose locale the song's `Locales` declare, else English.
+     * - a locale tag (`'km-KH'`) — that language for every song, whatever its
+     *   `Locales` say, taken from the attached plugin that claims the tag.
+     * - `'en'`, or any tag no attached plugin claims — English.
+     *
+     * Only the labels follow it; the font stays document-driven. Assigning it
+     * re-renders a mounted preview.
+     */
+    get labelLocale(): string;
+    set labelLocale(next: string);
+    /**
+     * The `language` contributions the labels are read from: the document's own
+     * under `labelLocale: 'auto'`, else those of the plugins claiming the locale
+     * a reader or host pinned.
+     */
+    private getLabelLanguageContributions;
+    /**
+     * {@link resolvedLabels} for a document other than the mounted one — for a
+     * host that renders part of a document itself (the app panels' incremental
+     * paths) and must match what a full render would print. The first attached
+     * plugin to translate a label wins.
+     */
+    resolveLabels(value: string): Record<string, string>;
+    /**
+     * {@link resolvedLabels} as the renderers' `labels` option — spread into
+     * every subclass's `getRenderOptions()`. Nothing at all when no label is
+     * translated, so a host's `extraRenderOptions` is never shadowed by an empty
+     * map.
+     */
+    protected getLabelRenderOptions(): Record<string, unknown>;
     set fontFamily(next: string);
     get fontSize(): string;
     set fontSize(next: string);

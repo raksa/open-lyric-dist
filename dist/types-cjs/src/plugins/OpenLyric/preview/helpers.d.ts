@@ -27,6 +27,13 @@ declare function getPreviewSourceLocation(body: any, startLineNumber: any): {
     bodyColumn: number;
 };
 declare function renderStructureValue(values: any): any;
+/**
+ * The text a preview prints for one of its fixed labels — an `ol:Config` field
+ * name, `Untitled Song`. `labels` is the render option a language plugin's
+ * `language.labels` arrives as, keyed by the English label; a label it does
+ * not translate stays as it is.
+ */
+declare function translatePreviewLabel(labels: any, label: any): string;
 declare function createStrummingPatternPreviewContextFromConfigBody(configBody: any, options?: {}): {
     allowZwspSeparators: boolean;
     keyText: string;
@@ -97,6 +104,7 @@ declare function createPreviewHelpers(viewOptions?: {}): {
     renderMixedLineCollection(lines: any): string;
     renderStrummingPatternCards: typeof renderStrummingPatternCards;
     renderStructureValue: typeof renderStructureValue;
+    translateLabel(label: any): string;
 };
 declare const previewHelpers: {
     createStrummingPatternPreviewContextFromConfigBody(configBody: any, options?: {}): {
@@ -127,6 +135,7 @@ declare const previewHelpers: {
     renderMixedLineCollection(lines: any): string;
     renderStrummingPatternCards: typeof renderStrummingPatternCards;
     renderStructureValue: typeof renderStructureValue;
+    translateLabel(label: any): string;
 };
 declare function renderOpenLyricFenceHtml(info: any, body: any, sourceLocation?: null, helpers?: {
     createStrummingPatternPreviewContextFromConfigBody(configBody: any, options?: {}): {
@@ -157,6 +166,7 @@ declare function renderOpenLyricFenceHtml(info: any, body: any, sourceLocation?:
     renderMixedLineCollection(lines: any): string;
     renderStrummingPatternCards: typeof renderStrummingPatternCards;
     renderStructureValue: typeof renderStructureValue;
+    translateLabel(label: any): string;
 }): any;
 /**
  * What the markdown preview renders for a document with nothing in it.
@@ -195,6 +205,7 @@ declare function renderOpenLyricEmptyDocumentHtml(helpers?: {
     renderMixedLineCollection(lines: any): string;
     renderStrummingPatternCards: typeof renderStrummingPatternCards;
     renderStructureValue: typeof renderStructureValue;
+    translateLabel(label: any): string;
 }): any;
 /**
  * Unfold every Config extras disclosure inside `root` — the header's Theme,
@@ -209,4 +220,4 @@ declare function renderOpenLyricEmptyDocumentHtml(helpers?: {
  * empty `<details>` would grow the browser's own "Details" label instead.
  */
 declare function expandOpenLyricExtras(root: any): void;
-export { DEFAULT_STRUMMING_PATTERN_TEXT, OPEN_LYRIC_PATTERN_TARGET_ID_PREFIX, createChordedLyricTextLines, createPreviewHelpers, createPreviewLineEntries, createStrummingPatternPreviewContextFromConfigBody, createStrummingPatternPreviewContextFromMarkdown, escapeHtml, expandOpenLyricExtras, getPreviewSourceLocation, isChordOnlyLineText, isProgressionLineText, normalizeMarkdownRenderableUrls, parseStrummingPatterns, parseStrummingPatternSteps, previewHelpers, renderInlineTextPlainText, renderOpenLyricEmptyDocumentHtml, renderOpenLyricFenceHtml, renderStrummingPatternGrid, sanitizeHtml, };
+export { DEFAULT_STRUMMING_PATTERN_TEXT, OPEN_LYRIC_PATTERN_TARGET_ID_PREFIX, createChordedLyricTextLines, createPreviewHelpers, createPreviewLineEntries, createStrummingPatternPreviewContextFromConfigBody, createStrummingPatternPreviewContextFromMarkdown, escapeHtml, expandOpenLyricExtras, getPreviewSourceLocation, isChordOnlyLineText, isProgressionLineText, normalizeMarkdownRenderableUrls, parseStrummingPatterns, parseStrummingPatternSteps, previewHelpers, renderInlineTextPlainText, renderOpenLyricEmptyDocumentHtml, renderOpenLyricFenceHtml, renderStrummingPatternGrid, sanitizeHtml, translatePreviewLabel, };

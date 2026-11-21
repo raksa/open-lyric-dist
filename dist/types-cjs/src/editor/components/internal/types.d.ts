@@ -200,6 +200,14 @@ export interface OpenLyricLanguageContribution {
      * keyed `km-KH` needs no locale list of its own.
      */
     locales?: readonly string[];
+    /**
+     * Translations for the fixed labels the PREVIEW surfaces print around a
+     * song, keyed by the English label: the `ol:Config` field names (`Title`,
+     * `Key`, `Attachments`, …) and `Untitled Song`. Applied the way
+     * {@link fontFamily} is — only while the document declares one of
+     * {@link locales} — and a label with no entry stays in English.
+     */
+    labels?: Readonly<Record<string, string>>;
     [key: string]: unknown;
 }
 /**

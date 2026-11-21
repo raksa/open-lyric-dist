@@ -481,6 +481,55 @@ registerPlugin('open-lyric', olEditorOpenLyricPluginData);
 `addPlugin(id, plugin)` is the same door any other plugin package goes through;
 whatever a host composes is its own choice, and this package requires none.
 
+### What a language plugin changes in a preview
+
+A plugin's `contributes.language` is applied **per document**: a preview reads
+the song's `ol:Config` `Locales` field, and the contribution takes effect only
+while that field names a locale the plugin claims (`language.locales`, which
+defaults to the plugin's id). A song that declares no matching locale renders
+exactly as it would with nothing attached. Matching ignores case and works on
+subtag boundaries, so `- Locales: km` matches a plugin keyed `km-KH`.
+
+| `language` key | Effect on `OpenLyric` and `OpenLyricMarkdownManager`                                                                                     |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `fontFamily`   | The stack the song renders in (`preview.resolvedFontFamily`). A host's own `preview.fontFamily` outranks it.                               |
+| `fontFaces`    | Faces added to the settings popup's font picker. Not per document — listed whenever the plugin is attached.                               |
+| `labels`       | Translations for the fixed labels the preview prints around the song, keyed by the English label (`preview.resolvedLabels` is the result). |
+
+`labels` covers the `ol:Config` field names — `Title`, `Subtitle`,
+`Description`, `Artist`, `Copyright`, `Locales`, `Key`, `Tempo`, `Time`,
+`Theme`, `Structure`, `Genre`, `Style`, `Keywords`, `Year`, `Melody`,
+`Attachments`, `Strumming Patterns` — and `Untitled Song`, the title a song
+without one is shown under:
+
+```js
+preview.addPlugin('fr-FR', {
+  id: 'fr-FR',
+  apiVersion: 1,
+  surfaces: ['lyric'],
+  contributes: {
+    language: { labels: { Attachments: 'Pièces jointes', Key: 'Tonalité' } },
+  },
+});
+```
+
+- In `OpenLyric` it translates the `Key` / `Time` / `Tempo` summary, the folded
+  details (`Theme`, `Genre`, `Style`, `Keywords`, `Year`, `Melody`,
+  `Attachments`) and the placeholder title — in the panel and in
+  `getValue({ type: 'html' | 'png-image' })`, which render the same markup.
+- In `OpenLyricMarkdownManager` it translates the field names of the `Config`
+  card. The card's edit actions still address a field by its notation name.
+- A label with no entry (or a blank one) stays in English, and with several
+  matching plugins the first attached one to translate a label wins.
+- `preview.labelLocale` overrides the per-document rule for the labels only
+  (the font stays document-driven). `'auto'` is the default; a locale tag such
+  as `'km-KH'` prints every song's labels in that plugin's language whatever
+  its `Locales` say; `'en'`, or a tag no attached plugin claims, prints
+  English. Assigning it re-renders a mounted preview.
+- Not translated: anything the author wrote (section names, lyrics, values),
+  the plain-text form (`getValue({ type: 'text' })`), and the controls'
+  tooltips and menus.
+
 ### Adding to a preview's settings popup and page
 
 A plugin attached to `OpenLyric` or `OpenLyricMarkdownManager` can add fields
