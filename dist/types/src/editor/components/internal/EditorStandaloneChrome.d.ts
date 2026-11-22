@@ -89,8 +89,12 @@ export declare class EditorStandaloneChrome {
      * Reset — hand the document back to the component's last saved text. The
      * confirm is the point: the edits it drops are the one thing nothing else
      * on the page can bring back (a standalone embed has no autosaved draft).
+     * It is asked in the page: an embed is often a sandboxed frame, where
+     * `confirm()` answers no without asking (`confirm()` remains for a browser
+     * without `<dialog>`).
      */
     private resetDocument;
+    private revertDocument;
     private formatDocument;
     private formatLine;
     private selectAll;

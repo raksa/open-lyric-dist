@@ -17,6 +17,7 @@
 export { refreshElementRefs, setStatus, updateStatus, } from '../../../src/editor/scripts/shared.js';
 export { createHtmlFragment, linkFragmentIds, queryRef, } from '../../../src/editor/html/markup-fragments.js';
 export { EditorPreferencesStore } from '../../../src/editor/scripts/app/EditorPreferencesStore.js';
+export { getOpenLyricPreferenceStorage } from '../../../src/editor/components/internal/preference-storage.js';
 export { getRegisteredKeyboardSpecifications, getRegisteredSpellcheckSpecification, getRegisteredTranscriptLocales, getRegisteredTranscriptSpecifications, registerPlugin, unregisterPlugin, } from '../../../src/editor/scripts/editor-plugin-registry.js';
 export { EDITOR_ONLY_SHELL_MODE } from '../../../src/editor/scripts/page-config.js';
 export { createDictionarySnapshot, getDictionaryConfig, getDictionaryPrefixSuggestions, getSuggestionDictionaryConfigs, hasAnyWordBaseCharacter, loadDictionary, normalizeWord, } from '../../../src/editor/scripts/spellcheck-common.js';

@@ -55,6 +55,7 @@ declare const olEditorOpenLyricPluginData: {
                 formatDeclaredPartName: typeof fenceParser.formatDeclaredPartName;
                 getFenceBlockKind: typeof fenceParser.getFenceBlockKind;
                 getFenceHeaderError: typeof fenceParser.getFenceHeaderError;
+                getFenceHeaderFix: typeof fenceParser.getFenceHeaderFix;
                 getFenceSnippetDefinitions: typeof fenceParser.getFenceSnippetDefinitions;
                 getRequiredDeclaredPartNames: typeof fenceParser.getRequiredDeclaredPartNames;
                 parseFenceHeader: typeof fenceParser.parseFenceHeader;
@@ -87,6 +88,7 @@ declare const olEditorOpenLyricPluginData: {
                     parseFenceHeader: (info: any) => any;
                     getFenceBlockKind: (info: any) => any;
                     getFenceHeaderError: (info: any) => string;
+                    getFenceHeaderFix: (info: any) => any;
                     getFenceSnippetDefinitions: () => any;
                     getRequiredDeclaredPartNames: () => any;
                     formatDeclaredPartName: typeof fenceParser.formatDeclaredPartName;
@@ -122,6 +124,7 @@ declare const olEditorOpenLyricPluginData: {
                 registerMarkdownOlLanguage: typeof registerMarkdownOlLanguage;
                 checkOLMarkdown: typeof validation.checkOLMarkdown;
                 collectMarkdownOlMarkersFromLines: typeof validation.collectMarkdownOlMarkersFromLines;
+                getMarkdownOlMarkerFixes: typeof validation.getMarkdownOlMarkerFixes;
                 scheduleValidation: typeof validation.scheduleValidation;
                 splitMarkdownOlText: typeof validation.splitMarkdownOlText;
                 validateMarkdownOlModel: typeof validation.validateMarkdownOlModel;

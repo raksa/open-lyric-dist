@@ -49,6 +49,7 @@ declare class EditorOpenLyricPlugin implements OpenLyricPlugin {
                 formatDeclaredPartName: typeof import("./domain/parser/fences.js").formatDeclaredPartName;
                 getFenceBlockKind: typeof import("./domain/parser/fences.js").getFenceBlockKind;
                 getFenceHeaderError: typeof import("./domain/parser/fences.js").getFenceHeaderError;
+                getFenceHeaderFix: typeof import("./domain/parser/fences.js").getFenceHeaderFix;
                 getFenceSnippetDefinitions: typeof import("./domain/parser/fences.js").getFenceSnippetDefinitions;
                 getRequiredDeclaredPartNames: typeof import("./domain/parser/fences.js").getRequiredDeclaredPartNames;
                 parseFenceHeader: typeof import("./domain/parser/fences.js").parseFenceHeader;
@@ -81,6 +82,7 @@ declare class EditorOpenLyricPlugin implements OpenLyricPlugin {
                     parseFenceHeader: (info: any) => any;
                     getFenceBlockKind: (info: any) => any;
                     getFenceHeaderError: (info: any) => string;
+                    getFenceHeaderFix: (info: any) => any;
                     getFenceSnippetDefinitions: () => any;
                     getRequiredDeclaredPartNames: () => any;
                     formatDeclaredPartName: typeof import("./domain/parser/fences.js").formatDeclaredPartName;
@@ -116,6 +118,7 @@ declare class EditorOpenLyricPlugin implements OpenLyricPlugin {
                 registerMarkdownOlLanguage: typeof import("./monaco/language.js").registerMarkdownOlLanguage;
                 checkOLMarkdown: typeof import("./document/validation.js").checkOLMarkdown;
                 collectMarkdownOlMarkersFromLines: typeof import("./document/validation.js").collectMarkdownOlMarkersFromLines;
+                getMarkdownOlMarkerFixes: typeof import("./document/validation.js").getMarkdownOlMarkerFixes;
                 scheduleValidation: typeof import("./document/validation.js").scheduleValidation;
                 splitMarkdownOlText: typeof import("./document/validation.js").splitMarkdownOlText;
                 validateMarkdownOlModel: typeof import("./document/validation.js").validateMarkdownOlModel;

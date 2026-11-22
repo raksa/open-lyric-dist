@@ -13,8 +13,8 @@ export interface OpenLyricMarkdownOptions extends OpenLyricPreviewOptions {
     isControlHidden?: boolean;
     /**
      * Show the document's comment lines — the `// …` authoring notes inside the
-     * `ol:` fences, which the preview drops by default. Shown muted and
-     * verbatim. Comments inside `ol:Config` stay hidden either way; they already
+     * `ol:` fences. On by default (`false` drops them from the preview). Shown
+     * muted and verbatim. Comments inside `ol:Config` stay hidden either way; they already
      * speak through the preview as strumming-pattern labels. (A `//` line in
      * plain markdown is ordinary text and was never dropped.)
      */

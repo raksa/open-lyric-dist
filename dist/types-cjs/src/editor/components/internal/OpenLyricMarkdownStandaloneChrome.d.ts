@@ -178,16 +178,45 @@ export declare class OpenLyricMarkdownStandaloneChrome {
     private hasContent;
     private syncActionAvailability;
     private setActionPending;
-    private openMarkdownDoc;
-    private downloadImage;
+    /** Whether the image options dialog is up, so a second click waits. */
+    private imageDialogOpen;
+    /** What the image is drawn from: the live root, its theme and background. */
+    private imageSource;
     /**
-     * An off-screen copy of the rendered markdown carrying the live root's
-     * resolved typography, background, and full width — what the raster captures.
+     * Download as Image: open the options dialog (`image/image-dialog.ts`,
+     * without the lyric preview's Include switches) on the options this panel
+     * last downloaded with, and draw the image the reader picks. Cancelling
+     * writes nothing.
      */
-    private buildRenderSurface;
+    private chooseImageOptions;
+    /**
+     * Draw the preview as `options` describe (`image/markdown-image.ts`),
+     * re-encoded as a JPEG unless a PNG is asked for, and download it — or
+     * hand it to the export `action` chosen instead.
+     */
+    private downloadImage;
     private getSurfaceBackground;
-    private mountStage;
+    /** The menu items {@link renderDocxActions} put after Download as Docx. */
+    private docxActionButtons;
+    /**
+     * One menu item per `'docx'` export action, after Download as Docx: the
+     * Word document has no options dialog to carry them. Rebuilt each time the
+     * menu opens, so an action added or removed later shows from the next
+     * opening on. The host's text is shown as given.
+     */
+    private renderDocxActions;
+    /**
+     * Download as Docx: the rendered preview as a Word document, set in the
+     * preview's font under the name it goes by outside the page — or handed to
+     * the `'docx'` export `action` chosen instead.
+     */
+    private downloadDocx;
     private print;
+    /**
+     * Print through the host's `onPrint`: the page this chrome would print,
+     * made self-contained (`buildOpenLyricPortablePrintPage`), handed over.
+     */
+    private printThroughHost;
     /**
      * The print document. Always light-themed regardless of the preview's own
      * theme — the app page prints the same way, so a dark preview never burns
@@ -204,5 +233,4 @@ export declare class OpenLyricMarkdownStandaloneChrome {
     private exportBaseName;
     private downloadHref;
     private nextFrame;
-    private waitForFonts;
 }

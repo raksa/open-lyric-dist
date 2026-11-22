@@ -130,6 +130,14 @@ export interface OpenLyricElementMapOptions extends OpenLyricImageOptions {
      */
     isShowingCommentText?: boolean;
     /**
+     * Override the song notes the Structure leaves out — the `ol:Note` fences
+     * the preview lists under the song (see
+     * {@link OpenLyricOptions.isShowingNotes}). `true` keeps them, each a
+     * section of its own in the map; `false` leaves them out. Omit to follow
+     * the preview. A note the Structure places is a section either way.
+     */
+    isShowingNotes?: boolean;
+    /**
      * Keep the Config `Attachments` — the song's links (a YouTube reference, a
      * chart PDF) — in the `Info` entry, which is the only entry they can reach:
      * they are listed under the song's header, and a section carries none of
@@ -325,6 +333,19 @@ export interface OpenLyricValueOptions extends OpenLyricImageOptions {
      */
     type: OpenLyricContentType;
     /**
+     * Image and HTML. With a `height`, draw the whole song smaller until it fits
+     * in it, instead of cutting a long song off at the bottom — a song made to
+     * fill a 1080 × 1080 post, say. Everything shrinks together (title, cards,
+     * text), the text rewrapping to fill the width, while the image keeps its
+     * `width` × `height` and the surface's padding (a margin set through `css`)
+     * keeps its size — the song's top-level elements take a CSS `zoom`, which
+     * the HTML carries too. The search runs on the laid-out export surface (no
+     * extra raster), keeps the largest zoom that fits to a thousandth, never
+     * draws the song larger, and stops at a quarter of its size. A song that
+     * already fits is left as it is, and without a `height` this does nothing.
+     */
+    isShrinkingToFit?: boolean;
+    /**
      * Override the inline key notes — the `[chord]` markers and leading `|`
      * bars. `true` forces them on, `false` forces them off. Omit to follow the
      * preview's current Hide Keys / Hide Bars state (what Copy as Text /
@@ -337,6 +358,12 @@ export interface OpenLyricValueOptions extends OpenLyricImageOptions {
      * (see {@link OpenLyricOptions.isShowingCommentText}).
      */
     isShowingCommentText?: boolean;
+    /**
+     * Override the song notes the Structure leaves out (see
+     * {@link OpenLyricOptions.isShowingNotes}): `true` keeps them under the
+     * song, `false` leaves them out. Omit to follow the preview.
+     */
+    isShowingNotes?: boolean;
     /**
      * Keep the Config `Attachments` — the song's links (a YouTube reference, a
      * chart PDF), listed under the header in the rendered forms and as an
@@ -432,19 +459,26 @@ export interface OpenLyricOptions extends OpenLyricPreviewOptions {
     isKeyNotesHidden?: boolean;
     /**
      * Show the song's comment lines — the `// …` authoring notes inside the
-     * `ol:` fences, which the preview drops by default. Shown muted and
-     * verbatim: never transposed, simplified, or read as notation. Comments
-     * inside `ol:Config` stay hidden either way; they already speak through the
-     * preview as strumming-pattern labels.
+     * `ol:` fences. On by default (`false` drops them from the preview). Shown
+     * muted and verbatim: never transposed, simplified, or read as notation.
+     * Comments inside `ol:Config` stay hidden either way; they already speak
+     * through the preview as strumming-pattern labels.
      */
     isShowingCommentText?: boolean;
+    /**
+     * Show the song's notes the Structure leaves out — `ol:Note` fences it
+     * does not name — as cards of their own under the song. On by default
+     * (`false` hides them). A note the Structure names is placed in the flow
+     * like any section, whatever this says, so a note never shows twice.
+     */
+    isShowingNotes?: boolean;
     /** Transpose the song to this key (empty = original Config key). */
     keyNote?: string;
     /**
      * Hide the standalone preview's floating controls — the settings gear (font
      * size/family, plugin toggle, key transpose, Simply / Hide Bars / Hide Keys)
      * and the actions `⋮` menu (Copy as Text, Download as Image, Print, Download
-     * as PowerPoint). A standalone (non-adopt) embed always renders the preview
+     * as Presentation). A standalone (non-adopt) embed always renders the preview
      * panel chrome — floating tools, export-progress bar, and guitar chord hover
      * popover; this only hides the interactive controls, which show by default.
      * No effect when the component adopts a host-owned container
@@ -510,6 +544,7 @@ export declare class OpenLyric extends OpenLyricPreviewComponent {
     private barsHiddenValue;
     private keyNotesHiddenValue;
     private showingCommentTextValue;
+    private showingNotesValue;
     private keyNoteValue;
     private controlHiddenValue;
     private standaloneChrome;
@@ -538,6 +573,12 @@ export declare class OpenLyric extends OpenLyricPreviewComponent {
      */
     get isShowingCommentText(): boolean;
     set isShowingCommentText(next: boolean);
+    /**
+     * Whether the song notes the Structure leaves out are listed under the
+     * song — see {@link OpenLyricOptions.isShowingNotes}.
+     */
+    get isShowingNotes(): boolean;
+    set isShowingNotes(next: boolean);
     /**
      * Whether the standalone chrome's floating controls (the settings gear and
      * the actions `⋮` menu) are hidden. Only affects a standalone (non-adopt)
@@ -738,7 +779,8 @@ export declare class OpenLyric extends OpenLyricPreviewComponent {
      * the render pipeline's `hideAttachments`: omitted, the Config links are
      * carried the way the preview panel lists them. `showStrummingPatterns` is
      * the getters' `isShowingStrummingPatterns` and reads the same way, turning
-     * into `hideStrummingPatterns`.
+     * into `hideStrummingPatterns`; `showNotes` is `isShowingNotes`, turning
+     * into `hideNotes`.
      */
     private getContentRenderOptions;
     private buildTextElementMap;

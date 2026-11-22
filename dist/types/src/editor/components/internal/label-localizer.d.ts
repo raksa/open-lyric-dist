@@ -13,7 +13,8 @@
  *   control (`button`, `label`, `option`, …), the popup and menus, a section
  *   title, a structure step — see {@link isTranslatableTextParent}. Lyrics, field
  *   values and everything else the author wrote are never looked at.
- * - **`title`, `aria-label` and `placeholder`** are translated on any element.
+ * - **`title`, `aria-label`, `placeholder` and `label`** (an `<optgroup>`'s
+ *   heading, an `<option>`'s short form) are translated on any element.
  * - A string is translated when the table has it exactly, or through a
  *   **pattern** entry — a key with `{0}` / `{1}` placeholders
  *   (`'Edit {0}'`), whose captures are translated in turn. A trailing colon
@@ -27,6 +28,12 @@
 type Labels = Readonly<Record<string, string>>;
 /** Opt an element (and its subtree) out: `data-ol-no-translate`. */
 declare const NO_TRANSLATE_ATTRIBUTE = "data-ol-no-translate";
+/**
+ * `labels` as one function, translating the way the localizer does — exact
+ * entries, `{0}` patterns, a trailing colon — for text the preview writes
+ * outside its own DOM: an exported slide show's viewer, say.
+ */
+declare function createLabelTranslator(labels: Labels): (text: string) => string;
 declare class LabelLocalizer {
     private readonly root;
     private readonly getLabels;
@@ -80,7 +87,6 @@ declare class LabelLocalizer {
     destroy(): void;
     /** The translation of one string; the string itself when there is none. */
     translate(text: string): string;
-    private translateCore;
     private schedule;
     /**
      * What a node should read: the translation of its English. A node the
@@ -97,4 +103,4 @@ declare class LabelLocalizer {
  * checking a translation table against what a preview actually shows.
  */
 declare function collectTranslatableStrings(root: HTMLElement): string[];
-export { LabelLocalizer, NO_TRANSLATE_ATTRIBUTE, collectTranslatableStrings };
+export { LabelLocalizer, NO_TRANSLATE_ATTRIBUTE, collectTranslatableStrings, createLabelTranslator, };

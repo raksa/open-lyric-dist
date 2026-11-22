@@ -197,13 +197,42 @@ export declare class OpenLyricStandaloneChrome {
     private savePersistedTypography;
     private copyText;
     private writeClipboard;
+    /** Whether the image options dialog is up, so a second click waits. */
+    private imageDialogOpen;
+    /**
+     * Download as Image: open the options dialog (`image/image-dialog.ts`) on
+     * the options last downloaded with — or, the first time, on what the
+     * preview is showing — and draw the image the reader picks. Cancelling
+     * writes nothing.
+     */
+    private chooseImageOptions;
+    /**
+     * Draw the song as `options` describe — through the component's own
+     * `getValue({ type: 'png-image' })`, re-encoded as a JPEG unless a PNG is
+     * asked for — and download it, or hand it to the export `action` chosen
+     * instead.
+     */
     private downloadImage;
-    private buildRenderSurface;
-    private getSurfaceBackground;
-    private mountStage;
     private print;
+    /**
+     * Print through the host's `onPrint`: the page this chrome would print,
+     * made self-contained (`buildOpenLyricPortablePrintPage`), handed over.
+     */
+    private printThroughHost;
     private buildPrintDocument;
+    /** Whether the Presentation options dialog is up, so a second click waits. */
+    private powerPointDialogOpen;
+    /**
+     * Download as Presentation: open the options dialog (`pptx/style-dialog.ts`)
+     * on the style last exported with, and build the deck in the one the reader
+     * picks. Cancelling writes nothing.
+     */
+    private choosePowerPointStyle;
     private downloadPowerPoint;
+    /** The light/dark half the slides are drawn in for `style`. */
+    private getPowerPointThemeName;
+    /** The deck palette: the preview's (or the style's) theme, plus its colours. */
+    private getPowerPointDeckTheme;
     /**
      * Slide colours per theme, as bare PowerPoint hex (no `#`).
      *
@@ -217,17 +246,19 @@ export declare class OpenLyricStandaloneChrome {
     private flattenChunk;
     private buildSlideDescriptors;
     /**
-     * A picture of each section exactly as the preview draws it — the same
-     * rasterizer behind Download as Image, one PNG per part. Walked in structure
-     * order rather than over the map, so a part that comes round again in the
-     * flow gets its slide again: the map holds one entry per unique part, the
-     * deck follows the song.
+     * A picture of each slide exactly as the preview draws it — the same
+     * rasterizer behind Download as Image — in `style`, in structure order
+     * (`buildOpenLyricPowerPointStyledSlideImages`).
      */
     private buildSlideImages;
     private addImageSlide;
-    private addTitleSlide;
     private addMessageSlide;
     private addLyricSlide;
+    /**
+     * Hand a finished export to the export action chosen in its dialog, the
+     * progress line showing it run, then its finished status or the failure.
+     */
+    private deliverToExportAction;
     private updateProgress;
     private flashStatus;
     private clearProgressResetTimer;

@@ -28,26 +28,83 @@ declare class EditorPreferencesStore {
     } | null;
     savePanelSizePreference(panelSizeWeights: any): void;
     normalizeDraftRecord(value: any): {
+        tabId?: any;
         content: any;
         fileName: any;
         sharedDocumentDate: any;
         updatedAt: number;
     } | null;
     loadDraftFromStorage(storage: any): {
+        tabId?: any;
         content: any;
         fileName: any;
         sharedDocumentDate: any;
         updatedAt: number;
     } | null;
+    /**
+     * Whether drafts live in two places: this tab's own (`sessionStorage`,
+     * which a reload keeps) and the one shared by every tab (`localStorage`,
+     * which a new tab starts from). Only then do tabs have drafts of their own
+     * to keep apart.
+     */
+    hasTabDrafts(): boolean;
+    /**
+     * This tab's id, kept in its `sessionStorage` so a reload keeps it. Every
+     * draft the tab writes carries it, which is how a tab tells its own shared
+     * draft from one another tab wrote. `''` without tab drafts.
+     */
+    getDraftTabId(): any;
+    /**
+     * The shared draft this tab started from, when it opened with none of its
+     * own (`tabId` and `updatedAt` of that record). Writing over that same
+     * record is the tab carrying on with it, not replacing another tab's work.
+     */
+    loadAdoptedDraftMark(): any;
+    saveAdoptedDraftMark(draftRecord: any): void;
+    /**
+     * The draft to restore: this tab's own whenever it has one — a reload
+     * brings back what the tab was showing, however recently another tab
+     * wrote — else the shared one, which is how a new tab (or the other page)
+     * picks up where the last one left off.
+     */
     getPreferredDraftRecord(sessionDraft: any, persistentDraft: any): any;
     saveDraftToStorage(storage: any, draftRecord: any): void;
+    /**
+     * Whether writing `draftRecord` as the shared draft would drop `existing`:
+     * another tab's draft, with other text, that this tab did not start from.
+     */
+    wouldReplaceOtherTabDraft(existing: any, draftRecord: any): boolean;
     syncDraftRecord(draftRecord: any): void;
+    /**
+     * Drop the kept copies of this tab's own draft: another tab kept one when
+     * it wrote over it, but the tab is still here and has written since.
+     */
+    forgetKeptDraftsOfTab(tabId: any): void;
     clearDraftStorage(storage: any): void;
     loadDraft(): any;
     saveDraft(content: any, fileName: any, { sharedDocumentDate }?: {
         sharedDocumentDate?: string | undefined;
     }): void;
     clearDraft(): void;
+    /**
+     * Drafts another tab wrote that this one would have written over, newest
+     * first: a tab restores its own draft, so the shared one it replaces is
+     * kept here instead of lost (`keptAt`: when). At most
+     * {@link KEPT_DRAFTS_LIMIT}, one per tab.
+     */
+    loadKeptDrafts(): ({
+        keptAt: number;
+        tabId?: any;
+        content: any;
+        fileName: any;
+        sharedDocumentDate: any;
+        updatedAt: number;
+    } | null)[];
+    saveKeptDrafts(keptDrafts: any): boolean;
+    /** Put `draftRecord` on the kept list, replacing that tab's earlier one. */
+    keepDraft(draftRecord: any): void;
+    /** Drop one kept draft — the one {@link loadKeptDrafts} listed with `keptAt`. */
+    removeKeptDraft(keptAt: any): void;
     loadInvisibleCharacterPreference(): boolean | null;
     saveInvisibleCharacterPreference(enabled: any): void;
     loadAutoSuggestPreference(): boolean;

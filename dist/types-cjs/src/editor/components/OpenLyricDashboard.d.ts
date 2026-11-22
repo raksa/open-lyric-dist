@@ -144,6 +144,8 @@ export declare class OpenLyricDashboard extends OpenLyricComponent {
     private readonly explicitTheme;
     private applicationInstance;
     private lastValueText;
+    /** Counts save commands, so only the latest one's failure is reported. */
+    private saveAttempt;
     private destroying;
     /** Undo functions for every patch the mount installed, LIFO. */
     private readonly patchRestorers;
@@ -362,10 +364,18 @@ export declare class OpenLyricDashboard extends OpenLyricComponent {
      * on `DocumentController.saveCurrentDocument()`, so shadowing that one
      * prototype method covers the whole command without touching the
      * keystroke. The default it displaces is the `.md` download; the separate
-     * Download entry (which prompts for a file name) is left alone, and so is
+     * Download entry (which asks for a file name) is left alone, and so is
      * the draft path — {@link installDraftPersistenceHooks} owns that.
      */
     private installSaveCommandHook;
+    /**
+     * The host's `saveValue` refused the save: say so, and — when the document
+     * had unsaved changes — make it unsaved again, with Reset's baseline back on
+     * the last text that was saved, so the dirty border and the unload guard
+     * keep protecting the edits. Only the latest save decides: a failure that
+     * settles after a newer save was issued is that newer save's business.
+     */
+    private handleSaveFailure;
     /**
      * Document value → dashboard `change` events (one-way mirror). Two entry
      * points cover every path: the editor edit pipeline

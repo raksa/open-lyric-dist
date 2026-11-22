@@ -37,9 +37,9 @@ Morning breaks with mercy on the water
   names.
 - Each part name may be declared **once** per document.
 - `ol:Config` is **required**. Every other section is optional.
-- Comment lines are ignored by validation and hidden in the preview unless
-  comments are turned on. `Config` comments always stay hidden — they surface as
-  strumming-pattern labels instead.
+- Comment lines are ignored by validation and shown in the preview (muted)
+  unless comments are turned off. `Config` comments always stay hidden — they
+  surface as strumming-pattern labels instead.
 
 ---
 
@@ -199,9 +199,11 @@ allowed **only** under `Description`, `Attachments` and `Strumming Patterns`.
 **`Time`** — `4/4 2/2 2/4 3/4 3/8 6/8 9/8 12/8`
 
 **`Locales`** — comma-separated tags from a **closed set** (the Windows LCID tag
-list, 229 entries: `en-US`, `km-KH`, `fr-FR`, `zh-CN`, …). Matching is
-case-insensitive; duplicates and empty entries are errors. The complete list is
-enumerated in the grammar JSON of §8, under `config.locales.values`.
+list, 229 entries: `en-US`, `km-KH`, `fr-FR`, `zh-CN`, …), written as listed:
+`en-us` is an error whose message names the listed `en-US`, and whose quick
+fix writes it (§6). Duplicates and
+empty entries are errors too. The complete list is enumerated in the grammar
+JSON of §8, under `config.locales.values`.
 
 **`Keywords`** — free-text search terms on one line, separated by commas:
 `- Keywords: grace, morning, worship`. Any script is fine; nothing is checked
@@ -267,12 +269,58 @@ no whitespace, no separators.
 - Every token must name a part the document actually **declares as a fence**.
 - The same part may not appear **twice in a row** — raise the previous token's
   repeat count instead (`Cx2`, not `CC`).
+- A declared section the Structure never names is valid, with no diagnostic.
+  The preview leaves it out of the song, with one exception: a `Note`.
+
+### Notes in the Structure, or after it
+
+A `Note` fence can be shown in two places:
+
+- **In the flow.** Name it in the Structure (`IV1CN1V2CO`). It is a step of
+  the song like any section: it renders in that place with its flow index, and
+  it takes that place in the plain text and in a slide deck.
+- **After the song.** Leave it out of the Structure. The preview then lists it
+  below the song's sections, in the order the notes are written, with no flow
+  index. It follows the song in the plain text too, and in a slide deck it can
+  close the deck. The preview's **Show song notes** setting (on by default)
+  and the render option `hideNotes` leave such notes out.
+
+A note named in the Structure never also appears after the song, so it
+shows once either way.
 
 ---
 
 ## 6. Diagnostics
 
 Every message the validator can emit, and what triggers it.
+
+A diagnostic that names its fix also carries it as data: `fix: { title,
+text }`, meaning *put `text` in place of the diagnostic's range*. The
+editor and VS Code offer it as a preferred quick fix (the light bulb,
+`Ctrl+.` / `Cmd+.`), withdrawn once the text under it changes; while two or
+more apply, the light bulb also offers **Fix all N Open Lyric problems**, and
+a `source.fixAll` request (Fix All, a save action) gets that edit as
+`source.fixAll.openLyric`. The MCP's `validate_song` returns the fix with each
+diagnostic, and its `apply_fixes` applies them all. These carry one:
+
+| Diagnostic | Range | `text` | `title` |
+| --- | --- | --- | --- |
+| `Unsupported ol part. Did you mean ol:<Header>?` | the header after `ol:` | `<Header>` | `Change to ol:<Header>` |
+| `Use ol:Config. Lowercase ol:config is not supported.` | `config` | `Config` | `Change to ol:Config` |
+| `Unsupported config field. Did you mean <Field>?` | the field name | `<Field>` — `title` → `Title`, `Strucure` → `Structure` | `Change to <Field>` |
+| `Invalid chord annotation. Try [<chord>].` | the bracketed token | `[<chord>]` | `Change to [<chord>]` |
+| `Invalid <section> token "<token>". Try <chord>.` | the token | `<chord>` | `Change to <chord>` |
+| `Repeat suffix must use exact format (2x).` | the parenthesised token | `(<n>x)` — `(2 X)` → `(2x)` | `Change to (<n>x)` |
+| `Key must be one of: …` | from the field's `:` to the end of the line | `: <key>` — `g` → `G`, `f♯m` → `F#m`, `E♭` → `Eb` | `Change to <key>` |
+| `Time must be one of: …` | from the field's `:` to the end of the line | `: <time>` — `4 / 4` → `4/4` | `Change to <time>` |
+| `Tempo must be a whole number of beats per minute then bpm, such as 76bpm.` | from the field's `:` to the end of the line | `: <n>bpm` — `70 bpm`, `70`, `70BPM` → `70bpm` | `Change to <n>bpm` |
+| `Unsupported locale. Use <tag> instead of <typed>.` | the tag | `<tag>` — `km-kh` → `km-KH` | `Change to <tag>` |
+
+A repeat whose count is itself wrong (`(0x)`, `(02x)`) gets no fix, and
+neither does a value with more than one reading: a Key ending in a capital
+`M` (`GM` may mean G major or G minor), a Key or Time outside its list
+however it is spelled, a Tempo of `0bpm` or with a fraction, a two-digit
+Year, a tag outside the locale list.
 
 ### Fences
 
@@ -283,6 +331,7 @@ Every message the validator can emit, and what triggers it.
 | `<Header> fences cannot be numbered.`                                                                                      | An index on Intro, Outro, Vamp, Final-Chorus or Config. |
 | `Section indexes must start at 1.`                                                                                         | A zero or zero-padded index, e.g. `ol:Verse 01`.       |
 | `Unsupported ol part. Use Config, Intro, Instrumental, Interlude, Turnaround, lyric sections, Breakdown, Vamp, or Solo.`    | An unknown fence header.                               |
+| `Unsupported ol part. Did you mean ol:<Header>?`                                                                           | An unknown header close to a known one: a letter or two off (one for a header of four letters or fewer), or a difference of case, spaces or hyphens only — `ol:Vers 2` → `ol:Verse 2`, `ol:pre chorus 1` → `ol:Pre-Chorus 1`. |
 | `Duplicate ol part. <partName> is already declared on line N.`                                                             | The same part name declared twice.                     |
 | `Unclosed ol fence.`                                                                                                       | A missing closing ``` line.                            |
 | `Missing required ol part. Add ol:Config.`                                                                                 | No Config fence in the document.                       |
@@ -291,17 +340,24 @@ Every message the validator can emit, and what triggers it.
 
 | Message                                                                                                                                        | Cause                                                  |
 | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `Invalid config entry. Use - Field: value.`                                                                                                     | A Config line that is not a known field entry.         |
-| `Config continuation lines must follow a Description, Attachments, or Strumming Patterns entry.`                                                 | An indented line under a single-line field.            |
+| `Invalid config entry. Use - Field: value.`                                                                                                     | A `-` line with no `Field:`, such as `- Genre`.        |
+| `Unsupported config field. Use …`                                                                                                               | A `- Field: value` entry whose field is not one of §4's and not close to one, such as `- Colour: red`. The message lists them all. |
+| `Unsupported config field. Did you mean <Field>?`                                                                                               | An unknown field close to a known one: a letter or two off (one for a name of four letters or fewer), or a difference of case, spaces or hyphens only — `- title:` → `Title`, `- Strucure:` → `Structure`, `- Kye:` → `Key`. Never a field the Config already declares (above or below) or one an earlier misspelt name was pointed at, so applying every fix never makes a duplicate; with no other close field, the message lists every field instead. A misspelt `Title` or `Structure` also leaves `Missing required config fields: …` until it is fixed. |
+| `Config continuation lines must follow a Description, Attachments, or Strumming Patterns entry.`                                                 | A line that is not a `- Field:` entry, indented or not, after a single-line field. |
 | `Duplicate config field. <Field> is already declared on line N.`                                                                                | A Config field written twice.                          |
 | `<Field> must provide a value on the same line.`                                                                                                | A single-line field left empty, value on the next line. |
 | `<Field> must be one of: …`                                                                                                                     | A `Key` or `Time` value outside its enum.              |
-| `Tempo must match [1-9]\d*bpm.`                                                                                                                 | `70 bpm`, `70`, or `0bpm`.                             |
+| `Tempo must be a whole number of beats per minute then bpm, such as 76bpm.`                                                                     | `70 bpm`, `70`, or `0bpm`.                             |
 | `Year must be a four-digit year, such as 2024.`                                                                                                 | `24`, `2023-2024`, or other-script digits.             |
 | `Missing required config fields: …`                                                                                                             | `Title` or `Structure` is absent.            |
 | `Locales must be a comma-separated list of locales with no empty entry.`                                                                        | A trailing comma or an empty slot.                     |
 | `Duplicate locale. <tag> is already listed.`                                                                                                    | The same locale tag listed twice.                      |
+| `Unsupported locale. Use <tag> instead of <typed>.`                                                                                             | A listed tag in another case, such as `en-us`.         |
+| `Unsupported locale. <typed> is not a supported locale such as en-US or km-KH.`                                                                 | A tag outside the closed set.                          |
+| `Attachments must use a protocol-based URL such as http://, https://, file:///, ftp://, ftps://, or a Markdown link whose target is such a URL. Spaces inside the URL are allowed.` | An `Attachments` value that is neither a `scheme://` URL nor a Markdown link to one, such as `demo.mp3`. |
+| `Attachments continuation lines must start with spaces or tabs and contain a protocol-based URL such as http://, https://, file:///, ftp://, ftps://, or a Markdown link that points to one. Spaces inside the URL are allowed.` | A line under `Attachments` that is not indented, or holds no such URL. |
 | `Strumming Patterns must use only d, D, v, V, u, U, ^, x, X, 1, *, +, -, _, ., 0, bar separators (\|), and spaces or tabs.`                      | Any other character inside a pattern.                  |
+| `Strumming Patterns continuation lines must start with spaces or tabs and use only d, D, v, V, u, U, ^, x, X, 1, *, +, -, _, ., 0, bar separators (\|), and spaces or tabs.` | A line under `Strumming Patterns` that is not indented, or holds any other character. |
 
 ### Structure
 
@@ -313,16 +369,18 @@ Every message the validator can emit, and what triggers it.
 | `Repeat suffix must use compact format x2.`                                                           | `x` written without a count.              |
 | `Repeat counts must start at 1.`                                                                      | `x0` or `x02`.                            |
 | `Structure cannot place <part> twice in a row. Increase the previous token's repeat count instead.`    | `CC` instead of `Cx2`.                    |
-| `Structure references undeclared ol part. <part> is not declared.`                                    | A token with no matching fence.           |
+| `Structure references undeclared ol part. <part> is not declared.`                                    | A token with no matching fence. Every such token is marked, each at its own place. |
 
 ### Section bodies
 
 | Message                                                             | Cause                                                                          |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | `Unclosed chord annotation.`                                         | A `[` with no `]` on the same line.                                            |
-| `Invalid chord annotation. Try [<chord>].`                           | A bracketed token that is not a chord symbol; the suggestion appears on a near match. |
+| `Invalid chord annotation.`                                          | A bracketed token that is not a chord symbol and is not close to one, such as `[Hmm]`. |
+| `Invalid chord annotation. Try [<chord>].`                           | A bracketed token close to a chord symbol; the suggestion is that chord.       |
 | `Unexpected closing bracket in lyric line.`                          | A `]` with no opening `[`.                                                     |
-| `Invalid <section> token.`                                           | A word in a progression that is neither a chord, a bar token, nor a repeat.    |
+| `Invalid <section> token "<token>". Try <chord>.`                    | A progression word that is nearly a chord: bracketed (`[G]` → `G`), lowercase (`em` → `Em`), or German B (`Hm` → `Bm`). |
+| `Invalid <section> token "<token>". Use chords, \| bars and (2x) repeats.` | Any other word in a progression that is neither a chord, a bar token, nor a repeat. |
 | `Invalid <section> directive. Expected {c: Piano + Pads }.`          | A malformed `{ … }` opening an Instrumental / Interlude body.                  |
 | `Invalid <section> directive. Expected {p: #3} or {c: Piano + Pads }.` | A malformed directive on a mixed-section progression line.                    |
 | `Repeat suffix must use exact format (2x).`                          | A repeat-looking token such as `(2 x)` or `(2X)`.                              |
@@ -421,7 +479,7 @@ validating a song before serializing it to notation.
     "partName": "The fence identity used by Structure and by duplicate checks: the header, plus ' ' + index when numbered (e.g. 'Verse 2').",
     "commentLine": {
       "pattern": "^\\s*//",
-      "note": "Valid inside every fence. Ignored by validation; hidden in the preview unless comments are turned on. Config comments always stay hidden."
+      "note": "Valid inside every fence. Ignored by validation; shown in the preview unless comments are turned off. Config comments always stay hidden."
     },
     "required": ["Config"],
     "duplicates": "Each part name may be declared once per document."
@@ -535,9 +593,9 @@ validating a song before serializing it to notation.
     "patterns": { "Tempo": "^[1-9]\\d*bpm$", "Year": "^[1-9]\\d{3}$" },
     "locales": {
       "separator": ",",
-      "caseInsensitiveMatch": true,
+      "caseInsensitiveMatch": false,
       "duplicatesRejected": true,
-      "note": "A closed value set - the Windows LCID tag list. A tag outside it is an error.",
+      "note": "A closed value set - the Windows LCID tag list, written as listed. A tag outside it is an error, and so is a listed tag in another case (en-us for en-US): its message names the listed form.",
       "values": [
         "arc", "af-ZA", "am-ET", "ar-AE", "ar-BH", "ar-DZ", "ar-EG", "ar-IQ",
         "ar-JO", "ar-KW", "ar-LB", "ar-LY", "ar-MA", "arn-CL", "ar-OM", "ar-QA",
@@ -615,39 +673,49 @@ validating a song before serializing it to notation.
     ]
   },
   "diagnostics": [
-    { "message": "Use ol:Config. Lowercase ol:config is not supported.", "cause": "The header spelled in lowercase." },
+    { "message": "Use ol:Config. Lowercase ol:config is not supported.", "cause": "The header spelled in lowercase.", "fix": "Config" },
     { "message": "Config fences cannot be numbered or suffixed.", "cause": "ol:Config 1 or similar." },
     { "message": "<Header> fences cannot be numbered.", "cause": "An index on Intro, Outro, Vamp, Final-Chorus or Config." },
     { "message": "Section indexes must start at 1.", "cause": "A zero or zero-padded index, e.g. ol:Verse 01." },
     { "message": "Unsupported ol part. Use Config, Intro, Instrumental, Interlude, Turnaround, lyric sections, Breakdown, Vamp, or Solo.", "cause": "An unknown fence header." },
+    { "message": "Unsupported ol part. Did you mean ol:<Header>?", "cause": "An unknown header close to a known one (a letter or two off, or only case, spaces or hyphens apart).", "fix": "<Header>" },
     { "message": "Duplicate ol part. <partName> is already declared on line N.", "cause": "The same part name declared twice." },
     { "message": "Unclosed ol fence.", "cause": "A missing closing fence line." },
     { "message": "Missing required ol part. Add ol:Config.", "cause": "No Config fence in the document." },
-    { "message": "Invalid config entry. Use - Field: value.", "cause": "A Config line that is not a known field entry." },
-    { "message": "Config continuation lines must follow a Description, Attachments, or Strumming Patterns entry.", "cause": "An indented line under a single-line field." },
+    { "message": "Invalid config entry. Use - Field: value.", "cause": "A '-' line with no 'Field:', such as '- Genre'." },
+    { "message": "Unsupported config field. Use ...", "cause": "A '- Field: value' entry whose field is not a Config field nor close to one, such as '- Colour: red'. The message lists them all." },
+    { "message": "Unsupported config field. Did you mean <Field>?", "cause": "An unknown field close to a known one (a letter or two off, or only case, spaces or hyphens apart), such as '- title:' or '- Strucure:'. Never a field the Config already declares, nor one an earlier misspelt name was pointed at.", "fix": "<Field>" },
+    { "message": "Config continuation lines must follow a Description, Attachments, or Strumming Patterns entry.", "cause": "A line that is not a '- Field:' entry, indented or not, after a single-line field." },
     { "message": "Duplicate config field. <Field> is already declared on line N.", "cause": "A Config field written twice." },
     { "message": "<Field> must provide a value on the same line.", "cause": "A single-line field left empty with its value on the next line." },
-    { "message": "<Field> must be one of: ...", "cause": "A Key or Time value outside its enum." },
-    { "message": "Tempo must match [1-9]\\d*bpm.", "cause": "Tempo written as '70 bpm', '70', or '0bpm'." },
+    { "message": "<Field> must be one of: ...", "cause": "A Key or Time value outside its enum.", "fix": ": <value>, when only case, spaces or a sharp/flat sign set it apart from one (not a Key ending in a capital M)" },
+    { "message": "Tempo must be a whole number of beats per minute then bpm, such as 76bpm.", "cause": "Tempo written as '70 bpm', '70', or '0bpm'.", "fix": ": <n>bpm, unless the count is 0 or has a fraction" },
     { "message": "Year must be a four-digit year, such as 2024.", "cause": "Year written as '24', '2023-2024', or with other-script digits." },
     { "message": "Missing required config fields: ...", "cause": "Title or Structure is absent from Config." },
     { "message": "Locales must be a comma-separated list of locales with no empty entry.", "cause": "A trailing comma or an empty slot." },
     { "message": "Duplicate locale. <tag> is already listed.", "cause": "The same locale tag listed twice." },
+    { "message": "Unsupported locale. Use <tag> instead of <typed>.", "cause": "A listed tag in another case, such as en-us.", "fix": "<tag>" },
+    { "message": "Unsupported locale. <typed> is not a supported locale such as en-US or km-KH.", "cause": "A tag outside the closed set." },
+    { "message": "Attachments must use a protocol-based URL such as http://, https://, file:///, ftp://, ftps://, or a Markdown link whose target is such a URL. Spaces inside the URL are allowed.", "cause": "An Attachments value that is neither a scheme:// URL nor a Markdown link to one, such as demo.mp3." },
+    { "message": "Attachments continuation lines must start with spaces or tabs and contain a protocol-based URL such as http://, https://, file:///, ftp://, ftps://, or a Markdown link that points to one. Spaces inside the URL are allowed.", "cause": "A line under Attachments that is not indented, or holds no such URL." },
     { "message": "Strumming Patterns must use only d, D, v, V, u, U, ^, x, X, 1, *, +, -, _, ., 0, bar separators (|), and spaces or tabs.", "cause": "Any other character inside a pattern." },
+    { "message": "Strumming Patterns continuation lines must start with spaces or tabs and use only d, D, v, V, u, U, ^, x, X, 1, *, +, -, _, ., 0, bar separators (|), and spaces or tabs.", "cause": "A line under Strumming Patterns that is not indented, or holds any other character." },
     { "message": "Structure must use compact codes like IV1x2CV1V2CO.", "cause": "Whitespace inside the Structure value." },
     { "message": "Unknown structure code. Use ...", "cause": "A letter that is not a structure code." },
     { "message": "<Header> cannot be numbered in Structure.", "cause": "An index on a code whose section is unnumbered." },
     { "message": "Repeat suffix must use compact format x2.", "cause": "'x' written without a count in Structure." },
     { "message": "Repeat counts must start at 1.", "cause": "x0 or x02 in Structure." },
     { "message": "Structure cannot place <part> twice in a row. Increase the previous token's repeat count instead.", "cause": "CC instead of Cx2." },
-    { "message": "Structure references undeclared ol part. <part> is not declared.", "cause": "A Structure token with no matching fence." },
+    { "message": "Structure references undeclared ol part. <part> is not declared.", "cause": "A Structure token with no matching fence; every such token is marked." },
     { "message": "Unclosed chord annotation.", "cause": "A '[' with no ']' on the same line." },
-    { "message": "Invalid chord annotation. Try [<chord>].", "cause": "A bracketed token that is not a chord symbol; the suggestion appears on a near match." },
+    { "message": "Invalid chord annotation.", "cause": "A bracketed token that is not a chord symbol and is not close to one, such as [Hmm]." },
+    { "message": "Invalid chord annotation. Try [<chord>].", "cause": "A bracketed token close to a chord symbol; the suggestion is that chord.", "fix": "[<chord>]" },
     { "message": "Unexpected closing bracket in lyric line.", "cause": "A ']' with no opening '['." },
-    { "message": "Invalid <section> token.", "cause": "A word in a progression that is neither a chord, a bar token, nor a repeat suffix." },
+    { "message": "Invalid <section> token \"<token>\". Try <chord>.", "cause": "A progression word that is nearly a chord: bracketed ([G]), lowercase (em) or German B (Hm).", "fix": "<chord>" },
+    { "message": "Invalid <section> token \"<token>\". Use chords, | bars and (2x) repeats.", "cause": "Any other word in a progression that is neither a chord, a bar token, nor a repeat suffix." },
     { "message": "Invalid <section> directive. Expected {c: Piano + Pads }.", "cause": "A malformed directive opening an Instrumental / Interlude body." },
     { "message": "Invalid <section> directive. Expected {p: #3} or {c: Piano + Pads }.", "cause": "A malformed directive on a mixed-section progression line." },
-    { "message": "Repeat suffix must use exact format (2x).", "cause": "A repeat-looking token such as (2 x) or (2X)." },
+    { "message": "Repeat suffix must use exact format (2x).", "cause": "A repeat-looking token such as (2 x) or (2X).", "fix": "(<n>x), unless the count is wrong" },
     { "message": "Unclosed repeat suffix.", "cause": "A '(' with no ')' in a progression." }
   ]
 }

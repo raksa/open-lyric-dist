@@ -26,6 +26,7 @@ declare class OpenLyricEditorApplication {
         openLyricHideLeadingBars: boolean;
         openLyricSimplifyChords: boolean;
         openLyricShowComments: boolean;
+        openLyricShowNotes: boolean;
         openLyricStructureKeys: {};
         theme: string;
         highlightInvisibleCharacters: boolean;

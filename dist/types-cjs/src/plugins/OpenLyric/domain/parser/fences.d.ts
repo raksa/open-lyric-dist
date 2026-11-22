@@ -74,6 +74,7 @@ declare const parser: {
     parseFenceHeader: (info: any) => any;
     getFenceBlockKind: (info: any) => any;
     getFenceHeaderError: (info: any) => string;
+    getFenceHeaderFix: (info: any) => any;
     getFenceSnippetDefinitions: () => any;
     getRequiredDeclaredPartNames: () => any;
     formatDeclaredPartName: typeof formatDeclaredPartName;
@@ -82,6 +83,7 @@ declare function findFenceDefinition(header: any): any;
 declare function parseFenceHeader(info: any): any;
 declare function getFenceBlockKind(info: any): any;
 declare function getFenceHeaderError(info: any): string;
+declare function getFenceHeaderFix(info: any): any;
 declare function getFenceSnippetDefinitions(): any;
 declare function getRequiredDeclaredPartNames(): any;
-export { OLBridge, OLBreakdown, OLChorus, OLConfig, OLFenceDefinition, OLFinalChorus, OLFreeTextFence, OLInstrumental, OLInstrumentalFence, OLInterlude, OLIntro, OLLyricFence, OLNote, OLOutro, OLPostChorus, OLPreChorus, OLRefrain, OLSolo, OLTag, OLTurnaround, OLVamp, OLVerse, definitions, definitionsByClassName, findFenceDefinition, formatDeclaredPartName, getFenceBlockKind, getFenceHeaderError, getFenceSnippetDefinitions, getRequiredDeclaredPartNames, parseFenceHeader, parser, registry, types, };
+export { OLBridge, OLBreakdown, OLChorus, OLConfig, OLFenceDefinition, OLFinalChorus, OLFreeTextFence, OLInstrumental, OLInstrumentalFence, OLInterlude, OLIntro, OLLyricFence, OLNote, OLOutro, OLPostChorus, OLPreChorus, OLRefrain, OLSolo, OLTag, OLTurnaround, OLVamp, OLVerse, definitions, definitionsByClassName, findFenceDefinition, formatDeclaredPartName, getFenceBlockKind, getFenceHeaderError, getFenceHeaderFix, getFenceSnippetDefinitions, getRequiredDeclaredPartNames, parseFenceHeader, parser, registry, types, };

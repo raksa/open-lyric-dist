@@ -49,7 +49,7 @@ declare function createOpenLyricPresentationData(markdown: any, options?: {}): {
     metaLine: string;
     strummingPatternLines: any[];
     structureLine: string;
-    sections: any;
+    sections: any[];
 } | null;
 declare function renderOpenLyricPlainText(markdown: any, options?: {}): string;
 declare function renderOpenLyricPreview(markdown: any, options?: {}): any;
