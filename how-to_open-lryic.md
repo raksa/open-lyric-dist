@@ -760,11 +760,17 @@ preview.onPrint = async ({ html, fileName, title }) => {
 
 The page needs nothing from the preview's own page:
 
-- Its style sheets are written into it.
+- Its style sheets are written into it. Each is asked for as a `<link>` asks
+  (`Accept: text/css`), and only an answer served as `text/css` (or with no
+  type) is written in.
 - The fonts the song is set in are embedded, the way Download as HTML embeds a
   deck's (see [Download as HTML](#download-as-html)).
 
 A sheet or a font the page cannot read stays linked or named, as it was.
+
+On paper the song keeps the face it is drawn in on screen, whether that comes
+from the Font family setting or from the page around the preview. The window
+Print opens does too.
 
 While `onPrint` works, the progress line reads _Preparing print_, then _Sent
 to print_. If it throws or rejects, the line reads _Print failed_ and the
